@@ -60,8 +60,6 @@ class RecommendBannerItem(val bannerDataBeans: List<BannerDataBean>) : Item {
                     } else {
                         // 从集合中移出
                         collectionView.removeAt(0)
-                    }.apply {
-                        setImageResource(tempPageData[position].testDrawable)
                     }
                     container.addView(imageView)
                     return imageView

@@ -117,7 +117,7 @@ dependencies {
     //-----------------------------support------------------------------------
     api "com.android.support:design:$android_support_version"
     api "com.android.support:multidex:$android_multidex_version"
-    api "com.android.support:support-v4:$android_support_version"
+//    api "com.android.support:support-v4:$android_support_version"
     api "com.android.support:cardview-v7:$android_support_version"
     api "com.android.support:appcompat-v7:$android_support_version"
     api "com.android.support:recyclerview-v7:$android_support_version"
@@ -148,7 +148,7 @@ dependencies {
     //----------------------------------RxBinding----------------------------------
     api "com.jakewharton.rxbinding2:rxbinding-kotlin:$rxbinding_version"
     api "com.jakewharton.rxbinding2:rxbinding-design-kotlin:$rxbinding_version"
-    api "com.jakewharton.rxbinding2:rxbinding-support-v4-kotlin:$rxbinding_version"
+//    api "com.jakewharton.rxbinding2:rxbinding-support-v4-kotlin:$rxbinding_version"
     api "com.jakewharton.rxbinding2:rxbinding-appcompat-v7-kotlin:$rxbinding_version"
     api "com.jakewharton.rxbinding2:rxbinding-recyclerview-v7-kotlin:$rxbinding_version"
 

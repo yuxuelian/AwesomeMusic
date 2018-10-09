@@ -1,6 +1,8 @@
 package com.kaibo.music.bean
 
-import android.support.annotation.DrawableRes
+import com.google.gson.annotations.SerializedName
+import com.kaibo.core.annotation.PoKo
+
 
 /**
  * @author kaibo
@@ -10,8 +12,9 @@ import android.support.annotation.DrawableRes
  * @description：
  */
 
+@PoKo
 data class BannerDataBean(
-        val imgUrl: String = "",
-        @DrawableRes
-        val testDrawable: Int = 0
+        @SerializedName("linkUrl") var linkUrl: String,
+        @SerializedName("picUrl") var picUrl: String,
+        @SerializedName("id") var id: Int
 )

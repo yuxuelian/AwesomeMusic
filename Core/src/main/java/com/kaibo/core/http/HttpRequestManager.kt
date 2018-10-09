@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 
 object HttpRequestManager {
 
-    internal var BASE_URL = "http://192.168.3.98:3010/mock/15/"
+    internal var BASE_URL = "http://192.168.0.110:3000/"
 
     //缓存大小   20M
     private const val CACHE_SIZE = 1024 * 1024 * 20L

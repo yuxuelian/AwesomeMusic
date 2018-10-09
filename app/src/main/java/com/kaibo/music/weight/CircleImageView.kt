@@ -17,7 +17,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewOutlineProvider
 import android.widget.ImageView
-import com.kaibo.ui.R
+import com.kaibo.music.R
 
 
 /**

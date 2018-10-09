@@ -8,10 +8,6 @@
         <attr name="civ_circle_background_color" format="color" />
     </declare-styleable>
 
-    <declare-styleable name="RatioLayout">
-        <attr name="ratio" format="float" />
-    </declare-styleable>
-
     <declare-styleable name="BannerIndicatorView">
         <!--选中的宽度-->
         <attr name="selectedWidth" format="dimension|reference" />

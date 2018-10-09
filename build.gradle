@@ -8,7 +8,8 @@ buildscript {
 
         gradle_plugin_version = '3.1.4'
         android_support_version = '27.1.1'
-        androidx_ktx_version = '1.0.0'
+//        androidx_ktx_version = '1.0.0'
+        androidx_ktx_version = '0.3'
         android_multidex_version = '1.0.3'
         android_room_version = '1.1.1'
         rxjava2_version = '2.1.14'

@@ -18,15 +18,21 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:AutoPlayTime="3000"
+                app:isAutoPlay="true"
+                app:isHandLoop="true"
                 app:isShowIndicatorOnlyOne="true"
-                app:isShowNumberIndicator="true"
+                app:isShowNumberIndicator="false"
                 app:layout_constraintDimensionRatio="5:2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:pageChangeDuration="800"
+                app:pointContainerLeftRightPadding="0dp"
+                app:pointContainerPosition="BOTTOM"
+                app:pointLeftRightPadding="3dp"
                 app:pointNormal="@drawable/shape_noraml"
                 app:pointSelect="@drawable/shape_selected"
-                app:pointsPosition="RIGHT"
+                app:pointTopBottomPadding="0dp"
+                app:pointsPosition="CENTER"
                 app:tipTextSize="12sp" />
         </android.support.constraint.ConstraintLayout>
 
