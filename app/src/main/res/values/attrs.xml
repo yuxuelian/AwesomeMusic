@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CircleImageView">
+        <attr name="civ_border_width" format="dimension" />
+        <attr name="civ_border_color" format="color" />
+        <attr name="civ_border_overlay" format="boolean" />
+        <attr name="civ_fill_color" format="color" />
+        <attr name="civ_circle_background_color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="RatioLayout">
+        <attr name="ratio" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="BannerIndicatorView">
+        <!--选中的宽度-->
+        <attr name="selectedWidth" format="dimension|reference" />
+        <!--选中圆圈的颜色-->
+        <attr name="selectedColor" format="color|reference" />
+        <!--圆圈半径-->
+        <attr name="circleRadius" format="dimension|reference" />
+        <!--圆圈之间的间隔-->
+        <attr name="circleMargin" format="dimension|reference" />
+        <!--未选中圆圈的颜色-->
+        <attr name="circleColor" format="color|reference" />
+    </declare-styleable>
+</resources>

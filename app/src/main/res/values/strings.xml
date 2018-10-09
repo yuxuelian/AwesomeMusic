@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">DelicateMusic</string>
+
+    <string-array name="home_tab_array">
+        <item>推荐</item>
+        <item>歌手</item>
+        <item>排行</item>
+        <item>搜索</item>
+    </string-array>
+
+</resources>

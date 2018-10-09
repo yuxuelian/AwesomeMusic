@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/corners_success_toast_bg"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="4dp"
+    android:paddingLeft="6dp"
+    android:paddingRight="10dp"
+    android:paddingTop="4dp">
+
+    <ImageView
+        android:id="@+id/toast_icon"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        tools:src="@drawable/icon_error" />
+
+    <TextView
+        android:id="@+id/toast_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:textColor="#FFF"
+        android:textSize="16sp"
+        tools:text="奥斯卡大家奥斯卡asd看来" />
+</LinearLayout>

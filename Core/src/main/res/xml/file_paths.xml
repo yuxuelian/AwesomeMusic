@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+
+    <!--<files-path>：内部存储空间应用私有目录下的 files/ 目录，等同于 Context.getFilesDir() 所获取的目录路径；-->
+    <!--<cache-path>：内部存储空间应用私有目录下的 cache/ 目录，等同于 Context.getCacheDir() 所获取的目录路径；-->
+    <!--<external-path>：外部存储空间根目录，等同于 Environment.getExternalStorageDirectory() 所获取的目录路径；-->
+    <!--<external-files-path>：外部存储空间应用私有目录下的 files/ 目录，等同于 Context.getExternalFilesDir(null) 所获取的目录路径；-->
+    <!--<external-cache-path>：外部存储空间应用私有目录下的 cache/ 目录，等同于 Context.getExternalCacheDir()；-->
+
+    <!--path表示有权限的目录,"/"表示external-path根路径下,name为一个标示与具体路径无关-->
+    <external-path
+        name="external"
+        path="/" />
+    <files-path
+        name="files"
+        path="/" />
+</paths>

@@ -1,0 +1,13 @@
+/**
+ * 文件   参数混传
+ *
+ * @param map   要上传的参数
+ * @param parts 要上传的文件里边
+ * @return
+ */
+@Multipart
+@POST("path")
+fun uploadReceipt(
+        @PartMap map: Map<String, RequestBody>,
+        @Part parts: List<MultipartBody.Part>
+): Observable<ResponseBody>

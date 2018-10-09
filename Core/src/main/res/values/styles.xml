@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="bottomSheetAnimation" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
+    </style>
+
+    <style name="horizontal_line">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1px</item>
+        <item name="android:background">@color/line_color</item>
+    </style>
+
+    <style name="dialogShadow">
+        <item name="android:windowShowAnimation">@anim/alpha_0_1</item>
+        <item name="android:windowHideAnimation">@anim/alpha_1_0</item>
+        <item name="android:windowEnterAnimation">@anim/alpha_0_1</item>
+        <item name="android:windowExitAnimation">@anim/alpha_1_0</item>
+    </style>
+
+    <style name="dialogBottomSheet">
+        <item name="android:windowShowAnimation">@anim/bottom_show</item>
+        <item name="android:windowHideAnimation">@anim/bottom_hide</item>
+        <item name="android:windowEnterAnimation">@anim/bottom_show</item>
+        <item name="android:windowExitAnimation">@anim/bottom_hide</item>
+    </style>
+</resources>
