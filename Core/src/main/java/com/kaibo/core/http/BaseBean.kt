@@ -14,6 +14,6 @@ import com.kaibo.core.annotation.PoKo
 @PoKo
 data class BaseBean<T>(
         @SerializedName("code") val code: Int,
-        @SerializedName("msg") val msg: String,
+        @SerializedName("message") val message: String,
         @SerializedName("data") val data: T
 )

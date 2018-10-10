@@ -31,10 +31,10 @@ fun <T> Observable<T>.toMainThread(): Observable<T> {
  */
 fun <T> Observable<BaseBean<T>>.checkResult(): Observable<T> {
     return this.map {
-        if (it.code == 200) {
+        if (it.code == 0) {
             it.data
         } else {
-            throw DataException(it.code, it.msg)
+            throw DataException(it.code, it.message)
         }
     }
 }

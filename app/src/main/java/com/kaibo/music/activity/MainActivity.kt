@@ -13,6 +13,14 @@ import com.kaibo.music.fragment.singer.SingerFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.include_title.*
 
+/**
+ * @author kaibo
+ * @date 2018/10/9 11:02
+ * @GitHub：https://github.com/yuxuelian
+ * @email：kaibo1hao@gmail.com
+ * @description：
+ */
+
 class MainActivity : BaseActivity() {
 
     override fun getLayoutRes(): Int {
@@ -34,6 +42,7 @@ class MainActivity : BaseActivity() {
 
             override fun getPageTitle(position: Int) = pageTitles[position]
         }
+        viewPager.offscreenPageLimit = 4
         tabLayout.setupWithViewPager(viewPager)
     }
 }

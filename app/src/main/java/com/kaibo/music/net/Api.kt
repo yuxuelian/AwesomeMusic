@@ -3,6 +3,7 @@ package com.kaibo.music.net
 import com.kaibo.core.http.BaseBean
 import com.kaibo.core.http.HttpRequestManager
 import com.kaibo.music.bean.BannerDataBean
+import com.kaibo.music.bean.RecommendBean
 import io.reactivex.Observable
 import retrofit2.http.GET
 
@@ -21,5 +22,8 @@ interface Api {
 
     @GET("api/bannerList")
     fun getBannerList(): Observable<BaseBean<List<BannerDataBean>>>
+
+    @GET("api/getRecommendList")
+    fun getRecommendList(): Observable<BaseBean<List<RecommendBean>>>
 
 }

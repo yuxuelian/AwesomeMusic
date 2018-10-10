@@ -1,26 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="80dp"
+    android:background="@drawable/btn_50_selector"
+    android:clickable="true"
+    android:focusable="true">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/banner"
+    <ImageView
+        android:id="@+id/recommendImg"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.kaibo.music.weight.MarqueeTextView
+        android:id="@+id/nameText"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="5:2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.kaibo.music.weight.BannerIndicatorView
-        android:id="@+id/bannerIndicatorView"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        app:circleColor="@color/colorBackground"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/dissnameText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/recommendImg"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="腾讯音乐人" />
+
+    <com.kaibo.music.weight.MarqueeTextView
+        android:id="@+id/dissnameText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:textColor="@color/colorThemeText"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:selectedColor="@color/colorTheme" />
+        app:layout_constraintStart_toEndOf="@+id/recommendImg"
+        app:layout_constraintTop_toBottomOf="@+id/nameText"
+        tools:text="和女友来一支三拍俏皮舞曲" />
 
 </android.support.constraint.ConstraintLayout>
