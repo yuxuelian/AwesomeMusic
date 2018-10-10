@@ -13,6 +13,7 @@ import com.kaibo.music.item.recommend.BannerItem
 import com.kaibo.music.item.recommend.SongListItem
 import com.kaibo.music.item.recommend.SongTitleItem
 import com.kaibo.music.net.Api
+import com.lcodecore.tkrefreshlayout.header.bezierlayout.BezierLayout
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import kotlinx.android.synthetic.main.fragment_recommend_layout.*
@@ -33,6 +34,11 @@ class RecommendFragment : BaseFragment() {
     override fun getLayoutRes() = R.layout.fragment_recommend_layout
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
+//        val headerView = BezierLayout(context)
+//        refresh.setHeaderView(headerView)
+//        refreshLayout.setFloatRefresh(false);
+        refresh.setPureScrollModeOn()
+
         val songTitleItem = SongTitleItem()
         Observable
                 .zip(
