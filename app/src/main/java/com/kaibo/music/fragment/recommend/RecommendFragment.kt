@@ -34,13 +34,6 @@ class RecommendFragment : BaseFragment() {
     override fun getLayoutRes() = R.layout.fragment_recommend_layout
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
-
-        refresh.setOnRefreshListener {
-            Observable.timer(2000, TimeUnit.MILLISECONDS).toMainThread().`as`(bindLifecycle()).subscribe {
-                refresh.isRefreshing = false
-            }
-        }
-
         val songTitleItem = SongTitleItem()
         Observable
                 .zip(

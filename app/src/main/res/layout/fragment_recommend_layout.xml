@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.kaibo.music.weight.refresh.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.kaibo.music.weight.refresh.ReboundLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/refresh"
     android:layout_width="match_parent"
@@ -11,5 +11,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never" />
-</com.kaibo.music.weight.refresh.SwipeRefreshLayout>
+</com.kaibo.music.weight.refresh.ReboundLayout>
 
