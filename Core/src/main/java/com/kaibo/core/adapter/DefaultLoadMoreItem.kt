@@ -1,6 +1,6 @@
 package com.kaibo.core.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
@@ -106,7 +106,7 @@ class DefaultLoadMoreItem : LoadMoreItem {
          * 在这里声明此Item所对应的ViewHolder，用来从OnCreateViewHolder传View到OnBindViewHolder中。
          * 这个ViewHolder类应该是私有的，只在这里用
          */
-        private class ViewHolder(itemView: View?, val progress: ProgressBar, val hintText: TextView) : RecyclerView.ViewHolder(itemView)
+        private class ViewHolder(itemView: View, val progress: ProgressBar, val hintText: TextView) : RecyclerView.ViewHolder(itemView)
     }
 
     /**

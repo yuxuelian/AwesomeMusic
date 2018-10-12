@@ -5,9 +5,9 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
-import android.support.v4.view.ViewPager
 import android.util.AttributeSet
 import android.view.View
+import androidx.viewpager.widget.ViewPager
 import com.kaibo.music.R
 import org.jetbrains.anko.dip
 
@@ -108,15 +108,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
     private fun getWidth(size: Int, measureSpec: Int): Int {
         return when (MeasureSpec.getMode(measureSpec)) {
-        // match_parent count*circleRadius*2+
+            // match_parent count*circleRadius*2+
             MeasureSpec.AT_MOST -> {
                 circleCount * circleRadius * 2 + (circleCount - 1) * circleMargin + selectedWidth + paddingLeft + paddingStart + paddingRight + paddingEnd
             }
-        // wrap_content
+            // wrap_content
             MeasureSpec.UNSPECIFIED -> {
                 circleCount * circleRadius * 2 + (circleCount - 1) * circleMargin + selectedWidth + paddingLeft + paddingStart + paddingRight + paddingEnd
             }
-        // 精确测量   比如xml中指定了尺寸的
+            // 精确测量   比如xml中指定了尺寸的
             MeasureSpec.EXACTLY -> {
                 MeasureSpec.getSize(measureSpec)
             }
@@ -126,15 +126,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
     private fun getHeight(size: Int, measureSpec: Int): Int {
         return when (MeasureSpec.getMode(measureSpec)) {
-        // match_parent  高度为两个圆半径
+            // match_parent  高度为两个圆半径
             MeasureSpec.AT_MOST -> {
                 size
             }
-        // wrap_content
+            // wrap_content
             MeasureSpec.UNSPECIFIED -> {
                 circleRadius * 2 + paddingBottom + paddingTop
             }
-        // 精确测量   比如xml中指定了尺寸的
+            // 精确测量   比如xml中指定了尺寸的
             MeasureSpec.EXACTLY -> {
                 MeasureSpec.getSize(measureSpec)
             }

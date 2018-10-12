@@ -1,8 +1,8 @@
 package com.kaibo.music.activity
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentPagerAdapter
 import com.kaibo.core.activity.BaseActivity
 import com.kaibo.core.util.statusBarHeight
 import com.kaibo.music.R
@@ -12,6 +12,7 @@ import com.kaibo.music.fragment.search.SearchFragment
 import com.kaibo.music.fragment.singer.SingerFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.include_title.*
+import org.jetbrains.anko.dip
 
 /**
  * @author kaibo

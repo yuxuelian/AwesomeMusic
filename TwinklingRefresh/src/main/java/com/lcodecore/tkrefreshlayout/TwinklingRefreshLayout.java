@@ -2,10 +2,6 @@ package com.lcodecore.tkrefreshlayout;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.NestedScrollingChild;
-import android.support.v4.view.NestedScrollingChildHelper;
-import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -28,7 +24,12 @@ import com.lcodecore.tkrefreshlayout.utils.DensityUtil;
 
 import java.lang.reflect.Constructor;
 
-import static android.support.v4.widget.ViewDragHelper.INVALID_POINTER;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.NestedScrollingChild;
+import androidx.core.view.NestedScrollingChildHelper;
+import androidx.core.view.ViewCompat;
+
+import static androidx.customview.widget.ViewDragHelper.INVALID_POINTER;
 
 /**
  * Created by lcodecore on 16/3/2.
@@ -290,7 +291,9 @@ public class TwinklingRefreshLayout extends RelativeLayout implements PullListen
         float sumX = 0, sumY = 0;
         final int count = ev.getPointerCount();
         for (int i = 0; i < count; i++) {
-            if (skipIndex == i) continue;
+            if (skipIndex == i) {
+                continue;
+            }
             sumX += ev.getX(i);
             sumY += ev.getY(i);
         }
@@ -315,7 +318,9 @@ public class TwinklingRefreshLayout extends RelativeLayout implements PullListen
                 final float x1 = mVelocityTracker.getXVelocity(id1);
                 final float y1 = mVelocityTracker.getYVelocity(id1);
                 for (int i = 0; i < count; i++) {
-                    if (i == upIndex) continue;
+                    if (i == upIndex) {
+                        continue;
+                    }
 
                     final int id2 = ev.getPointerId(i);
                     final float x = x1 * mVelocityTracker.getXVelocity(id2);
@@ -384,6 +389,8 @@ public class TwinklingRefreshLayout extends RelativeLayout implements PullListen
                     mVelocityTracker = null;
                 }
                 break;
+            default:
+                break;
         }
     }
 
@@ -440,7 +447,7 @@ public class TwinklingRefreshLayout extends RelativeLayout implements PullListen
                 mLastTouchY = (int) e.getY();
                 startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
                 break;
-            case MotionEventCompat.ACTION_POINTER_DOWN:
+            case MotionEvent.ACTION_POINTER_DOWN:
                 mActivePointerId = e.getPointerId(actionIndex);
                 mLastTouchX = (int) e.getX(actionIndex);
                 mLastTouchY = (int) e.getY(actionIndex);
@@ -501,12 +508,13 @@ public class TwinklingRefreshLayout extends RelativeLayout implements PullListen
                 mIsBeingDragged = false;
                 mActivePointerId = INVALID_POINTER;
                 break;
+            default:
+                break;
         }
         vtev.recycle();
         return true;
     }
 
-    //NestedScroll
     @Override
     public void setNestedScrollingEnabled(boolean enabled) {
         mChildHelper.setNestedScrollingEnabled(enabled);
@@ -620,7 +628,9 @@ public class TwinklingRefreshLayout extends RelativeLayout implements PullListen
         if (view != null && mExtraHeadLayout != null) {
             mExtraHeadLayout.addView(view);
             mExtraHeadLayout.bringToFront();
-            if (floatRefresh) mHeadLayout.bringToFront();
+            if (floatRefresh) {
+                mHeadLayout.bringToFront();
+            }
             cp.onAddExHead();
             cp.setExHeadFixed();
         }
@@ -646,11 +656,15 @@ public class TwinklingRefreshLayout extends RelativeLayout implements PullListen
 
     public void setFloatRefresh(boolean ifOpenFloatRefreshMode) {
         floatRefresh = ifOpenFloatRefreshMode;
-        if (!floatRefresh) return;
+        if (!floatRefresh) {
+            return;
+        }
         post(new Runnable() {
             @Override
             public void run() {
-                if (mHeadLayout != null) mHeadLayout.bringToFront();
+                if (mHeadLayout != null) {
+                    mHeadLayout.bringToFront();
+                }
             }
         });
     }
@@ -686,8 +700,11 @@ public class TwinklingRefreshLayout extends RelativeLayout implements PullListen
     public void setEnableLoadmore(boolean enableLoadmore1) {
         enableLoadmore = enableLoadmore1;
         if (mBottomView != null) {
-            if (enableLoadmore) mBottomView.getView().setVisibility(VISIBLE);
-            else mBottomView.getView().setVisibility(GONE);
+            if (enableLoadmore) {
+                mBottomView.getView().setVisibility(VISIBLE);
+            } else {
+                mBottomView.getView().setVisibility(GONE);
+            }
         }
     }
 
@@ -697,8 +714,11 @@ public class TwinklingRefreshLayout extends RelativeLayout implements PullListen
     public void setEnableRefresh(boolean enableRefresh1) {
         this.enableRefresh = enableRefresh1;
         if (mHeadView != null) {
-            if (enableRefresh) mHeadView.getView().setVisibility(VISIBLE);
-            else mHeadView.getView().setVisibility(GONE);
+            if (enableRefresh) {
+                mHeadView.getView().setVisibility(VISIBLE);
+            } else {
+                mHeadView.getView().setVisibility(GONE);
+            }
         }
     }
 
@@ -789,42 +809,61 @@ public class TwinklingRefreshLayout extends RelativeLayout implements PullListen
     @Override
     public void onPullingDown(TwinklingRefreshLayout refreshLayout, float fraction) {
         mHeadView.onPullingDown(fraction, mMaxHeadHeight, mHeadHeight);
-        if (!enableRefresh) return;
-        if (refreshListener != null) refreshListener.onPullingDown(refreshLayout, fraction);
+        if (!enableRefresh) {
+            return;
+        }
+        if (refreshListener != null) {
+            refreshListener.onPullingDown(refreshLayout, fraction);
+        }
     }
 
     @Override
     public void onPullingUp(TwinklingRefreshLayout refreshLayout, float fraction) {
         mBottomView.onPullingUp(fraction, mMaxHeadHeight, mHeadHeight);
-        if (!enableLoadmore) return;
-        if (refreshListener != null) refreshListener.onPullingUp(refreshLayout, fraction);
+        if (!enableLoadmore) {
+            return;
+        }
+        if (refreshListener != null) {
+            refreshListener.onPullingUp(refreshLayout, fraction);
+        }
     }
 
     @Override
     public void onPullDownReleasing(TwinklingRefreshLayout refreshLayout, float fraction) {
         mHeadView.onPullReleasing(fraction, mMaxHeadHeight, mHeadHeight);
-        if (!enableRefresh) return;
-        if (refreshListener != null)
+        if (!enableRefresh) {
+            return;
+        }
+        if (refreshListener != null) {
             refreshListener.onPullDownReleasing(refreshLayout, fraction);
+        }
     }
 
     @Override
     public void onPullUpReleasing(TwinklingRefreshLayout refreshLayout, float fraction) {
         mBottomView.onPullReleasing(fraction, mMaxBottomHeight, mBottomHeight);
-        if (!enableLoadmore) return;
-        if (refreshListener != null) refreshListener.onPullUpReleasing(refreshLayout, fraction);
+        if (!enableLoadmore) {
+            return;
+        }
+        if (refreshListener != null) {
+            refreshListener.onPullUpReleasing(refreshLayout, fraction);
+        }
     }
 
     @Override
     public void onRefresh(TwinklingRefreshLayout refreshLayout) {
         mHeadView.startAnim(mMaxHeadHeight, mHeadHeight);
-        if (refreshListener != null) refreshListener.onRefresh(refreshLayout);
+        if (refreshListener != null) {
+            refreshListener.onRefresh(refreshLayout);
+        }
     }
 
     @Override
     public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
         mBottomView.startAnim(mMaxBottomHeight, mBottomHeight);
-        if (refreshListener != null) refreshListener.onLoadMore(refreshLayout);
+        if (refreshListener != null) {
+            refreshListener.onLoadMore(refreshLayout);
+        }
     }
 
     @Override
@@ -832,7 +871,9 @@ public class TwinklingRefreshLayout extends RelativeLayout implements PullListen
         if (refreshListener != null) {
             refreshListener.onFinishRefresh();
         }
-        if (!cp.isEnableKeepIView() && !cp.isRefreshing()) return;
+        if (!cp.isEnableKeepIView() && !cp.isRefreshing()) {
+            return;
+        }
         mHeadView.onFinish(new OnAnimEndListener() {
             @Override
             public void onAnimEnd() {
@@ -846,18 +887,24 @@ public class TwinklingRefreshLayout extends RelativeLayout implements PullListen
         if (refreshListener != null) {
             refreshListener.onFinishLoadMore();
         }
-        if (!cp.isEnableKeepIView() && !cp.isLoadingMore()) return;
+        if (!cp.isEnableKeepIView() && !cp.isLoadingMore()) {
+            return;
+        }
         mBottomView.onFinish();
     }
 
     @Override
     public void onRefreshCanceled() {
-        if (refreshListener != null) refreshListener.onRefreshCanceled();
+        if (refreshListener != null) {
+            refreshListener.onRefreshCanceled();
+        }
     }
 
     @Override
     public void onLoadmoreCanceled() {
-        if (refreshListener != null) refreshListener.onLoadmoreCanceled();
+        if (refreshListener != null) {
+            refreshListener.onLoadmoreCanceled();
+        }
     }
 
 
@@ -880,8 +927,12 @@ public class TwinklingRefreshLayout extends RelativeLayout implements PullListen
             if (isPureScrollModeOn) {
                 setOverScrollTopShow(false);
                 setOverScrollBottomShow(false);
-                if (mHeadLayout != null) mHeadLayout.setVisibility(GONE);
-                if (mBottomLayout != null) mBottomLayout.setVisibility(GONE);
+                if (mHeadLayout != null) {
+                    mHeadLayout.setVisibility(GONE);
+                }
+                if (mBottomLayout != null) {
+                    mBottomLayout.setVisibility(GONE);
+                }
             }
         }
 
@@ -942,11 +993,15 @@ public class TwinklingRefreshLayout extends RelativeLayout implements PullListen
         }
 
         public void resetHeaderView() {
-            if (mHeadView != null) mHeadView.reset();
+            if (mHeadView != null) {
+                mHeadView.reset();
+            }
         }
 
         public void resetBottomView() {
-            if (mBottomView != null) mBottomView.reset();
+            if (mBottomView != null) {
+                mBottomView.reset();
+            }
         }
 
         public View getExHead() {

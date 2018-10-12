@@ -1,7 +1,7 @@
 package com.kaibo.core.util
 
 import android.app.Activity
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import com.kaibo.core.R
 import org.jetbrains.anko.internals.AnkoInternals
 

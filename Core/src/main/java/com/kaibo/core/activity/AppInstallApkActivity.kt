@@ -38,6 +38,7 @@ class AppInstallApkActivity : BaseActivity() {
             if (!canInstall) {
                 rxPermissions
                         .request(Manifest.permission.REQUEST_INSTALL_PACKAGES)
+                        .`as`(bindLifecycle())
                         .subscribe { granted: Boolean ->
                             when {
                                 granted -> {

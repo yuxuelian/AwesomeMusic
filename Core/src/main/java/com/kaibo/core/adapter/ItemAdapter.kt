@@ -1,8 +1,8 @@
 package com.kaibo.core.adapter
 
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 
 interface Item {
     val controller: ItemController
@@ -185,7 +185,7 @@ class ItemManager(private val delegated: MutableList<Item> = mutableListOf()) : 
         delegated.clear()
         delegated.addAll(elements)
         ensureControllers(elements)
-        result.dispatchUpdatesTo(observer)
+        result.dispatchUpdatesTo(observer!!)
     }
 
     /**

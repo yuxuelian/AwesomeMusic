@@ -5,11 +5,12 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.animation.DecelerateInterpolator;
 
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
+import com.lcodecore.tkrefreshlayout.header.bezierlayout.BezierInterpolator;
 import com.lcodecore.tkrefreshlayout.utils.LogUtil;
 import com.lcodecore.tkrefreshlayout.utils.ScrollingUtil;
 
@@ -25,7 +26,7 @@ import static android.view.View.VISIBLE;
 public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
 
     private TwinklingRefreshLayout.CoContext cp;
-    private static final float animFraction = 1f;
+    private static final float animFraction = 2f;
     //动画的变化率
     private DecelerateInterpolator decelerateInterpolator;
 
@@ -37,6 +38,7 @@ public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
     private boolean scrollHeadLocked = false;
     private boolean scrollBottomLocked = false;
 
+    @Override
     public void scrollHeadByMove(float moveY) {
         float offsetY = decelerateInterpolator.getInterpolation(moveY / cp.getMaxHeadHeight() / 2) * moveY / 2;
 
@@ -66,6 +68,7 @@ public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
         }
     }
 
+    @Override
     public void scrollBottomByMove(float moveY) {
         float offsetY = decelerateInterpolator.getInterpolation(moveY / cp.getMaxBottomHeight() / 2) * moveY / 2;
 
@@ -130,6 +133,7 @@ public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
     /**
      * 1.满足进入刷新的条件或者主动刷新时，把Head位移到刷新位置（当前位置 ~ HeadHeight）
      */
+    @Override
     public void animHeadToRefresh() {
         LogUtil.i("animHeadToRefresh:");
         isAnimHeadToRefresh = true;
@@ -163,6 +167,7 @@ public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
     /**
      * 2.动画结束或不满足进入刷新状态的条件，收起头部（当前位置 ~ 0）
      */
+    @Override
     public void animHeadBack(final boolean isFinishRefresh) {
         LogUtil.i("animHeadBack：finishRefresh?->" + isFinishRefresh);
         isAnimHeadBack = true;
@@ -191,6 +196,7 @@ public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
     /**
      * 3.满足进入加载更多的条件或者主动加载更多时，把Footer移到加载更多位置（当前位置 ~ BottomHeight）
      */
+    @Override
     public void animBottomToLoad() {
         LogUtil.i("animBottomToLoad");
         isAnimBottomToLoad = true;
@@ -223,6 +229,7 @@ public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
     /**
      * 4.加载更多完成或者不满足进入加载更多模式的条件时，收起尾部（当前位置 ~ 0）
      */
+    @Override
     public void animBottomBack(final boolean isFinishLoading) {
         LogUtil.i("animBottomBack：finishLoading?->" + isFinishLoading);
         isAnimBottomBack = true;
@@ -238,9 +245,11 @@ public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
                     int dy = getVisibleFootHeight() - height;
                     //可以让TargetView滚动dy高度，但这样两个方向上滚动感觉画面闪烁，改为dy/2是为了消除闪烁
                     if (dy > 0) {
-                        if (cp.getTargetView() instanceof RecyclerView)
+                        if (cp.getTargetView() instanceof RecyclerView) {
                             ScrollingUtil.scrollAViewBy(cp.getTargetView(), dy);
-                        else ScrollingUtil.scrollAViewBy(cp.getTargetView(), dy / 2);
+                        } else {
+                            ScrollingUtil.scrollAViewBy(cp.getTargetView(), dy / 2);
+                        }
                     }
                 }
 
@@ -274,12 +283,17 @@ public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
      *
      * @param vy 手指向上滑动速度
      */
+    @Override
     public void animHeadHideByVy(int vy) {
-        if (isAnimHeadHide) return;
+        if (isAnimHeadHide) {
+            return;
+        }
         isAnimHeadHide = true;
         LogUtil.i("animHeadHideByVy：vy->" + vy);
         vy = Math.abs(vy);
-        if (vy < 5000) vy = 8000;
+        if (vy < 5000) {
+            vy = 8000;
+        }
         animLayoutByTime(getVisibleHeadHeight(), 0, 5 * Math.abs(getVisibleHeadHeight() * 1000 / vy), animHeadUpListener, new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -301,12 +315,17 @@ public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
      *
      * @param vy 手指向下滑动的速度
      */
+    @Override
     public void animBottomHideByVy(int vy) {
         LogUtil.i("animBottomHideByVy：vy->" + vy);
-        if (isAnimBottomHide) return;
+        if (isAnimBottomHide) {
+            return;
+        }
         isAnimBottomHide = true;
         vy = Math.abs(vy);
-        if (vy < 5000) vy = 8000;
+        if (vy < 5000) {
+            vy = 8000;
+        }
         animLayoutByTime(getVisibleFootHeight(), 0, 5 * getVisibleFootHeight() * 1000 / vy, animBottomUpListener, new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -331,9 +350,12 @@ public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
      * @param vy           满足越界条件的手指滑动速度  the finger sliding speed on the screen.
      * @param computeTimes 从满足条件到滚动到顶部总共计算的次数 Calculation times from sliding to top.
      */
+    @Override
     public void animOverScrollTop(float vy, int computeTimes) {
         LogUtil.i("animOverScrollTop：vy->" + vy + ",computeTimes->" + computeTimes);
-        if (isOverScrollTopLocked) return;
+        if (isOverScrollTopLocked) {
+            return;
+        }
         isOverScrollTopLocked = true;
         isAnimOsTop = true;
         cp.setStatePTD();
@@ -369,6 +391,7 @@ public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
      * @param vy           满足越界条件的手指滑动速度
      * @param computeTimes 从满足条件到滚动到顶部总共计算的次数
      */
+    @Override
     public void animOverScrollBottom(float vy, int computeTimes) {
         LogUtil.i("animOverScrollBottom：vy->" + vy + ",computeTimes->" + computeTimes);
         if (isOverScrollBottomLocked) return;
@@ -491,12 +514,14 @@ public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
     };
 
     private void translateExHead(int offsetY) {
-        if (!cp.isExHeadLocked()) cp.getExHead().setTranslationY(offsetY);
+        if (!cp.isExHeadLocked()) {
+            cp.getExHead().setTranslationY(offsetY);
+        }
     }
 
     public void animLayoutByTime(int start, int end, long time, AnimatorUpdateListener listener, AnimatorListener animatorListener) {
         ValueAnimator va = ValueAnimator.ofInt(start, end);
-        va.setInterpolator(new DecelerateInterpolator());
+        va.setInterpolator(new BezierInterpolator(.6f, .4f, .4f, .6f));
         va.addUpdateListener(listener);
         va.addListener(animatorListener);
         va.setDuration(time);
@@ -506,7 +531,7 @@ public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
 
     public void animLayoutByTime(int start, int end, long time, AnimatorUpdateListener listener) {
         ValueAnimator va = ValueAnimator.ofInt(start, end);
-        va.setInterpolator(new DecelerateInterpolator());
+        va.setInterpolator(new BezierInterpolator(.6f, .4f, .4f, .6f));
         va.addUpdateListener(listener);
         va.setDuration(time);
         va.start();
@@ -515,10 +540,10 @@ public class AnimProcessor implements IAnimRefresh, IAnimOverScroll {
 
     public void animLayoutByTime(int start, int end, AnimatorUpdateListener listener, AnimatorListener animatorListener) {
         ValueAnimator va = ValueAnimator.ofInt(start, end);
-        va.setInterpolator(new DecelerateInterpolator());
+        va.setInterpolator(new BezierInterpolator(.6f, .4f, .4f, .6f));
         va.addUpdateListener(listener);
         va.addListener(animatorListener);
-        va.setDuration((int) (Math.abs(start - end) * animFraction));
+        va.setDuration(400);
         va.start();
 //        offerToQueue(va);
     }

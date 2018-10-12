@@ -13,14 +13,14 @@ allOpen {
 }
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     dataBinding.enabled true
 
     defaultConfig {
         applicationId "com.kaibo.music"
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -33,6 +33,12 @@ android {
 
         buildConfigField 'String', 'APP_HOST', '\"http://www.baidu.com\"'
         buildConfigField 'int', 'COUNT', "${versionCode}"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
+            }
+        }
     }
 
     signingConfigs {
@@ -57,8 +63,14 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+kapt {
+    arguments {
+        arg("AROUTER_MODULE_NAME", project.getName())
     }
 }
 

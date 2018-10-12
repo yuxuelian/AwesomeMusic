@@ -3,8 +3,8 @@ package com.kaibo.core.dialog
 import android.os.Bundle
 import com.jakewharton.rxbinding2.view.clicks
 import com.kaibo.core.R
+import com.kaibo.core.util.dip
 import kotlinx.android.synthetic.main.dialog_msg.*
-import org.jetbrains.anko.support.v4.dip
 
 /**
  * @author kaibo

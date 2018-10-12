@@ -1,6 +1,7 @@
 package com.lcodecore.tkrefreshlayout.header.bezierlayout;
 
 import android.graphics.PointF;
+import android.util.Log;
 import android.view.animation.Interpolator;
 
 /**
@@ -28,6 +29,7 @@ public class BezierInterpolator implements Interpolator {
 
     @Override
     public float getInterpolation(float input) {
+        Log.d("BezierInterpolator", input + "");
         float t = input;
         //如果重新开始要重置缓存的i。
         if ((int) (input * 10) == 0) {

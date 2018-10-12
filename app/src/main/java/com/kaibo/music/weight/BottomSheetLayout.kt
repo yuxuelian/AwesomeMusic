@@ -5,14 +5,14 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
-import android.support.v4.widget.ViewDragHelper
 import android.util.AttributeSet
 import android.util.Log
+import android.view.DragEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
-import java.lang.IllegalStateException
+import androidx.customview.widget.ViewDragHelper
+import com.orhanobut.logger.Logger
 
 /**
  * @author:Administrator
@@ -42,8 +42,7 @@ class BottomSheetLayout @JvmOverloads constructor(context: Context, attrs: Attri
         private const val LIMIT_CLOSE_VAL = -LIMIT_OPEN_VAL
     }
 
-    private lateinit var topView: View
-    private lateinit var bottomView: View
+    private lateinit var moveChildView: View
 
     private val viewDragHelper = ViewDragHelper.create(this, 1.0F, MyCallBack())
 
@@ -146,57 +145,49 @@ class BottomSheetLayout @JvmOverloads constructor(context: Context, attrs: Attri
         val widthSize = MeasureSpec.getSize(widthMeasureSpec)
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
         val heightSize = MeasureSpec.getSize(heightMeasureSpec)
-
         val width = when (widthMode) {
-        //子元素至多达到指定大小的值
+            //子元素至多达到指定大小的值
             MeasureSpec.AT_MOST -> Math.min(this.layoutParams.width, widthSize)
-        //父元素决定自元素的确切大小，子元素将被限定在给定的边界里而忽略它本身大小
+            //父元素决定自元素的确切大小，子元素将被限定在给定的边界里而忽略它本身大小
             MeasureSpec.EXACTLY -> widthSize
-        //父容器没有对我有任何限制
+            //父容器没有对我有任何限制
             MeasureSpec.UNSPECIFIED -> this.layoutParams.width
             else -> 0
         }
-
         val height = when (heightMode) {
             View.MeasureSpec.AT_MOST -> Math.min(this.layoutParams.height, heightSize)
             View.MeasureSpec.EXACTLY -> heightSize
             View.MeasureSpec.UNSPECIFIED -> this.layoutParams.height
             else -> 0
         }
-
-        //测量第一个子View的尺寸
-        topView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(topView.layoutParams.height, MeasureSpec.EXACTLY))
-        //测量第二个子View的尺寸
-        bottomView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height - topView.measuredHeight, MeasureSpec.EXACTLY))
+        moveChildView.measure(widthMeasureSpec, heightMeasureSpec)
         setMeasuredDimension(width, height)
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         Log.d(TAG, "onLayout: ------")
         if (changed) {
-            topView.layout(0, bottomView.measuredHeight, measuredWidth, measuredHeight)
-            bottomView.layout(0, measuredHeight, measuredWidth, measuredHeight + bottomView.measuredHeight)
+            moveChildView.layout(0, 0, measuredWidth, measuredHeight)
         }
     }
 
     override fun onFinishInflate() {
         super.onFinishInflate()
         val childCount = childCount
-        if (childCount != 2) {
-            throw IllegalStateException("请添加两个子View")
+        if (childCount == 0) {
+            throw IllegalStateException("请添加一个子View")
         }
 
-        topView = getChildAt(0)
-        bottomView = getChildAt(1)
+        moveChildView = getChildAt(0)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
         //view的大小发生改变后    重新复制动画对象
-        anim = ValueAnimator.ofInt(0, bottomView.measuredHeight).apply {
+        anim = ValueAnimator.ofInt(0, h).apply {
             duration = this@BottomSheetLayout.duration
-            interpolator = AccelerateDecelerateInterpolator()
+            interpolator = BezierInterpolator(.6f, .4f, .4f, .6f)
             repeatCount = 0
             repeatMode = ValueAnimator.RESTART
 
@@ -204,18 +195,13 @@ class BottomSheetLayout @JvmOverloads constructor(context: Context, attrs: Attri
                 val animatedValue = it.animatedValue as Int
 
                 //修改当前的滑动进度
-                progress = animatedValue / bottomView.measuredHeight.toFloat()
+                progress = animatedValue / h.toFloat()
 
                 //重新布局
-                topView.layout(0,
+                moveChildView.layout(0,
                         animatedValue,
                         measuredWidth,
-                        animatedValue + topView.measuredHeight)
-
-                bottomView.layout(0,
-                        animatedValue + topView.measuredHeight,
-                        measuredWidth,
-                        animatedValue + topView.measuredHeight + bottomView.measuredHeight)
+                        animatedValue + moveChildView.measuredHeight)
             }
 
             addListener(object : AnimatorListenerAdapter() {
@@ -230,6 +216,13 @@ class BottomSheetLayout @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
+    override fun dispatchDragEvent(event: DragEvent?): Boolean {
+        return super.dispatchDragEvent(event)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        return super.dispatchTouchEvent(ev)
+    }
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
         return viewDragHelper.shouldInterceptTouchEvent(event)
@@ -253,13 +246,14 @@ class BottomSheetLayout @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    internal inner class MyCallBack : ViewDragHelper.Callback() {
+    private inner class MyCallBack : ViewDragHelper.Callback() {
 
         /**
          * 边界控制
          */
         override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
-            return Math.max(Math.min(top, bottomView.measuredHeight), 0)
+            Logger.d("clampViewPositionVertical  top=$top")
+            return top
         }
 
         /**
@@ -275,16 +269,16 @@ class BottomSheetLayout @JvmOverloads constructor(context: Context, attrs: Attri
                 }
                 yvel > LIMIT_CLOSE_VAL -> {
                     //折叠起来
-                    viewDragHelper.settleCapturedViewAt(0, bottomView.measuredHeight)
+                    viewDragHelper.settleCapturedViewAt(0, moveChildView.measuredHeight)
                 }
                 else -> {
                     //bottomView 露出一半
-                    if (bottomView.top + bottomView.measuredHeight / 2f < measuredHeight) {
+                    if (moveChildView.top + moveChildView.measuredHeight / 2f < measuredHeight) {
                         //展开
                         viewDragHelper.settleCapturedViewAt(0, 0)
                     } else {
                         //折叠起来
-                        viewDragHelper.settleCapturedViewAt(0, bottomView.measuredHeight)
+                        viewDragHelper.settleCapturedViewAt(0, moveChildView.measuredHeight)
                     }
                 }
             }
@@ -295,14 +289,7 @@ class BottomSheetLayout @JvmOverloads constructor(context: Context, attrs: Attri
          * 被捕获view的位置发生改变时回调
          */
         override fun onViewPositionChanged(changedView: View, left: Int, top: Int, dx: Int, dy: Int) {
-            bottomView.layout(
-                    0,
-                    topView.top + topView.measuredHeight,
-                    measuredWidth,
-                    topView.top + topView.measuredHeight + bottomView.measuredHeight
-            )
-
-            progress = topView.top / bottomView.measuredHeight.toFloat()
+            progress = moveChildView.top / moveChildView.measuredHeight.toFloat()
             //回调进度
             onProgressListener?.invoke(progress)
         }
@@ -318,7 +305,7 @@ class BottomSheetLayout @JvmOverloads constructor(context: Context, attrs: Attri
          * 是否捕获指定的view
          */
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
-            return child === topView
+            return child === moveChildView
         }
     }
 }

@@ -20,4 +20,11 @@
         <!--未选中圆圈的颜色-->
         <attr name="circleColor" format="color|reference" />
     </declare-styleable>
+
+    <declare-styleable name="ReboundEffectsView">
+        <attr name="orientation">
+            <enum name="portrait" value="1"/>
+            <enum name="landscape" value="2"/>
+        </attr>
+    </declare-styleable>
 </resources>

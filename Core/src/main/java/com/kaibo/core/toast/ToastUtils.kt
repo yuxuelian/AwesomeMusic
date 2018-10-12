@@ -3,8 +3,8 @@ package com.kaibo.core.toast
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
-import android.support.annotation.ColorInt
-import android.support.annotation.DrawableRes
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
