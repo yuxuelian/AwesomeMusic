@@ -3,10 +3,10 @@ package com.kaibo.core.activity
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
-import android.support.annotation.CallSuper
-import android.support.annotation.LayoutRes
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import androidx.annotation.CallSuper
+import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.kaibo.core.R
 import com.kaibo.core.dialog.LoadingDialog
 import com.kaibo.core.toast.ToastUtils
@@ -37,6 +37,7 @@ abstract class BaseActivity : AppCompatActivity() {
         if (!rxPermissions.isGranted(permissionName)) {
             rxPermissions
                     .requestEach(permissionName)
+                    .`as`(bindLifecycle())
                     .subscribe { permission: Permission ->
                         if (permission.granted) {
                             invoke.invoke()

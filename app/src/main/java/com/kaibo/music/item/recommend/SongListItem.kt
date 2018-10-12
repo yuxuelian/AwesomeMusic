@@ -1,10 +1,10 @@
 package com.kaibo.music.item.recommend
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.kaibo.core.adapter.Item
 import com.kaibo.core.adapter.ItemController
 import com.kaibo.core.glide.GlideApp

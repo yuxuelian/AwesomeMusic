@@ -1,18 +1,17 @@
 package com.kaibo.core.dialog
 
 import android.app.Dialog
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import com.uber.autodispose.AutoDisposeConverter
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import com.kaibo.core.R
 import com.kaibo.core.util.bindToAutoDispose
+import com.uber.autodispose.AutoDisposeConverter
 
 /**
  * @author:Administrator

@@ -16,13 +16,13 @@ allOpen {
 }
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     dataBinding.enabled true
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName '1.0.0'
         multiDexEnabled true
@@ -177,7 +177,7 @@ dependencies {
     api "com.android.support:support-fragment:$android_support_version"
 
     //-----------------------------anko---------------------------------------
-    api 'org.jetbrains.anko:anko:0.10.4'
+    api 'org.jetbrains.anko:anko:0.10.7'
 
     //-----------------------------arouter-----------------------------------
     api("com.alibaba:arouter-api:$arouter_version") {

@@ -7,9 +7,10 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
 import android.util.AttributeSet;
 import android.view.View;
+
+import androidx.annotation.ColorInt;
 
 /**
  * Created by cjj on 2015/8/5.

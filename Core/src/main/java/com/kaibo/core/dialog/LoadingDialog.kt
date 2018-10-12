@@ -1,12 +1,12 @@
 package com.kaibo.core.dialog
 
 import android.os.Bundle
-import android.support.v4.app.FragmentManager
 import android.view.KeyEvent
 import android.view.WindowManager
-import com.wang.avi.indicators.*
+import androidx.fragment.app.FragmentManager
 import com.kaibo.core.R
 import com.kaibo.core.util.getRandom
+import com.wang.avi.indicators.*
 import kotlinx.android.synthetic.main.dialog_loading.*
 
 /**

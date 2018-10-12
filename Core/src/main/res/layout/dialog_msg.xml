@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="280dp"
@@ -17,8 +17,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:maxLines="3"
             android:maxWidth="200dp"
+            android:maxLines="3"
             android:textColor="@color/color_303030"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/ling2"
@@ -77,4 +77,4 @@
             app:layout_constraintStart_toEndOf="@+id/ling2"
             app:layout_constraintTop_toBottomOf="@+id/line" />
     </android.support.constraint.ConstraintLayout>
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>
