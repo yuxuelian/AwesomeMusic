@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 
 /**
  * Created by Administrator on 2015/8/27.
@@ -53,7 +52,7 @@ public class RoundProgressView extends View {
         mPath.setColor(Color.rgb(114, 114, 114));
 
         va = ValueAnimator.ofInt(0, 360);
-        va.setDuration(720);
+        va.setDuration(600);
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -62,7 +61,7 @@ public class RoundProgressView extends View {
             }
         });
         va.setRepeatCount(ValueAnimator.INFINITE);
-        va.setInterpolator(new AccelerateDecelerateInterpolator());
+        va.setInterpolator(new BezierInterpolator(.6f, .4f, .4f, .6f));
     }
 
     private RectF oval, oval2;
@@ -74,14 +73,16 @@ public class RoundProgressView extends View {
         mPath.setStyle(Paint.Style.FILL);
         canvas.drawCircle(getMeasuredWidth() / 2, getMeasuredHeight() / 2, r, mPath);
         canvas.save();
-        mPath.setStyle(Paint.Style.STROKE);//设置为空心
+        //设置为空心
+        mPath.setStyle(Paint.Style.STROKE);
         mPath.setStrokeWidth(6);
         canvas.drawCircle(getMeasuredWidth() / 2, getMeasuredHeight() / 2, r + 15, mPath);
         canvas.restore();
 
         mPantR.setStyle(Paint.Style.FILL);
         if (oval == null) oval = new RectF();
-        oval.set(getMeasuredWidth() / 2 - r, getMeasuredHeight() / 2 - r, getMeasuredWidth() / 2 + r, getMeasuredHeight() / 2 + r);// 设置个新的长方形，扫描测量
+        // 设置个新的长方形，扫描测量
+        oval.set(getMeasuredWidth() / 2 - r, getMeasuredHeight() / 2 - r, getMeasuredWidth() / 2 + r, getMeasuredHeight() / 2 + r);
         canvas.drawArc(oval, stratAngle, endAngle, true, mPantR);
         canvas.save();
         mPantR.setStrokeWidth(6);

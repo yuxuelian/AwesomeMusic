@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -16,6 +15,8 @@ import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.OverScroller;
 
+import androidx.core.view.ViewCompat;
+
 /**
  * 多点触控的弹性ScrollView
  */
@@ -26,7 +27,7 @@ public class ElasticScrollView extends FrameLayout {
     private Point mOriginPos = new Point();
     private OverScroller mOverScroller;
 
-    private final int overDuration = 400;
+    private final int overDuration = 600;
 
     public ElasticScrollView(Context context) {
         super(context);
@@ -44,7 +45,7 @@ public class ElasticScrollView extends FrameLayout {
     }
 
     private void init(Context context) {
-        BezierInterpolator interpolator = new BezierInterpolator(.73f, .21f, .21f, .73f);
+        BezierInterpolator interpolator = new BezierInterpolator(.6f, .4f, .4f, .6f);
         mOverScroller = new OverScroller(context, interpolator);
         mGestureDetector = new GestureDetector(context, new YScrollDetector());
         canScroll = true;
@@ -75,11 +76,9 @@ public class ElasticScrollView extends FrameLayout {
     class YScrollDetector extends SimpleOnGestureListener {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (canScroll)
-                if (Math.abs(distanceY) >= Math.abs(distanceX))
-                    canScroll = true;
-                else
-                    canScroll = false;
+            if (canScroll) {
+                canScroll = Math.abs(distanceY) >= Math.abs(distanceX);
+            }
 
             if (canScroll) {
                 if (e1.getAction() == MotionEvent.ACTION_DOWN) {

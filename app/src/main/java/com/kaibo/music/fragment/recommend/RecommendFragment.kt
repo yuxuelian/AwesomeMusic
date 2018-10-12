@@ -1,7 +1,7 @@
 package com.kaibo.music.fragment.recommend
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaibo.core.adapter.withItems
 import com.kaibo.core.fragment.BaseFragment
 import com.kaibo.core.util.checkResult
@@ -13,10 +13,10 @@ import com.kaibo.music.item.recommend.BannerItem
 import com.kaibo.music.item.recommend.SongListItem
 import com.kaibo.music.item.recommend.SongTitleItem
 import com.kaibo.music.net.Api
-import com.lcodecore.tkrefreshlayout.header.bezierlayout.BezierLayout
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import kotlinx.android.synthetic.main.fragment_recommend_layout.*
+import java.util.concurrent.TimeUnit
 
 /**
  * @author kaibo
@@ -34,10 +34,12 @@ class RecommendFragment : BaseFragment() {
     override fun getLayoutRes() = R.layout.fragment_recommend_layout
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
-//        val headerView = BezierLayout(context)
-//        refresh.setHeaderView(headerView)
-//        refreshLayout.setFloatRefresh(false);
-        refresh.setPureScrollModeOn()
+
+        refresh.setOnRefreshListener {
+            Observable.timer(2000, TimeUnit.MILLISECONDS).toMainThread().`as`(bindLifecycle()).subscribe {
+                refresh.isRefreshing = false
+            }
+        }
 
         val songTitleItem = SongTitleItem()
         Observable

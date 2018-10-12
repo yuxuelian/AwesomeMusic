@@ -2,7 +2,7 @@ package com.kaibo.core
 
 import android.app.Application
 import android.content.Context
-import android.support.multidex.MultiDex
+import androidx.multidex.MultiDex
 import com.kaibo.core.http.HttpRequestManager
 import com.kaibo.core.toast.ToastUtils
 import com.orhanobut.logger.AndroidLogAdapter

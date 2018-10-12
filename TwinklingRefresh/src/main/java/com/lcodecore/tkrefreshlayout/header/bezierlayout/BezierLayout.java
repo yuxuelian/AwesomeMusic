@@ -4,7 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.support.annotation.ColorInt;
+import androidx.annotation.ColorInt;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -136,7 +136,7 @@ public class BezierLayout extends FrameLayout implements IHeaderView {
 
             }
         });
-        waveAnimator.setInterpolator(new BezierInterpolator(.73f, .21f, .21f, .73f));
+        waveAnimator.setInterpolator(new BezierInterpolator(.6f, .4f, .4f, .6f));
         waveAnimator.setDuration(800);
         waveAnimator.start();
         /*处理圈圈进度条**/

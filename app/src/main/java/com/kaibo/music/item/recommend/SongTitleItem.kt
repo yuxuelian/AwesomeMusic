@@ -1,8 +1,8 @@
 package com.kaibo.music.item.recommend
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.kaibo.core.adapter.Item
 import com.kaibo.core.adapter.ItemController
 import com.kaibo.core.util.inflate

@@ -1,11 +1,11 @@
 package com.kaibo.core.util
 
-import android.arch.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleOwner
+import com.kaibo.core.exception.DataException
+import com.kaibo.core.http.BaseBean
 import com.uber.autodispose.AutoDispose
 import com.uber.autodispose.AutoDisposeConverter
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.kaibo.core.exception.DataException
-import com.kaibo.core.http.BaseBean
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 

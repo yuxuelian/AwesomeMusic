@@ -2,7 +2,7 @@ package com.kaibo.core.util
 
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.kaibo.core.R
 import com.kaibo.core.adapter.ItemDividerDecoration

@@ -58,18 +58,6 @@ abstract class BaseActivity : AppCompatActivity() {
         LoadingDialog()
     }
 
-    protected open fun showLoading() {
-        if (!loadingDialog.isVisible) {
-            loadingDialog.show(supportFragmentManager)
-        }
-    }
-
-    protected open fun hideLoading() {
-        if (loadingDialog.isVisible) {
-            loadingDialog.hide()
-        }
-    }
-
     /**
      * 是否沉浸式   Pair  的第一个参数表示是否沉浸式
      * 第二个参数    当第一个参数为true的时候  第二个参数才生效

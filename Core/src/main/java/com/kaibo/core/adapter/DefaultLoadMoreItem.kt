@@ -1,10 +1,10 @@
 package com.kaibo.core.adapter
 
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding2.view.clicks
 import com.kaibo.core.R
 import kotlinx.android.synthetic.main.item_default_load_more.view.*

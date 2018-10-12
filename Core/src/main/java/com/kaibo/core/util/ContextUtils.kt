@@ -14,7 +14,7 @@ import android.os.Build
 import android.os.Environment
 import android.os.LocaleList
 import android.provider.Settings
-import android.support.v4.content.FileProvider
+import androidx.core.content.FileProvider
 import com.kaibo.core.util.toFile
 import com.kaibo.core.util.toUri
 import java.io.ByteArrayInputStream

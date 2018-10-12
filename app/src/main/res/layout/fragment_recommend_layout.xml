@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.kaibo.music.weight.refresh.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/refresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:tr_overscroll_height="2000dp">
+    app:orientation="portrait">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recommendRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
+        android:layout_height="match_parent"
+        android:overScrollMode="never" />
+</com.kaibo.music.weight.refresh.SwipeRefreshLayout>
 
