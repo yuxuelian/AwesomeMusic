@@ -10,9 +10,9 @@ import com.kaibo.music.fragment.rank.RankFragment
 import com.kaibo.music.fragment.recommend.RecommendFragment
 import com.kaibo.music.fragment.search.SearchFragment
 import com.kaibo.music.fragment.singer.SingerFragment
+import com.kaibo.music.weight.overscroll.OverScrollDecoratorHelper
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.include_title.*
-import org.jetbrains.anko.dip
 
 /**
  * @author kaibo
@@ -45,5 +45,6 @@ class MainActivity : BaseActivity() {
         }
         viewPager.offscreenPageLimit = 4
         tabLayout.setupWithViewPager(viewPager)
+        OverScrollDecoratorHelper.setUpOverScroll(viewPager)
     }
 }

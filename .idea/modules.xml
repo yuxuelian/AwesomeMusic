@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Core/Core.iml" filepath="$PROJECT_DIR$/Core/Core.iml" />
       <module fileurl="file://$PROJECT_DIR$/DelicateMusic.iml" filepath="$PROJECT_DIR$/DelicateMusic.iml" />
-      <module fileurl="file://$PROJECT_DIR$/TwinklingRefresh/TwinklingRefresh.iml" filepath="$PROJECT_DIR$/TwinklingRefresh/TwinklingRefresh.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

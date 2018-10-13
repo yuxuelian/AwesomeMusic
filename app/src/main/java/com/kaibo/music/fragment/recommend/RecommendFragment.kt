@@ -13,10 +13,10 @@ import com.kaibo.music.item.recommend.BannerItem
 import com.kaibo.music.item.recommend.SongListItem
 import com.kaibo.music.item.recommend.SongTitleItem
 import com.kaibo.music.net.Api
+import com.kaibo.music.weight.overscroll.OverScrollDecoratorHelper
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import kotlinx.android.synthetic.main.fragment_recommend_layout.*
-import java.util.concurrent.TimeUnit
 
 /**
  * @author kaibo
@@ -46,6 +46,8 @@ class RecommendFragment : BaseFragment() {
                 .`as`(bindLifecycle())
                 .subscribe({ netRes ->
                     recommendRecyclerView.layoutManager = LinearLayoutManager(context)
+                    // 设置纵向回弹
+                    OverScrollDecoratorHelper.setUpOverScroll(recommendRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL)
                     recommendRecyclerView.withItems {
                         // 设置轮播图数据
                         bannerItem.setData(netRes.first)

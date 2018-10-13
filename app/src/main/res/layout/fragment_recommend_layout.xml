@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.kaibo.music.weight.refresh.ReboundLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/refresh"
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recommendRecyclerView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:orientation="portrait">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recommendRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:overScrollMode="never" />
-</com.kaibo.music.weight.refresh.ReboundLayout>
+    android:overScrollMode="never" />
 

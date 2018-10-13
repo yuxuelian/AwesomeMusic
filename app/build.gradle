@@ -83,5 +83,4 @@ dependencies {
     //性能检测
     androidTestImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
     implementation project(':Core')
-    implementation project(':TwinklingRefresh')
 }
