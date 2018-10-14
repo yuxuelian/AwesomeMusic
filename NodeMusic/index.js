@@ -3,6 +3,8 @@ const bodyParser = require('body-parser')
 const recommendInit = require('./recommend')
 const musicInit = require('./music')
 const searchInit = require('./search')
+const singerListInit = require('./singer')
+const rankListInit = require('./rank')
 const app = express()
 // 初始化body解析器
 app.use(bodyParser.json());
@@ -12,6 +14,8 @@ const apiRoutes = express.Router()
 recommendInit(apiRoutes)
 musicInit(apiRoutes)
 searchInit(apiRoutes)
+singerListInit(apiRoutes)
+rankListInit(apiRoutes)
 // 挂载到 /api
 app.use('/api', apiRoutes)
 // 启动监听

@@ -34,7 +34,6 @@ class RecommendFragment : BaseFragment() {
     override fun getLayoutRes() = R.layout.fragment_recommend_layout
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
-        val songTitleItem = SongTitleItem()
         Observable
                 .zip(
                         Api.instance.getBannerList().checkResult(),
@@ -45,24 +44,28 @@ class RecommendFragment : BaseFragment() {
                 .toMainThread()
                 .`as`(bindLifecycle())
                 .subscribe({ netRes ->
-                    recommendRecyclerView.layoutManager = LinearLayoutManager(context)
-                    // 设置纵向回弹
-                    OverScrollDecoratorHelper.setUpOverScroll(recommendRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL)
-                    recommendRecyclerView.withItems {
-                        // 设置轮播图数据
-                        bannerItem.setData(netRes.first)
-                        // 列表轮播图
-                        add(bannerItem)
-                        // 列表标题
-                        add(songTitleItem)
-                        // 列表数据
-                        addAll(netRes.second.map {
-                            SongListItem(it)
-                        })
-                    }
+                    initRecommendList(netRes)
                 }) {
                     it.printStackTrace()
                 }
+    }
+
+    private fun initRecommendList(netRes: Pair<List<BannerDataBean>, List<RecommendBean>>) {
+        recommendRecyclerView.layoutManager = LinearLayoutManager(context)
+        // 设置纵向回弹
+        OverScrollDecoratorHelper.setUpOverScroll(recommendRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL)
+        recommendRecyclerView.withItems {
+            // 设置轮播图数据
+            bannerItem.setData(netRes.first)
+            // 列表轮播图
+            add(bannerItem)
+            // 列表标题
+            add(SongTitleItem())
+            // 列表数据
+            addAll(netRes.second.map {
+                SongListItem(it)
+            })
+        }
     }
 
     override fun onResume() {

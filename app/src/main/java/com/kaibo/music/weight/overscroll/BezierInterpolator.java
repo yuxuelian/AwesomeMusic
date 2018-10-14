@@ -34,7 +34,6 @@ public class BezierInterpolator implements Interpolator {
         //如果重新开始要重置缓存的i。
         if ((int) (input * 10) == 0) {
             mLastI = 0;
-            Logger.d(input * 10);
         }
         // 近似求解t
         double tempX;

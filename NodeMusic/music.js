@@ -33,8 +33,8 @@ function musicInit(apiRoutes) {
                 })
                 response.json(res)
             })
-            .catch((e) => {
-                console.log(e)
+            .catch((axiosErr) => {
+                console.log(axiosErr)
                 response.json(config.error)
             })
     })
@@ -56,8 +56,8 @@ function musicInit(apiRoutes) {
                 res.data = qqResData
                 response.json(res)
             })
-            .catch((e) => {
-                console.log(e)
+            .catch((axiosErr) => {
+                console.log(axiosErr)
                 response.json(config.error)
             })
     })

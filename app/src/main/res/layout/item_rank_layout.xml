@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="10dp"
+    android:background="@color/color_333"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/picImg"
+        android:layout_width="80dp"
+        android:layout_height="80dp" />
+
+    <TextView
+        android:id="@+id/songOne"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:ellipsize="end"
+        android:maxWidth="200dp"
+        android:singleLine="true"
+        android:textColor="@color/colorThemeText"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/songTwo"
+        app:layout_constraintStart_toEndOf="@id/picImg"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1.章节你好" />
+
+    <TextView
+        android:id="@+id/songTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:ellipsize="end"
+        android:maxWidth="200dp"
+        android:singleLine="true"
+        android:textColor="@color/colorThemeText"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/songThree"
+        app:layout_constraintStart_toEndOf="@id/picImg"
+        app:layout_constraintTop_toBottomOf="@+id/songOne"
+        tools:text="2.章节你好" />
+
+    <TextView
+        android:id="@+id/songThree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:ellipsize="end"
+        android:maxWidth="200dp"
+        android:singleLine="true"
+        android:textColor="@color/colorThemeText"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/picImg"
+        app:layout_constraintTop_toBottomOf="@+id/songTwo"
+        tools:text="3.章节你好" />
+</androidx.constraintlayout.widget.ConstraintLayout>

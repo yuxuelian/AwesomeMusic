@@ -27,9 +27,9 @@ android {
 
         multiDexEnabled true
 
-        ndk {
-            abiFilters 'armeabi-v7a', 'x86'
-        }
+//        ndk {
+//            abiFilters 'armeabi-v7a', 'x86'
+//        }
 
         buildConfigField 'String', 'APP_HOST', '\"http://www.baidu.com\"'
         buildConfigField 'int', 'COUNT', "${versionCode}"

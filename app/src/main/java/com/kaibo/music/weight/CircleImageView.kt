@@ -229,7 +229,7 @@ class CircleImageView @JvmOverloads constructor(context: Context, attrs: Attribu
         initializeBitmap()
     }
 
-    override fun setImageDrawable(drawable: Drawable) {
+    override fun setImageDrawable(drawable: Drawable?) {
         super.setImageDrawable(drawable)
         initializeBitmap()
     }
