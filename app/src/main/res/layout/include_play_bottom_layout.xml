@@ -2,15 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    app:layout_constraintBottom_toBottomOf="parent">
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <View
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="14dp"
         android:layout_marginRight="40dp"
         android:orientation="horizontal">
 
@@ -62,15 +62,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="40dp">
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="20dp">
 
         <ImageView
             android:id="@+id/lastSongBtn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/last_song"
+            android:src="@drawable/single_song"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/playModeBtn"
             app:layout_constraintStart_toStartOf="parent"
@@ -80,7 +79,7 @@
             android:id="@+id/playModeBtn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/single_song"
+            android:src="@drawable/last_song"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/playOrPauseBtn"
             app:layout_constraintStart_toEndOf="@+id/lastSongBtn"
@@ -88,8 +87,8 @@
 
         <ImageView
             android:id="@+id/playOrPauseBtn"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:src="@drawable/play"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/nextSongBtn"

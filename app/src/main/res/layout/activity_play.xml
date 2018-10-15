@@ -1,90 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/playRootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/test_play_img">
+    android:orientation="vertical">
 
     <!--顶部布局-->
     <include
         android:id="@+id/playTopLayout"
         layout="@layout/include_play_top_layout" />
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2">
+
+        <!--中间布局-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/playCenterLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.kaibo.music.weight.CircleImageView
+                android:id="@+id/playRotaImg"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:maxWidth="200dp"
+                android:src="@drawable/test_play_img"
+                android:transitionName="shareSongImage"
+                app:civ_border_color="@color/color_3999"
+                app:civ_border_width="10dp"
+                app:layout_constraintBottom_toTopOf="@+id/minLrcLayout"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/minLrcLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/playRotaImg">
+
+                <TextView
+                    android:id="@+id/topLrc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="原来当爱放下防备后的这些那些"
+                    android:textColor="@color/colorThemeText"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/centerLrc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="都有个期限"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/bottomLrc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="其实台下的观众就我一个"
+                    android:textColor="@color/colorThemeText"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--中间的歌词部分-->
+        <FrameLayout
+            android:id="@+id/lrcLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/playBottomLayout"
+            app:layout_constraintTop_toBottomOf="@+id/playTopLayout"
+            app:layout_constraintVertical_bias="0.41000003">
+        </FrameLayout>
+    </FrameLayout>
+
     <!--底部布局-->
     <include
         android:id="@+id/playBottomLayout"
         layout="@layout/include_play_bottom_layout" />
-
-    <!--中间布局-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/playCenterLayout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/playBottomLayout"
-        app:layout_constraintTop_toBottomOf="@+id/playTopLayout">
-
-        <com.kaibo.music.weight.CircleImageView
-            android:id="@+id/playRotaImg"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginEnd="60dp"
-            android:src="@drawable/test_play_img"
-            android:transitionName="shareSongImage"
-            app:civ_border_color="@color/color_3999"
-            app:civ_border_width="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.2" />
-
-        <LinearLayout
-            android:id="@+id/minLrcLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent">
-
-            <TextView
-                android:id="@+id/topLrc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="原来当爱放下防备后的这些那些"
-                android:textColor="@color/colorThemeText"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/centerLrc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="都有个期限"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/bottomLrc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="其实台下的观众就我一个"
-                android:textColor="@color/colorThemeText"
-                android:textSize="14sp" />
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!--中间的歌词部分-->
-    <FrameLayout
-        android:id="@+id/lrcLayout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/playBottomLayout"
-        app:layout_constraintTop_toBottomOf="@+id/playTopLayout"
-        app:layout_constraintVertical_bias="0.41000003">
-
-    </FrameLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
