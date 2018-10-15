@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.item_singer_layout.view.*
  * @description：
  */
 
-class SingerItem(val singerBean: SingerBean) : Item {
+class SingerItem(val singerBean: SingerBean, val init: View.() -> Unit = {}) : Item {
 
     companion object Controller : ItemController {
         override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
@@ -38,6 +38,8 @@ class SingerItem(val singerBean: SingerBean) : Item {
                     .error(R.drawable.logo).into(holder.singerAvatar)
             // 设置姓名
             holder.singerName.text = item.singerBean.name
+            // 初始化Item
+            holder.itemView.apply(item.init)
         }
 
         private class ViewHolder(itemView: View,

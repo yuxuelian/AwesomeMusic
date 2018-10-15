@@ -20,8 +20,8 @@
         app:pointContainerLeftRightPadding="0dp"
         app:pointContainerPosition="BOTTOM"
         app:pointLeftRightPadding="3dp"
-        app:pointNormal="@drawable/shape_noraml"
-        app:pointSelect="@drawable/shape_selected"
+        app:pointNormal="@drawable/banner_noraml"
+        app:pointSelect="@drawable/banner_selected"
         app:pointTopBottomPadding="0dp"
         app:pointsPosition="CENTER"
         app:tipTextSize="12sp" />

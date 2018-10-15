@@ -10,6 +10,8 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.annotation.ColorInt
+import androidx.annotation.Px
 import com.kaibo.music.R
 import com.orhanobut.logger.Logger
 import org.jetbrains.anko.dip
@@ -43,6 +45,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     /**
      * 字母默认颜色
      */
+    @ColorInt
     var textColor: Int = 0
         set(value) {
             field = value
@@ -52,6 +55,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     /**
      * 字母选中颜色
      */
+    @ColorInt
     var selectedTextColor: Int = 0
         set(value) {
             field = value
@@ -61,6 +65,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     /**
      * 字母字体大小
      */
+    @Px
     var textSize: Int = 0
         set(value) {
             field = value
@@ -70,6 +75,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     /**
      * 上下边距的位置
      */
+    @Px
     var letterMargin: Int = 0
         set(value) {
             field = value
@@ -217,14 +223,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
 
     private fun updateDraw(y: Float) {
-        var y = y
-        if (y < lettersHeight[0]) {
-            y = lettersHeight[0]
+        var _y = y
+        if (_y < lettersHeight[0]) {
+            _y = lettersHeight[0]
         }
-        if (y > lettersHeight[lettersHeight.size - 1]) {
-            y = lettersHeight[lettersHeight.size - 1]
+        if (_y > lettersHeight[lettersHeight.size - 1]) {
+            _y = lettersHeight[lettersHeight.size - 1]
         }
-        val currentIndex = getCalcIndex(y)
+        val currentIndex = findIndex(_y)
         if (currentIndex != index) {
             index = currentIndex
             //触发重绘
@@ -239,7 +245,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
      * @param y
      * @return
      */
-    private fun getCalcIndex(y: Float): Int {
+    private fun findIndex(y: Float): Int {
         for (i in 0 until lettersHeight.size - 1) {
             val start = lettersHeight[i]
             val end = lettersHeight[i + 1]

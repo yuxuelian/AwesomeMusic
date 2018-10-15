@@ -7,17 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gavin.com.library.StickyDecoration
 import com.kaibo.core.adapter.withItems
 import com.kaibo.core.fragment.BaseFragment
-import com.kaibo.core.util.checkResult
-import com.kaibo.core.util.dip
-import com.kaibo.core.util.sp
-import com.kaibo.core.util.toMainThread
+import com.kaibo.core.util.*
 import com.kaibo.music.R
+import com.kaibo.music.activity.SingerMusicListActivity
 import com.kaibo.music.bean.SingerBean
 import com.kaibo.music.bean.SingerContractBean
 import com.kaibo.music.item.singer.SingerItem
 import com.kaibo.music.net.Api
 import com.kaibo.music.weight.overscroll.OverScrollDecoratorHelper
-import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_singer_layout.*
 
 /**
@@ -58,11 +55,16 @@ class SingerFragment : BaseFragment() {
             // 移动到指定的位置
             layoutManager.scrollToPositionWithOffset(itemsCount[index], 0)
         }
+        // RecyclerView滑动的时候联动SlideBar
         singerList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                // 找到第一个可见的Item所在的position
                 val visiblePosition = layoutManager.findFirstVisibleItemPosition()
+                // 根据position值寻找position是处于哪个区间
                 itemsCount.forEachIndexed { index, start ->
+                    // index 最大取值只能取值到  0  size-2  因为 itemsCount 大小是 letters.size+1
                     if (index < itemsCount.size - 1) {
+                        // 比对区间
                         if (visiblePosition in start until itemsCount[index + 1]) {
                             // 移动slideBar的Index
                             slideBar.index = index
@@ -80,8 +82,12 @@ class SingerFragment : BaseFragment() {
         singerList.layoutManager = LinearLayoutManager(context)
         // 设置纵向回弹
         OverScrollDecoratorHelper.setUpOverScroll(singerList, OverScrollDecoratorHelper.ORIENTATION_VERTICAL)
-        singerList.withItems(singerBeanList.map {
-            SingerItem(it)
+        singerList.withItems(singerBeanList.map { singerBean: SingerBean ->
+            SingerItem(singerBean) {
+                setOnClickListener {
+                    activity?.animInStartActivity<SingerMusicListActivity>("singerBean" to singerBean)
+                }
+            }
         })
         val decoration = StickyDecoration.Builder
                 .init { position ->

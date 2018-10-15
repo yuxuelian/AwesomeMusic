@@ -24,6 +24,11 @@ inline fun <reified T : Activity> Activity.animStartActivity(vararg params: Pair
     overridePendingTransition(R.anim.translation_right_in, R.anim.translation_right_out)
 }
 
+inline fun <reified T : Activity> Activity.animInStartActivity(vararg params: Pair<String, Any?>) {
+    startActivity<T>(*params)
+    overridePendingTransition(R.anim.translation_right_in, 0)
+}
+
 inline fun <reified T : Activity> Activity.animStartActivityForResult(requestCode: Int, vararg params: Pair<String, Any?>) {
     startActivityForResult<T>(requestCode, *params)
     overridePendingTransition(R.anim.translation_right_in, R.anim.translation_right_out)

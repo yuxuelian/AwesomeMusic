@@ -1,7 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_play_layout"
     android:layout_width="match_parent"
-    android:layout_height="60dp">
+    android:layout_height="50dp"
+    android:background="@drawable/btn_50_selector"
+    android:clickable="true"
+    android:focusable="true">
 
+    <com.kaibo.music.weight.CircleImageView
+        android:id="@+id/songImg"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:src="@drawable/test_play_img"
+        android:transitionName="shareSongImage"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.kaibo.music.weight.MarqueeTextView
+        android:id="@+id/songName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:maxWidth="160dp"
+        android:text="演员"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/songSinger"
+        app:layout_constraintStart_toEndOf="@id/songImg"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.kaibo.music.weight.MarqueeTextView
+        android:id="@+id/songSinger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:maxWidth="160dp"
+        android:text="薛之谦"
+        android:textColor="@color/colorThemeText"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/songImg"
+        app:layout_constraintTop_toBottomOf="@+id/songName" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/btn_50_selector"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="10dp"
+        android:src="@drawable/play"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/playListBtn"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/playListBtn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/btn_50_selector"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="12dp"
+        android:src="@drawable/play_list"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

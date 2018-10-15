@@ -117,6 +117,14 @@ abstract class BaseActivity : AppCompatActivity() {
         overridePendingTransition(R.anim.translation_left_in, R.anim.translation_left_out)
     }
 
+    /**
+     * 带动画结束
+     */
+    protected fun animOutFinish() {
+        finish()
+        overridePendingTransition(0, R.anim.translation_left_out)
+    }
+
 
     @LayoutRes
     abstract fun getLayoutRes(): Int

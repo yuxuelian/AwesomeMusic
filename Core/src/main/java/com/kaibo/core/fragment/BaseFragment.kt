@@ -34,6 +34,7 @@ abstract class BaseFragment : Fragment() {
         if (!rxPermissions.isGranted(permissionName)) {
             rxPermissions
                     .requestEach(permissionName)
+                    .`as`(bindLifecycle())
                     .subscribe { permission: Permission ->
                         if (permission.granted) {
                             invoke.invoke()

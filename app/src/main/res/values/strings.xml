@@ -1,43 +1,14 @@
 <resources>
     <string name="app_name">DelicateMusic</string>
     <string name="hot_music_list_recommend">热门歌单推荐</string>
+    <string name="search_placeholder">搜索歌曲、歌手</string>
+    <string name="hot_search">热门搜索</string>
+    <string name="search">搜索</string>
+    <string name="search_history">搜索历史</string>
 
     <string-array name="home_tab_array">
         <item>推荐</item>
         <item>歌手</item>
         <item>排行</item>
-        <item>搜索</item>
     </string-array>
-
-    <array name="waveSideBarLetters">
-        <item>\u0023</item>
-        <item>\u2606</item>
-        <item>A</item>
-        <item>B</item>
-        <item>C</item>
-        <item>D</item>
-        <item>E</item>
-        <item>F</item>
-        <item>G</item>
-        <item>H</item>
-        <item>I</item>
-        <item>J</item>
-        <item>K</item>
-        <item>L</item>
-        <item>M</item>
-        <item>N</item>
-        <item>O</item>
-        <item>P</item>
-        <item>Q</item>
-        <item>R</item>
-        <item>S</item>
-        <item>T</item>
-        <item>U</item>
-        <item>V</item>
-        <item>W</item>
-        <item>X</item>
-        <item>Y</item>
-        <item>Z</item>
-    </array>
-
 </resources>

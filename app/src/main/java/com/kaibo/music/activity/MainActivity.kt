@@ -4,15 +4,11 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import com.kaibo.core.activity.BaseActivity
-import com.kaibo.core.util.statusBarHeight
 import com.kaibo.music.R
-import com.kaibo.music.fragment.rank.RankFragment
-import com.kaibo.music.fragment.recommend.RecommendFragment
-import com.kaibo.music.fragment.search.SearchFragment
-import com.kaibo.music.fragment.singer.SingerFragment
+import com.kaibo.music.fragment.home.HomeFragment
+import com.kaibo.music.fragment.home.MeFragment
 import com.kaibo.music.weight.overscroll.OverScrollDecoratorHelper
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.include_title.*
 
 /**
  * @author kaibo
@@ -24,27 +20,27 @@ import kotlinx.android.synthetic.main.include_title.*
 
 class MainActivity : BaseActivity() {
 
+    var currentItem
+        get() = mainPager.currentItem
+        set(value) {
+            mainPager.currentItem = value
+        }
+
     override fun getLayoutRes(): Int {
         return R.layout.activity_main
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        appBarLayout.setPadding(0, statusBarHeight, 0, 0)
-        initViewPager()
-    }
+        val fragments: List<Fragment> = listOf(MeFragment(), HomeFragment())
+        mainPager.adapter = object : FragmentPagerAdapter(supportFragmentManager) {
 
-    private fun initViewPager() {
-        val pageTitles: Array<String> = resources.getStringArray(R.array.home_tab_array)
-        val fragments = listOf<Fragment>(RecommendFragment(), SingerFragment(), RankFragment(), SearchFragment())
-        viewPager.adapter = object : FragmentPagerAdapter(supportFragmentManager) {
             override fun getItem(position: Int) = fragments[position]
 
             override fun getCount() = fragments.size
-
-            override fun getPageTitle(position: Int) = pageTitles[position]
         }
-        viewPager.offscreenPageLimit = 4
-        tabLayout.setupWithViewPager(viewPager)
-        OverScrollDecoratorHelper.setUpOverScroll(viewPager)
+        // 默认选中到1页
+        mainPager.currentItem = 1
+        OverScrollDecoratorHelper.setUpOverScroll(mainPager)
     }
+
 }

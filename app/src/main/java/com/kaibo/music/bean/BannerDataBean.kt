@@ -14,7 +14,7 @@ import com.kaibo.core.annotation.PoKo
 
 @PoKo
 data class BannerDataBean(
-        @SerializedName("linkUrl") var linkUrl: String,
-        @SerializedName("picUrl") var picUrl: String,
-        @SerializedName("id") var id: Int
+        @SerializedName("linkUrl") val linkUrl: String,
+        @SerializedName("picUrl") val picUrl: String,
+        @SerializedName("id") val id: Int
 )
