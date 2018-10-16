@@ -9,10 +9,14 @@ package com.kaibo.music.play
  * PlayerService向外发送的事件
  */
 
-data class PlaySeekBean(
-        val seek: Int
+data class PlayProgressBean(
+        val progress: Int
 )
 
 data class PlayDurationBean(
         val duration: Int
+)
+
+data class PlayStatusChange(
+        val isPlaying: Boolean
 )

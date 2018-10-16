@@ -5,9 +5,10 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.IBinder
 import com.kaibo.core.bus.RxBus
+import com.kaibo.core.util.toMainThread
 import com.orhanobut.logger.Logger
 import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
 
 /**
@@ -20,13 +21,16 @@ import java.util.concurrent.TimeUnit
 
 class PlayerService : Service() {
 
-    private var disposable: Disposable? = null
+    private val disposables by lazy {
+        CompositeDisposable()
+    }
 
     internal val mediaPlayer by lazy {
         MediaPlayer()
     }
 
-    private val testDataSource = "https://music.kaibo123.com/amobile.music.tc.qq.com/C400003OU9ul1LEU9T.m4a?guid=4715368380&vkey=F3DA36B2E856E4F87A02E2B55C27714B0DF3540E9E6CEBDB51337D852F2C9EDB17FAFE803BDFABD97FD19DE24BC2A8D0C68D2A9DCEE6A74A&uin=0&fromtag=999"
+    // 当前正在播放的源
+    private var playDataSource = ""
 
     override fun onBind(p0: Intent): IBinder {
         return PlayerStatusBinder(this)
@@ -35,12 +39,53 @@ class PlayerService : Service() {
     override fun onCreate() {
         super.onCreate()
         initMediaPlayer()
-        try {
-            // 测试播放音乐
-            playMusic(testDataSource)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        // 监听进度命令
+        val seekDisposable = RxBus
+                .toObservable<SeekCommand>()
+                .subscribe {
+                    if (!mediaPlayer.isPlaying) {
+                        mediaPlayer.start()
+                        // 播放状态发生改变
+                        RxBus.post(PlayStatusChange(true))
+                    }
+                    mediaPlayer.seekTo(it.seek)
+                }
+        // 播放暂停命令监听
+        val playDataDisposable = RxBus.toObservable<PlayCommand>()
+                .subscribe {
+                    if (playDataSource != it.dataSource) {
+                        // 记录下播放源
+                        playDataSource = it.dataSource
+                        // 设置播放源
+                        try {
+                            // 测试播放音乐
+                            playNewDataSource(it.dataSource)
+                            // 把duration发送出去
+                            RxBus.post(PlayDurationBean(mediaPlayer.duration))
+                        } catch (e: Exception) {
+                            // TODO 设置播放源出错  需要发送错误信息出去
+                            e.printStackTrace()
+
+                            // 播放暂停
+                            RxBus.post(PlayStatusChange(false))
+                        }
+                    } else {
+                        if (it.isPlay) {
+                            // 没有播放 就启动播放
+                            if (!mediaPlayer.isPlaying) {
+                                mediaPlayer.start()
+                                // 把duration发送出去
+                                RxBus.post(PlayDurationBean(mediaPlayer.duration))
+                            }
+                        } else {
+                            // 正在播放 就暂停播放
+                            if (mediaPlayer.isPlaying) {
+                                mediaPlayer.pause()
+                            }
+                        }
+                    }
+                }
+        disposables.addAll(seekDisposable, playDataDisposable)
     }
 
     private fun initMediaPlayer() {
@@ -56,6 +101,7 @@ class PlayerService : Service() {
 
         // 进度调整完成
         mediaPlayer.setOnSeekCompleteListener {
+            // 发送播放完成的事件出去
             Logger.d("setOnSeekCompleteListener")
         }
 
@@ -79,22 +125,24 @@ class PlayerService : Service() {
     }
 
     private fun initNotifySeek() {
-        disposable = Observable
+        val disposable = Observable
                 .interval(1000L, TimeUnit.MILLISECONDS)
+                .toMainThread()
                 .subscribe({
                     // 正在播放才向外发送进度
                     if (mediaPlayer.isPlaying) {
                         // 向外发送播放进度
                         val seek = mediaPlayer.currentPosition
                         // 发送seek
-                        RxBus.post(PlaySeekBean(seek))
+                        RxBus.post(PlayProgressBean(seek))
                     }
                 }) {
                     it.printStackTrace()
                 }
+        disposables.add(disposable)
     }
 
-    private fun playMusic(dataSource: String) {
+    private fun playNewDataSource(dataSource: String) {
         if (mediaPlayer.isPlaying) {
             mediaPlayer.stop()
         }
@@ -114,7 +162,9 @@ class PlayerService : Service() {
         mediaPlayer.stop()
         mediaPlayer.release()
         // 释放心跳
-        disposable?.dispose()
+        if (!disposables.isDisposed) {
+            disposables.dispose()
+        }
         super.onDestroy()
     }
 

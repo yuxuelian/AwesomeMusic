@@ -11,9 +11,13 @@ import android.os.Binder
  */
 
 class PlayerStatusBinder(val service: PlayerService) : Binder() {
+
     val duration
         get() = service.mediaPlayer.duration
 
     val seek
         get() = service.mediaPlayer.currentPosition
+
+    val isPlaying
+        get() = service.mediaPlayer.isPlaying
 }

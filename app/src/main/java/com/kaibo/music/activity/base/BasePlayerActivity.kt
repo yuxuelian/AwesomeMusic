@@ -15,10 +15,7 @@ import com.kaibo.core.bus.RxBus
 import com.kaibo.core.util.blur
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
-import com.kaibo.music.play.PlayDurationBean
-import com.kaibo.music.play.PlaySeekBean
-import com.kaibo.music.play.PlayerService
-import com.kaibo.music.play.PlayerStatusBinder
+import com.kaibo.music.play.*
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.startService
@@ -78,7 +75,7 @@ abstract class BasePlayerActivity : BaseActivity() {
             this >= 5999000 -> "99:59"
             this <= 0 -> "00:00"
             else -> {
-                val second = Math.ceil(this / 1000.0).toInt()
+                val second = Math.floor(this / 1000.0).toInt()
                 String.format("%02d:%02d", second / 60, second % 60)
             }
         }
@@ -95,6 +92,7 @@ abstract class BasePlayerActivity : BaseActivity() {
             // 绑定成功后获取一次PlayerService的播放状态
             updateDuration(iBinder.duration)
             updateSeek(iBinder.seek)
+            playStatusChange(iBinder.isPlaying)
         }
     }
 
@@ -109,8 +107,13 @@ abstract class BasePlayerActivity : BaseActivity() {
         }) {
             it.printStackTrace()
         }
-        RxBus.toObservable<PlaySeekBean>().`as`(bindLifecycle()).subscribe({
-            updateSeek(it.seek)
+        RxBus.toObservable<PlayProgressBean>().`as`(bindLifecycle()).subscribe({
+            updateSeek(it.progress)
+        }) {
+            it.printStackTrace()
+        }
+        RxBus.toObservable<PlayStatusChange>().`as`(bindLifecycle()).subscribe({
+            playStatusChange(it.isPlaying)
         }) {
             it.printStackTrace()
         }
@@ -123,6 +126,7 @@ abstract class BasePlayerActivity : BaseActivity() {
 
     protected abstract fun updateDuration(duration: Int)
     protected abstract fun updateSeek(seek: Int)
+    protected abstract fun playStatusChange(playing: Boolean)
 
     /**
      * 模糊背景图片

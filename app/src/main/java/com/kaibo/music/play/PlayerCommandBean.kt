@@ -8,3 +8,14 @@ package com.kaibo.music.play
  * @description：
  */
 
+data class SeekCommand(
+        val seek: Int
+)
+
+data class PlayCommand(
+        // 播放源
+        var dataSource: String,
+        // 是否进行播放
+        var isPlay: Boolean
+)
+

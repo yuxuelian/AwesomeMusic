@@ -10,10 +10,13 @@ import android.widget.SeekBar
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.jakewharton.rxbinding2.view.clicks
+import com.kaibo.core.bus.RxBus
 import com.kaibo.core.util.statusBarHeight
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
 import com.kaibo.music.activity.base.BasePlayerActivity
+import com.kaibo.music.play.PlayCommand
+import com.kaibo.music.play.SeekCommand
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_player.*
 import kotlinx.android.synthetic.main.include_play_bottom_layout.*
@@ -33,11 +36,13 @@ import java.util.concurrent.TimeUnit
 
 class PlayerActivity : BasePlayerActivity() {
 
+    private var isPlaying = false
+
     override fun getLayoutRes() = R.layout.activity_player
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
         super.initOnCreate(savedInstanceState)
-        playRootView.setPadding(0, statusBarHeight, 0, dip(40))
+        playRootView.setPadding(0, statusBarHeight, 0, 0)
         backBtn.clicks().`as`(bindLifecycle()).subscribe {
             onBackPressed()
         }
@@ -59,17 +64,41 @@ class PlayerActivity : BasePlayerActivity() {
         initLrcLayout()
         // 设置SeekBar的拖动监听
         playerSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(p0: SeekBar, p1: Int, p2: Boolean) {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    currentSeek.text = progress.formatMunite()
+                }
             }
 
-            override fun onStartTrackingTouch(p0: SeekBar) {
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
                 isSeeking = true
             }
 
-            override fun onStopTrackingTouch(p0: SeekBar) {
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
                 isSeeking = false
+                // 松手后发送进度到Service
+                RxBus.post(SeekCommand(seekBar.progress))
             }
         })
+
+        val playDataSource = "https://music.kaibo123.com/amobile.music.tc.qq.com/C400003OU9ul1LEU9T.m4a?guid=4715368380&vkey=F3DA36B2E856E4F87A02E2B55C27714B0DF3540E9E6CEBDB51337D852F2C9EDB17FAFE803BDFABD97FD19DE24BC2A8D0C68D2A9DCEE6A74A&uin=0&fromtag=999"
+        val playCommand = PlayCommand(playDataSource, true)
+
+        // 播放或者暂停
+        playOrPauseBtn.clicks().`as`(bindLifecycle()).subscribe {
+            if (isPlaying) {
+                isPlaying = false
+                // 显示暂停图标
+                playOrPauseBtn.setImageResource(R.drawable.big_play)
+            } else {
+                isPlaying = true
+                // 显示播放图标
+                playOrPauseBtn.setImageResource(R.drawable.big_pause)
+            }
+            playCommand.isPlay = isPlaying
+            // 发送命令
+            RxBus.post(playCommand)
+        }
     }
 
     private fun initLrcLayout() {
@@ -176,6 +205,15 @@ class PlayerActivity : BasePlayerActivity() {
             playerSeek.progress = seek
             currentSeek.text = seek.formatMunite()
         }
+    }
+
+    override fun playStatusChange(playing: Boolean) {
+        if (playing) {
+            playOrPauseBtn.setImageResource(R.drawable.big_pause)
+        } else {
+            playOrPauseBtn.setImageResource(R.drawable.big_play)
+        }
+        isPlaying = playing
     }
 
     override fun onResume() {
