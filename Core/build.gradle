@@ -230,6 +230,15 @@ dependencies {
 
     //照片选择
     api 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
+
+    // ijkplayer
+    api "tv.danmaku.ijk.media:ijkplayer-java:$ijkplayer_version"
+    api "tv.danmaku.ijk.media:ijkplayer-x86:$ijkplayer_version"
+    api "tv.danmaku.ijk.media:ijkplayer-armv7a:$ijkplayer_version"
+//    api "tv.danmaku.ijk.media:ijkplayer-armv5:$ijkplayer_version"
+//    api "tv.danmaku.ijk.media:ijkplayer-arm64:$ijkplayer_version"
+//    api "tv.danmaku.ijk.media:ijkplayer-x86_64:$ijkplayer_version"
+
     //google地图
 //    api 'com.google.android.gms:play-services-maps:15.0.1'
 

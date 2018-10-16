@@ -11,6 +11,7 @@ import com.kaibo.core.util.checkResult
 import com.kaibo.core.util.statusBarHeight
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
+import com.kaibo.music.activity.base.BaseAnimActivity
 import com.kaibo.music.bean.HotSearchBean
 import com.kaibo.music.item.search.HotSearchItem
 import com.kaibo.music.net.Api

@@ -4,13 +4,15 @@
     android:id="@+id/playRootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="40dp">
 
     <!--顶部布局-->
     <include
         android:id="@+id/playTopLayout"
         layout="@layout/include_play_top_layout" />
 
+    <!--中间布局-->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -26,9 +28,8 @@
                 android:id="@+id/playRotaImg"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:maxWidth="200dp"
+                android:layout_marginStart="60dp"
+                android:layout_marginEnd="60dp"
                 android:src="@drawable/test_play_img"
                 android:transitionName="shareSongImage"
                 app:civ_border_color="@color/color_3999"
@@ -77,14 +78,13 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!--中间的歌词部分-->
-        <FrameLayout
-            android:id="@+id/lrcLayout"
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/lrcPager"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
             app:layout_constraintBottom_toTopOf="@+id/playBottomLayout"
-            app:layout_constraintTop_toBottomOf="@+id/playTopLayout"
-            app:layout_constraintVertical_bias="0.41000003">
-        </FrameLayout>
+            app:layout_constraintTop_toBottomOf="@+id/playTopLayout" />
     </FrameLayout>
 
     <!--底部布局-->

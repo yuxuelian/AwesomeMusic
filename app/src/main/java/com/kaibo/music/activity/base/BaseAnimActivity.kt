@@ -1,4 +1,4 @@
-package com.kaibo.music.activity
+package com.kaibo.music.activity.base
 
 import com.kaibo.core.activity.BaseActivity
 

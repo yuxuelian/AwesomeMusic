@@ -21,7 +21,9 @@
         </activity>
         <activity android:name=".activity.SearchActivity" />
         <activity android:name=".activity.SingerMusicListActivity" />
-        <activity android:name=".activity.PlayActivity" />
+        <activity android:name=".activity.PlayerActivity" />
+
+        <service android:name=".play.PlayerService" />
     </application>
 
 </manifest>

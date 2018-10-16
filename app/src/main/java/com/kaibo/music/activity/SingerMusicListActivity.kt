@@ -1,6 +1,7 @@
 package com.kaibo.music.activity
 
 import com.kaibo.music.R
+import com.kaibo.music.activity.base.BaseAnimActivity
 import com.kaibo.music.bean.SingerBean
 
 /**

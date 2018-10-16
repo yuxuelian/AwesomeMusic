@@ -31,6 +31,7 @@ buildscript {
         rxbinding_version = '2.1.1'
         zxing_version = '3.2.1'
         anko_version = '0.10.7'
+        ijkplayer_version = '0.8.8'
     }
 
     repositories {

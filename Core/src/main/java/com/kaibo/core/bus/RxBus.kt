@@ -14,21 +14,13 @@ import io.reactivex.Observable
  */
 
 object RxBus {
-    private val mBus: Relay<Any> = PublishRelay.create<Any>().toSerialized()
+    val mBus: Relay<Any> = PublishRelay.create<Any>().toSerialized()
 
     fun post(obj: Any) {
         mBus.accept(obj)
     }
 
-    fun <T> toObservable(tClass: Class<T>): Observable<T> {
-        return mBus.ofType(tClass)
-    }
-
-    fun toObservable(): Observable<Any> {
-        return mBus
-    }
-
-    fun hasObservers(): Boolean {
-        return mBus.hasObservers()
+    inline fun <reified T> toObservable(): Observable<T> {
+        return mBus.ofType(T::class.java)
     }
 }

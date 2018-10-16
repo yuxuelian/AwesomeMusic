@@ -12,7 +12,7 @@ import com.kaibo.core.util.animInStartActivity
 import com.kaibo.core.util.statusBarHeight
 import com.kaibo.music.R
 import com.kaibo.music.activity.MainActivity
-import com.kaibo.music.activity.PlayActivity
+import com.kaibo.music.activity.PlayerActivity
 import com.kaibo.music.activity.SearchActivity
 import com.kaibo.music.fragment.rank.RankFragment
 import com.kaibo.music.fragment.recommend.RecommendFragment
@@ -46,10 +46,10 @@ class HomeFragment : BaseFragment() {
         // 点击底部的播放条
         bottom_play_layout.clicks().`as`(bindLifecycle()).subscribe {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val intent = Intent(activity, PlayActivity::class.java)
+                val intent = Intent(activity, PlayerActivity::class.java)
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(activity, songImg, "shareSongImage").toBundle())
             } else {
-                activity?.animInStartActivity<PlayActivity>()
+                activity?.animInStartActivity<PlayerActivity>()
             }
 
         }
