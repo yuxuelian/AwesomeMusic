@@ -38,39 +38,43 @@ class SongListActivity : BaseAnimActivity() {
         backBtn.clicks().`as`(bindLifecycle()).subscribe {
             onBackPressed()
         }
-        if (intent.hasExtra("disstid")) {
-            val disstid = intent.getStringExtra("disstid")
-            Api.instance.getRecommendSongList(disstid).checkResult()
-                    .toMainThread().`as`(bindLifecycle()).subscribe({ recommendSongListBean: RecommendSongListBean ->
-                        // 加载Logo
-                        GlideApp.with(this).load(recommendSongListBean.logo).into(songListLogo)
-                        titleText.text = recommendSongListBean.dissname
-                        initSongList(recommendSongListBean.songList)
-                    }) {
-                        it.printStackTrace()
-                    }
-        } else if (intent.hasExtra("singermid")) {
-            val singermid = intent.getStringExtra("singermid")
-            Api.instance.getSingerSongList(singermid).checkResult()
-                    .toMainThread().`as`(bindLifecycle()).subscribe({ singerSongListBean: SingerSongListBean ->
-                        // 加载Logo
-                        GlideApp.with(this).load(singerSongListBean.singerAvatar).into(songListLogo)
-                        titleText.text = singerSongListBean.singerName
-                        initSongList(singerSongListBean.songList)
-                    }) {
-                        it.printStackTrace()
-                    }
-        } else if (intent.hasExtra("topid")) {
-            val topid = intent.getIntExtra("topid", 0)
-            Api.instance.getRankSongList(topid).checkResult()
-                    .toMainThread().`as`(bindLifecycle()).subscribe({ rankSongListBean: RankSongListBean ->
-                        // 加载Logo
-                        GlideApp.with(this).load(rankSongListBean.rankImage).into(songListLogo)
-                        titleText.text = rankSongListBean.rankName
-                        initSongList(rankSongListBean.songList)
-                    }) {
-                        it.printStackTrace()
-                    }
+        when {
+            intent.hasExtra("disstid") -> {
+                val disstid = intent.getStringExtra("disstid")
+                Api.instance.getRecommendSongList(disstid).checkResult()
+                        .toMainThread().`as`(bindLifecycle()).subscribe({ recommendSongListBean: RecommendSongListBean ->
+                            // 加载Logo
+                            GlideApp.with(this).load(recommendSongListBean.logo).into(songListLogo)
+                            titleText.text = recommendSongListBean.dissname
+                            initSongList(recommendSongListBean.songList)
+                        }) {
+                            it.printStackTrace()
+                        }
+            }
+            intent.hasExtra("singermid") -> {
+                val singermid = intent.getStringExtra("singermid")
+                Api.instance.getSingerSongList(singermid).checkResult()
+                        .toMainThread().`as`(bindLifecycle()).subscribe({ singerSongListBean: SingerSongListBean ->
+                            // 加载Logo
+                            GlideApp.with(this).load(singerSongListBean.singerAvatar).into(songListLogo)
+                            titleText.text = singerSongListBean.singerName
+                            initSongList(singerSongListBean.songList)
+                        }) {
+                            it.printStackTrace()
+                        }
+            }
+            intent.hasExtra("topid") -> {
+                val topid = intent.getIntExtra("topid", 0)
+                Api.instance.getRankSongList(topid).checkResult()
+                        .toMainThread().`as`(bindLifecycle()).subscribe({ rankSongListBean: RankSongListBean ->
+                            // 加载Logo
+                            GlideApp.with(this).load(rankSongListBean.rankImage).into(songListLogo)
+                            titleText.text = rankSongListBean.rankName
+                            initSongList(rankSongListBean.songList)
+                        }) {
+                            it.printStackTrace()
+                        }
+            }
         }
     }
 

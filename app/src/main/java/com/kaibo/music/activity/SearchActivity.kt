@@ -15,7 +15,8 @@ import com.kaibo.music.activity.base.BaseAnimActivity
 import com.kaibo.music.bean.HotSearchBean
 import com.kaibo.music.item.search.HotSearchItem
 import com.kaibo.music.net.Api
-import com.kaibo.music.weight.overscroll.OverScrollDecoratorHelper
+import com.kaibo.music.weight.AcFunOverView
+import com.liaoinstan.springview.widget.SpringView
 import kotlinx.android.synthetic.main.activity_search.*
 import java.util.concurrent.TimeUnit
 
@@ -33,9 +34,17 @@ class SearchActivity : BaseAnimActivity() {
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
         appBarLayout.setPadding(0, statusBarHeight, 0, 0)
+        springview.setGive(SpringView.Give.NONE)
+        springview.setListener(object : SpringView.OnFreshListener {
+            override fun onRefresh() {}
+
+            override fun onLoadmore() {}
+        })
+        springview.header = AcFunOverView(this)
+        springview.footer = AcFunOverView(this)
+
         setSupportActionBar(searchToolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        OverScrollDecoratorHelper.setUpOverScroll(searchScrollView)
         Api.instance.getHotSearch().checkResult()
                 .toMainThread().`as`(bindLifecycle()).subscribe({
                     initHotSearchList(it)

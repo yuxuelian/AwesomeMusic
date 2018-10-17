@@ -4,11 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/singerList"
+    <com.liaoinstan.springview.widget.SpringView
+        android:id="@+id/springview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:overScrollMode="never" />
+        app:type="overlap">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/singerList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never" />
+    </com.liaoinstan.springview.widget.SpringView>
 
     <com.kaibo.music.weight.SlideBar
         android:id="@+id/slideBar"

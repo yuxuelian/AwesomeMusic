@@ -5,11 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="240dp">
+
+        <ImageView
+            android:id="@+id/songListLogo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:foreground="@color/colorForeground"
+            android:transitionName="@string/transition_recommend_logo"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:targetApi="lollipop" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="240dp"
-        android:background="@color/transparent">
+        android:background="@color/transparent"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
@@ -17,15 +35,6 @@
             android:layout_height="match_parent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:toolbarId="@+id/toolbar">
-
-            <ImageView
-                android:id="@+id/songListLogo"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:foreground="@color/colorForeground"
-                android:scaleType="centerCrop"
-                android:transitionName="@string/transition_recommend_logo"
-                tools:targetApi="lollipop" />
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -63,6 +72,7 @@
         android:id="@+id/songListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorBackground"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

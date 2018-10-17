@@ -14,7 +14,9 @@ import com.kaibo.music.bean.SingerBean
 import com.kaibo.music.bean.SingerListBean
 import com.kaibo.music.item.singer.SingerItem
 import com.kaibo.music.net.Api
-import com.kaibo.music.weight.overscroll.OverScrollDecoratorHelper
+import com.kaibo.music.weight.AcFunOverView
+
+import com.liaoinstan.springview.widget.SpringView
 import kotlinx.android.synthetic.main.fragment_singer_layout.*
 
 /**
@@ -29,6 +31,14 @@ class SingerFragment : BaseFragment() {
     override fun getLayoutRes() = R.layout.fragment_singer_layout
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
+        springview.setGive(SpringView.Give.NONE)
+        springview.setListener(object : SpringView.OnFreshListener {
+            override fun onRefresh() {}
+
+            override fun onLoadmore() {}
+        })
+        springview.header = AcFunOverView(context)
+        springview.footer = AcFunOverView(context)
         // 获取歌曲数据
         Api.instance.getSingerList().checkResult().toMainThread().`as`(bindLifecycle())
                 .subscribe({ singerListBeanList: List<SingerListBean> ->
@@ -81,7 +91,6 @@ class SingerFragment : BaseFragment() {
     private fun initSingerList(singerBeanList: List<SingerBean>) {
         singerList.layoutManager = LinearLayoutManager(context)
         // 设置纵向回弹
-        OverScrollDecoratorHelper.setUpOverScroll(singerList, OverScrollDecoratorHelper.ORIENTATION_VERTICAL)
         singerList.withItems(singerBeanList.map { singerBean: SingerBean ->
             SingerItem(singerBean) {
                 setOnClickListener {

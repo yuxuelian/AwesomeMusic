@@ -7,7 +7,6 @@ import com.kaibo.core.activity.BaseActivity
 import com.kaibo.music.R
 import com.kaibo.music.fragment.home.HomeFragment
 import com.kaibo.music.fragment.home.MeFragment
-import com.kaibo.music.weight.overscroll.OverScrollDecoratorHelper
 import kotlinx.android.synthetic.main.activity_main.*
 
 /**
@@ -40,7 +39,6 @@ class MainActivity : BaseActivity() {
         }
         // 默认选中到1页
         mainPager.currentItem = 1
-        OverScrollDecoratorHelper.setUpOverScroll(mainPager)
     }
 
 }

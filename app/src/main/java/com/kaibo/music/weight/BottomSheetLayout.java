@@ -13,10 +13,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.AbsListView;
 import android.widget.ListView;
-
-import com.kaibo.music.weight.overscroll.BezierInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -170,7 +169,8 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
             }
         });
         valueAnimator.setDuration(400);
-        valueAnimator.setInterpolator(new BezierInterpolator(.6f, .4f, .4f, .6f));
+//        valueAnimator.setInterpolator(new BezierInterpolator(.6f, .4f, .4f, .6f));
+        valueAnimator.setInterpolator(new LinearInterpolator());
         valueAnimator.start();
     }
 

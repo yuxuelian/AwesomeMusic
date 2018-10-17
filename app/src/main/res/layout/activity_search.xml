@@ -74,69 +74,76 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ScrollView
-        android:id="@+id/searchScrollView"
+    <com.liaoinstan.springview.widget.SpringView
+        android:id="@+id/springview"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        app:type="overlap">
 
-        <LinearLayout
+        <ScrollView
+            android:id="@+id/searchScrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/hot_search"
-                android:textColor="@color/color_909090"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/hot_search_list"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="20dp"
-                android:overScrollMode="never" />
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="20dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:text="@string/search_history"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/hot_search"
                     android:textColor="@color/color_909090"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
-                <ImageView
-                    android:id="@+id/deleteHistory"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="end|center_vertical"
-                    android:background="@drawable/btn_50_selector"
-                    android:src="@drawable/delete" />
-            </FrameLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/hot_search_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="20dp"
+                    android:overScrollMode="never" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/search_history_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="20dp"
-                android:overScrollMode="never" />
-        </LinearLayout>
-    </ScrollView>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center_vertical"
+                        android:text="@string/search_history"
+                        android:textColor="@color/color_909090"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/deleteHistory"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:background="@drawable/btn_50_selector"
+                        android:src="@drawable/delete" />
+                </FrameLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/search_history_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="20dp"
+                    android:overScrollMode="never" />
+            </LinearLayout>
+        </ScrollView>
+    </com.liaoinstan.springview.widget.SpringView>
 </LinearLayout>

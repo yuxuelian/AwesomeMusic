@@ -15,7 +15,9 @@ import com.kaibo.music.item.recommend.BannerItem
 import com.kaibo.music.item.recommend.RecommendItem
 import com.kaibo.music.item.recommend.SongTitleItem
 import com.kaibo.music.net.Api
-import com.kaibo.music.weight.overscroll.OverScrollDecoratorHelper
+import com.kaibo.music.weight.AcFunOverView
+
+import com.liaoinstan.springview.widget.SpringView
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import kotlinx.android.synthetic.main.fragment_recommend_layout.*
@@ -36,6 +38,14 @@ class RecommendFragment : BaseFragment() {
     override fun getLayoutRes() = R.layout.fragment_recommend_layout
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
+        springview.setGive(SpringView.Give.NONE)
+        springview.setListener(object : SpringView.OnFreshListener {
+            override fun onRefresh() {}
+
+            override fun onLoadmore() {}
+        })
+        springview.header = AcFunOverView(context)
+        springview.footer = AcFunOverView(context)
         Observable
                 .zip(
                         Api.instance.getBannerList().checkResult(),
@@ -55,7 +65,6 @@ class RecommendFragment : BaseFragment() {
     private fun initRecommendList(netRes: Pair<List<BannerDataBean>, List<RecommendBean>>) {
         recommendRecyclerView.layoutManager = LinearLayoutManager(context)
         // 设置纵向回弹
-        OverScrollDecoratorHelper.setUpOverScroll(recommendRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL)
         recommendRecyclerView.withItems {
             // 设置轮播图数据
             bannerItem.setData(netRes.first)

@@ -12,7 +12,9 @@ import com.kaibo.music.activity.SongListActivity
 import com.kaibo.music.bean.RankBean
 import com.kaibo.music.item.rank.RankItem
 import com.kaibo.music.net.Api
-import com.kaibo.music.weight.overscroll.OverScrollDecoratorHelper
+import com.kaibo.music.weight.AcFunOverView
+
+import com.liaoinstan.springview.widget.SpringView
 import kotlinx.android.synthetic.main.fragment_rank_layout.*
 
 /**
@@ -27,6 +29,14 @@ class RankFragment : BaseFragment() {
     override fun getLayoutRes() = R.layout.fragment_rank_layout
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
+        springview.setGive(SpringView.Give.NONE)
+        springview.setListener(object : SpringView.OnFreshListener {
+            override fun onRefresh() {}
+
+            override fun onLoadmore() {}
+        })
+        springview.header = AcFunOverView(context)
+        springview.footer = AcFunOverView(context)
         Api.instance.getRankList().checkResult()
                 .toMainThread().`as`(bindLifecycle())
                 .subscribe({
@@ -38,7 +48,6 @@ class RankFragment : BaseFragment() {
 
     private fun initRankList(rankBeanList: List<RankBean>) {
         rankList.layoutManager = LinearLayoutManager(context)
-        OverScrollDecoratorHelper.setUpOverScroll(rankList, OverScrollDecoratorHelper.ORIENTATION_VERTICAL)
         rankList.withItems(rankBeanList.map { rankBean: RankBean ->
             RankItem(rankBean) {
                 setOnClickListener {
