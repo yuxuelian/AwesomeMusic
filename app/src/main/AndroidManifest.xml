@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.SearchActivity" />
-        <activity android:name=".activity.SingerMusicListActivity" />
+        <activity android:name=".activity.SongListActivity" />
         <activity android:name=".activity.PlayerActivity" />
 
         <service android:name=".play.PlayerService" />

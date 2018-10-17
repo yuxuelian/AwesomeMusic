@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.item_rank_layout.view.*
  * @description：
  */
 
-class RankItem(val rankBean: RankBean) : Item {
+class RankItem(val rankBean: RankBean, val init: View.() -> Unit = {}) : Item {
 
     companion object Controller : ItemController {
         override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
@@ -36,12 +36,13 @@ class RankItem(val rankBean: RankBean) : Item {
                     .load(item.rankBean.picUrl)
                     .placeholder(R.drawable.logo)
                     .error(R.drawable.logo).into(holder.picImg)
-            val songList = item.rankBean.songList
+            val songList = item.rankBean.songBeanList
             if (songList.size == 3) {
                 songList.forEachIndexed { index, song ->
                     holder.songList[index].text = "${index + 1}.${song.songname}-${song.singername}"
                 }
             }
+            holder.itemView.apply(item.init)
         }
 
         private class ViewHolder(itemView: View,

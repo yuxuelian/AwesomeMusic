@@ -25,73 +25,68 @@ class PlayerService : Service() {
         CompositeDisposable()
     }
 
-    internal val mediaPlayer by lazy {
+    private val mediaPlayer by lazy {
         MediaPlayer()
     }
 
-    // 当前正在播放的源
-    private var playDataSource = ""
+    // 记录播放器的播放状态
+    private val dataSourceStatus = DataSourceStatus()
+    private val playingStatus = PlayingStatus()
+    private val durationStatus = DurationStatus()
+    private val seekStatus = SeekStatus()
 
-    override fun onBind(p0: Intent): IBinder {
-        return PlayerStatusBinder(this)
+    override fun onBind(p0: Intent): IBinder? {
+        return null
     }
 
     override fun onCreate() {
         super.onCreate()
         initMediaPlayer()
-        // 监听进度命令
-        val seekDisposable = RxBus
-                .toObservable<SeekCommand>()
-                .subscribe {
-                    if (!mediaPlayer.isPlaying) {
-                        mediaPlayer.start()
-                        // 播放状态发生改变
-                        RxBus.post(PlayStatusChange(true))
-                    }
-                    mediaPlayer.seekTo(it.seek)
-                }
         // 播放暂停命令监听
-        val playDataDisposable = RxBus.toObservable<PlayCommand>()
+        val playDataDisposable = RxBus.toObservable<PlayerCommand>()
                 .subscribe {
-                    if (playDataSource != it.dataSource) {
-                        // 记录下播放源
-                        playDataSource = it.dataSource
-                        // 设置播放源
-                        try {
-                            // 测试播放音乐
-                            playNewDataSource(it.dataSource)
-                            // 把duration发送出去
-                            RxBus.post(PlayDurationBean(mediaPlayer.duration))
-                        } catch (e: Exception) {
-                            // TODO 设置播放源出错  需要发送错误信息出去
-                            e.printStackTrace()
-
-                            // 播放暂停
-                            RxBus.post(PlayStatusChange(false))
+                    when (it) {
+                        is DataSourceCommand -> {
+                            dataSourceCommand(it)
                         }
-                    } else {
-                        if (it.isPlay) {
-                            // 没有播放 就启动播放
+                        is SeekCommand -> {
                             if (!mediaPlayer.isPlaying) {
                                 mediaPlayer.start()
-                                // 把duration发送出去
-                                RxBus.post(PlayDurationBean(mediaPlayer.duration))
+                                // 播放状态发生改变
                             }
-                        } else {
-                            // 正在播放 就暂停播放
-                            if (mediaPlayer.isPlaying) {
-                                mediaPlayer.pause()
-                            }
+                            mediaPlayer.seekTo(it.seek)
                         }
                     }
                 }
-        disposables.addAll(seekDisposable, playDataDisposable)
+        disposables.add(playDataDisposable)
+    }
+
+    private fun dataSourceCommand(it: DataSourceCommand) {
+        if (dataSourceStatus.songBean == null) {
+            dataSourceStatus.songBean = it.songBean
+        } else {
+            if (dataSourceStatus.songBean!!.url != it.songBean.url) {
+                dataSourceStatus.songBean = it.songBean
+            } else {
+                // 同一个播放源,然后判断是否正在播放,没有播放则启动播放
+                if (!mediaPlayer.isPlaying) {
+                    mediaPlayer.start()
+                }
+                return
+            }
+        }
+        // 设置播放源
+        try {
+            // 测试播放音乐
+            playNewDataSource(it.songBean.url)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun initMediaPlayer() {
         // 准备完成监听
         mediaPlayer.setOnPreparedListener {
-            RxBus.post(PlayDurationBean(it.duration))
         }
 
         // 缓存监听
@@ -132,10 +127,10 @@ class PlayerService : Service() {
                     // 正在播放才向外发送进度
                     if (mediaPlayer.isPlaying) {
                         // 向外发送播放进度
-                        val seek = mediaPlayer.currentPosition
-                        // 发送seek
-                        RxBus.post(PlayProgressBean(seek))
+                        seekStatus.seek = mediaPlayer.currentPosition
                     }
+                    // 发送seek
+                    RxBus.post(seekStatus)
                 }) {
                     it.printStackTrace()
                 }
@@ -167,5 +162,4 @@ class PlayerService : Service() {
         }
         super.onDestroy()
     }
-
 }

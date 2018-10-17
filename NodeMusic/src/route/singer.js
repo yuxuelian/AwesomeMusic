@@ -1,7 +1,7 @@
-const config = require('./config')
-const utils = require('./utils')
+const config = require('../util/config')
+const utils = require('../util/utils')
 const axios = require('axios')
-const singerBean = require('./singerBean')
+const singerBean = require('../util/singerBean')
 
 const HOT_NAME = '热门'
 const HOT_SINGER_LENGTH = 10

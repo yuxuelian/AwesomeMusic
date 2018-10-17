@@ -5,20 +5,13 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.kaibo.core.annotation.PoKo
 
-
 /**
- * @author 56896
- * @date 2018/10/14 15:09
+ * @author kaibo
+ * @date 2018/10/17 14:42
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：
  */
-
-@PoKo
-data class SingerContractBean(
-        @SerializedName("title") val title: String,
-        @SerializedName("items") val items: List<SingerBean>
-)
 
 @PoKo
 data class SingerBean(
@@ -54,6 +47,4 @@ data class SingerBean(
             return arrayOfNulls(size)
         }
     }
-
-
 }

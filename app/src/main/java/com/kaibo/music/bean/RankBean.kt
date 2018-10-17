@@ -17,13 +17,7 @@ data class RankBean(
         @SerializedName("id") val id: Int,
         @SerializedName("listenCount") val listenCount: Int,
         @SerializedName("picUrl") val picUrl: String,
-        @SerializedName("songList") val songList: List<Song>,
+        @SerializedName("songList") val songBeanList: List<SongBean>,
         @SerializedName("topTitle") val topTitle: String,
         @SerializedName("type") val type: Int
-)
-
-@PoKo
-data class Song(
-        @SerializedName("singername") val singername: String,
-        @SerializedName("songname") val songname: String
 )

@@ -47,11 +47,10 @@ class HomeFragment : BaseFragment() {
         bottom_play_layout.clicks().`as`(bindLifecycle()).subscribe {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 val intent = Intent(activity, PlayerActivity::class.java)
-                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(activity, songImg, "shareSongImage").toBundle())
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(activity, songImg, getString(R.string.transition_share_song_img)).toBundle())
             } else {
                 activity?.animInStartActivity<PlayerActivity>()
             }
-
         }
     }
 

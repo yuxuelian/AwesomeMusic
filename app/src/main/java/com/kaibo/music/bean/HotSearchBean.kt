@@ -42,6 +42,4 @@ data class HotSearchBean(
             return arrayOfNulls(size)
         }
     }
-
-
 }

@@ -4,9 +4,11 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaibo.core.adapter.withItems
 import com.kaibo.core.fragment.BaseFragment
+import com.kaibo.core.util.animInStartActivity
 import com.kaibo.core.util.checkResult
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
+import com.kaibo.music.activity.SongListActivity
 import com.kaibo.music.bean.RankBean
 import com.kaibo.music.item.rank.RankItem
 import com.kaibo.music.net.Api
@@ -37,8 +39,12 @@ class RankFragment : BaseFragment() {
     private fun initRankList(rankBeanList: List<RankBean>) {
         rankList.layoutManager = LinearLayoutManager(context)
         OverScrollDecoratorHelper.setUpOverScroll(rankList, OverScrollDecoratorHelper.ORIENTATION_VERTICAL)
-        rankList.withItems(rankBeanList.map {
-            RankItem(it)
+        rankList.withItems(rankBeanList.map { rankBean: RankBean ->
+            RankItem(rankBean) {
+                setOnClickListener {
+                    activity?.animInStartActivity<SongListActivity>("topid" to rankBean.id)
+                }
+            }
         })
     }
 

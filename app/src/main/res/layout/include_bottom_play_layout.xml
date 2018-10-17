@@ -15,10 +15,11 @@
         android:layout_height="40dp"
         android:layout_marginStart="20dp"
         android:src="@drawable/test_play_img"
-        android:transitionName="shareSongImage"
+        android:transitionName="@string/transition_share_song_img"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:targetApi="lollipop" />
 
     <com.kaibo.music.weight.MarqueeTextView
         android:id="@+id/songName"

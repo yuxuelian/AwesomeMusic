@@ -9,9 +9,9 @@ import com.kaibo.core.adapter.withItems
 import com.kaibo.core.fragment.BaseFragment
 import com.kaibo.core.util.*
 import com.kaibo.music.R
-import com.kaibo.music.activity.SingerMusicListActivity
+import com.kaibo.music.activity.SongListActivity
 import com.kaibo.music.bean.SingerBean
-import com.kaibo.music.bean.SingerContractBean
+import com.kaibo.music.bean.SingerListBean
 import com.kaibo.music.item.singer.SingerItem
 import com.kaibo.music.net.Api
 import com.kaibo.music.weight.overscroll.OverScrollDecoratorHelper
@@ -31,20 +31,20 @@ class SingerFragment : BaseFragment() {
     override fun initViewCreated(savedInstanceState: Bundle?) {
         // 获取歌曲数据
         Api.instance.getSingerList().checkResult().toMainThread().`as`(bindLifecycle())
-                .subscribe({ singerContractBeanList: List<SingerContractBean> ->
+                .subscribe({ singerListBeanList: List<SingerListBean> ->
                     // 初始化SingerList
-                    initSingerList(singerContractBeanList.flatMap { it.items })
-                    initSlideBar(singerContractBeanList)
+                    initSingerList(singerListBeanList.flatMap { it.items })
+                    initSlideBar(singerListBeanList)
                 }) {
                     it.printStackTrace()
                 }
     }
 
-    private fun initSlideBar(singerContractBeanList: List<SingerContractBean>) {
-        val titleList: MutableList<String> = ArrayList(singerContractBeanList.size)
-        val itemsCount: MutableList<Int> = ArrayList(singerContractBeanList.size + 1)
+    private fun initSlideBar(singerListBeanList: List<SingerListBean>) {
+        val titleList: MutableList<String> = ArrayList(singerListBeanList.size)
+        val itemsCount: MutableList<Int> = ArrayList(singerListBeanList.size + 1)
         itemsCount.add(0)
-        singerContractBeanList.forEachIndexed { index, singerContractBean ->
+        singerListBeanList.forEachIndexed { index, singerContractBean ->
             titleList.add(singerContractBean.title)
             itemsCount.add(itemsCount[index] + singerContractBean.items.size)
         }
@@ -85,7 +85,7 @@ class SingerFragment : BaseFragment() {
         singerList.withItems(singerBeanList.map { singerBean: SingerBean ->
             SingerItem(singerBean) {
                 setOnClickListener {
-                    activity?.animInStartActivity<SingerMusicListActivity>("singerBean" to singerBean)
+                    activity?.animInStartActivity<SongListActivity>("singermid" to singerBean.id)
                 }
             }
         })

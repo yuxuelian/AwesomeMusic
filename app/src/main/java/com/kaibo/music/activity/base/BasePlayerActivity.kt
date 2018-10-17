@@ -1,12 +1,7 @@
 package com.kaibo.music.activity.base
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.os.IBinder
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.annotation.CallSuper
@@ -81,47 +76,31 @@ abstract class BasePlayerActivity : BaseActivity() {
         }
     }
 
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceDisconnected(componentName: ComponentName) {
-            // 解除绑定时会调用这个方法
-        }
-
-        override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
-            // 绑定成功会调用这个方法
-            iBinder as PlayerStatusBinder
-            // 绑定成功后获取一次PlayerService的播放状态
-            updateDuration(iBinder.duration)
-            updateSeek(iBinder.seek)
-            playStatusChange(iBinder.isPlaying)
-        }
-    }
-
     @CallSuper
     override fun initOnCreate(savedInstanceState: Bundle?) {
         // 启动播放音乐的Service
-        bindService(Intent(this, PlayerService::class.java), serviceConnection, Context.BIND_AUTO_CREATE)
         startService<PlayerService>()
         // 订阅进度总进度监听
-        RxBus.toObservable<PlayDurationBean>().`as`(bindLifecycle()).subscribe({
-            updateDuration(it.duration)
-        }) {
-            it.printStackTrace()
+        RxBus.toObservable<PlayerStatus>().`as`(bindLifecycle()).subscribe {
+            when (it) {
+                is DataSourceStatus -> {
+                }
+                is PlayingStatus -> {
+                    when (it.status) {
+                        PlayingStatus.Status.PLAY -> playStatusChange(true)
+                        PlayingStatus.Status.PAUSE -> playStatusChange(false)
+                        else -> {
+                        }
+                    }
+                }
+                is DurationStatus -> {
+                    updateDuration(it.duration)
+                }
+                is SeekStatus -> {
+                    updateSeek(it.seek)
+                }
+            }
         }
-        RxBus.toObservable<PlayProgressBean>().`as`(bindLifecycle()).subscribe({
-            updateSeek(it.progress)
-        }) {
-            it.printStackTrace()
-        }
-        RxBus.toObservable<PlayStatusChange>().`as`(bindLifecycle()).subscribe({
-            playStatusChange(it.isPlaying)
-        }) {
-            it.printStackTrace()
-        }
-    }
-
-    override fun onDestroy() {
-        this.unbindService(serviceConnection)
-        super.onDestroy()
     }
 
     protected abstract fun updateDuration(duration: Int)

@@ -15,7 +15,8 @@ import com.kaibo.core.util.statusBarHeight
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
 import com.kaibo.music.activity.base.BasePlayerActivity
-import com.kaibo.music.play.PlayCommand
+import com.kaibo.music.bean.SongBean
+import com.kaibo.music.play.DataSourceCommand
 import com.kaibo.music.play.SeekCommand
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_player.*
@@ -66,6 +67,7 @@ class PlayerActivity : BasePlayerActivity() {
         playerSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
+                    // 拖动的同时修改时间显示
                     currentSeek.text = progress.formatMunite()
                 }
             }
@@ -82,7 +84,7 @@ class PlayerActivity : BasePlayerActivity() {
         })
 
         val playDataSource = "https://music.kaibo123.com/amobile.music.tc.qq.com/C400003OU9ul1LEU9T.m4a?guid=4715368380&vkey=F3DA36B2E856E4F87A02E2B55C27714B0DF3540E9E6CEBDB51337D852F2C9EDB17FAFE803BDFABD97FD19DE24BC2A8D0C68D2A9DCEE6A74A&uin=0&fromtag=999"
-        val playCommand = PlayCommand(playDataSource, true)
+        val playCommand = DataSourceCommand(SongBean(url = playDataSource))
 
         // 播放或者暂停
         playOrPauseBtn.clicks().`as`(bindLifecycle()).subscribe {
@@ -95,7 +97,6 @@ class PlayerActivity : BasePlayerActivity() {
                 // 显示播放图标
                 playOrPauseBtn.setImageResource(R.drawable.big_pause)
             }
-            playCommand.isPlay = isPlaying
             // 发送命令
             RxBus.post(playCommand)
         }

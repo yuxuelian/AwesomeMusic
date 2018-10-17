@@ -1,10 +1,10 @@
 package com.kaibo.music.item.recommend
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.kaibo.core.adapter.Item
 import com.kaibo.core.adapter.ItemController
 import com.kaibo.core.glide.GlideApp
@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.item_recommend_banner_layout.view.*
  * @description：
  */
 
-class SongListItem(val recommendBean: RecommendBean) : Item {
+class RecommendItem(val recommendBean: RecommendBean, val init: View.() -> Unit = {}) : Item {
 
     companion object Controller : ItemController {
         override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
@@ -31,13 +31,14 @@ class SongListItem(val recommendBean: RecommendBean) : Item {
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, item: Item) {
             holder as ViewHolder
-            item as SongListItem
-
+            item as RecommendItem
             //加载图片
             GlideApp.with(holder.recommendImg).load(item.recommendBean.imgurl)
                     .placeholder(R.drawable.logo).error(R.drawable.logo).into(holder.recommendImg)
             holder.nameText.text = item.recommendBean.name
             holder.dissnameText.text = item.recommendBean.dissname
+            //初始化Item
+            holder.itemView.apply(item.init)
         }
 
         private class ViewHolder(itemView: View,

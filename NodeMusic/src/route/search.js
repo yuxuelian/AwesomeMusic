@@ -1,5 +1,5 @@
-const config = require('./config')
-const utils = require('./utils')
+const config = require('../util/config')
+const utils = require('../util/utils')
 const axios = require('axios')
 
 function search(apiRoutes) {

@@ -5,6 +5,7 @@
     <color name="colorAccent">#FFCD32</color>
 
     <color name="colorBackground">#222222</color>
+    <color name="colorForeground">#99222222</color>
     <color name="colorTheme">#FFCD32</color>
     <color name="colorThemeText">#909090</color>
     <color name="color_555">#555555</color>

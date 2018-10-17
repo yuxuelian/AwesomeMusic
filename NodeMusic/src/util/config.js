@@ -1,4 +1,5 @@
 module.exports = {
+    redisTTL: 30 * 60 * 1000,
     commonParams: {
         g_tk: 1928093487,
         inCharset: 'utf-8',

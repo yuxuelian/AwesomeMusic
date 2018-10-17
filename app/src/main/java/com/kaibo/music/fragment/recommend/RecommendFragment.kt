@@ -4,13 +4,15 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaibo.core.adapter.withItems
 import com.kaibo.core.fragment.BaseFragment
+import com.kaibo.core.util.animInStartActivity
 import com.kaibo.core.util.checkResult
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
+import com.kaibo.music.activity.SongListActivity
 import com.kaibo.music.bean.BannerDataBean
 import com.kaibo.music.bean.RecommendBean
 import com.kaibo.music.item.recommend.BannerItem
-import com.kaibo.music.item.recommend.SongListItem
+import com.kaibo.music.item.recommend.RecommendItem
 import com.kaibo.music.item.recommend.SongTitleItem
 import com.kaibo.music.net.Api
 import com.kaibo.music.weight.overscroll.OverScrollDecoratorHelper
@@ -62,8 +64,22 @@ class RecommendFragment : BaseFragment() {
             // 列表标题
             add(SongTitleItem())
             // 列表数据
-            addAll(netRes.second.map {
-                SongListItem(it)
+            addAll(netRes.second.map { recommendBean: RecommendBean ->
+                RecommendItem(recommendBean) {
+                    setOnClickListener {
+                        //                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                            val intent = Intent(activity, SongListActivity::class.java)
+//                            intent.putExtra("disstid", recommendBean.disstid)
+//                            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(
+//                                    activity,
+//                                    it.recommendImg,
+//                                    getString(R.string.transition_recommend_logo)).toBundle())
+//                        } else {
+//                            activity?.animInStartActivity<SongListActivity>("disstid" to recommendBean.disstid)
+//                        }
+                        activity?.animInStartActivity<SongListActivity>("disstid" to recommendBean.disstid)
+                    }
+                }
             })
         }
     }
