@@ -35,7 +35,7 @@ abstract class BaseApplication : Application() {
 //        //初始化配置BaseURL
 //        HttpRequestManager.BASE_URL = getBaseUrl()
         INSTANCE = this
-        ToastUtils.init(this)
+//        ToastUtils.init(this)
         Logger.addLogAdapter(AndroidLogAdapter())
     }
 

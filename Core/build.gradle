@@ -227,7 +227,7 @@ configurations.all {
 //    api project(":Skin:ConstraintLayout")
 
         //照片选择
-        api 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
+//        api 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
 
         // ijkplayer
 //        api "tv.danmaku.ijk.media:ijkplayer-java:$ijkplayer_version"
@@ -237,7 +237,7 @@ configurations.all {
 //    api "tv.danmaku.ijk.media:ijkplayer-arm64:$ijkplayer_version"
 //    api "tv.danmaku.ijk.media:ijkplayer-x86_64:$ijkplayer_version"
         //SpringView核心库 (只包含DefaultHeader/Footer)
-        api "com.liaoinstan.springview:library:$spring_view_version"
+//        api "com.liaoinstan.springview:library:$spring_view_version"
         //AcFun风格 （header and footer）
 //        api "com.liaoinstan.springview:AcfunHeader:$spring_view_version"
 //        //阿里旅行风格 （header and footer）

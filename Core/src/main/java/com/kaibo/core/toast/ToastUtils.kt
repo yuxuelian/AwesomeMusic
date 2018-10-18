@@ -27,13 +27,6 @@ object ToastUtils {
 
     private var isInit = false
 
-    @SuppressLint("ShowToast")
-    fun init(context: Context) {
-        isInit = true
-        toast = Toast(context)
-        toast.view = LayoutInflater.from(context).inflate(R.layout.toast_layout, null, false)
-    }
-
     @ColorInt
     private val DEFAULT_TEXT_COLOR = Color.WHITE
 
@@ -48,6 +41,13 @@ object ToastUtils {
 
     @DrawableRes
     private val ERROR_COLOR = R.drawable.corners_error_toast_bg
+
+    @SuppressLint("ShowToast")
+    fun init(context: Context) {
+        isInit = true
+        toast = Toast(context)
+        toast.view = LayoutInflater.from(context).inflate(R.layout.toast_layout, null, false)
+    }
 
     @JvmOverloads
     fun showInfo(msg: CharSequence?, @ColorInt textColor: Int = DEFAULT_TEXT_COLOR, @DrawableRes tintColor: Int = INFO_COLOR, showIcon: Boolean = true) {
