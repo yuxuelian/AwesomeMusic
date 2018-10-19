@@ -9,6 +9,7 @@ import com.kaibo.core.activity.BaseActivity
 import com.kaibo.core.bus.RxBus
 import com.kaibo.core.util.blur
 import com.kaibo.core.util.toMainThread
+import com.kaibo.music.IMyAidlInterface
 import com.kaibo.music.R
 import com.kaibo.music.play.*
 import io.reactivex.Observable
@@ -27,6 +28,7 @@ abstract class BasePlayerActivity : BaseActivity() {
 
     protected val topLayoutIn: Animation by lazy {
         AnimationUtils.loadAnimation(this, R.anim.top_layout_in).apply {
+            IMyAidlInterface.Stub
             fillAfter = true
         }
     }

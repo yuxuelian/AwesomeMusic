@@ -17,7 +17,7 @@ import com.kaibo.music.net.Api
 import com.kaibo.music.weight.AcFunOverView
 
 import com.liaoinstan.springview.widget.SpringView
-import kotlinx.android.synthetic.main.fragment_singer_layout.*
+import kotlinx.android.synthetic.main.fragment_singer.*
 
 /**
  * @author kaibo
@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.fragment_singer_layout.*
  */
 class SingerFragment : BaseFragment() {
 
-    override fun getLayoutRes() = R.layout.fragment_singer_layout
+    override fun getLayoutRes() = R.layout.fragment_singer
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
         springview.setGive(SpringView.Give.NONE)

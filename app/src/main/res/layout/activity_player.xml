@@ -9,7 +9,7 @@
     <!--顶部布局-->
     <include
         android:id="@+id/playTopLayout"
-        layout="@layout/include_play_top_layout" />
+        layout="@layout/include_play_top" />
 
     <!--中间布局-->
     <FrameLayout
@@ -89,5 +89,5 @@
     <!--底部布局-->
     <include
         android:id="@+id/playBottomLayout"
-        layout="@layout/include_play_bottom_layout" />
+        layout="@layout/include_play_bottom" />
 </LinearLayout>

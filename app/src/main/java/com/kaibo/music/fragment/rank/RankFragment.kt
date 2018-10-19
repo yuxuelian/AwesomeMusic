@@ -15,7 +15,7 @@ import com.kaibo.music.net.Api
 import com.kaibo.music.weight.AcFunOverView
 
 import com.liaoinstan.springview.widget.SpringView
-import kotlinx.android.synthetic.main.fragment_rank_layout.*
+import kotlinx.android.synthetic.main.fragment_rank.*
 
 /**
  * @author kaibo
@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.main.fragment_rank_layout.*
  */
 class RankFragment : BaseFragment() {
 
-    override fun getLayoutRes() = R.layout.fragment_rank_layout
+    override fun getLayoutRes() = R.layout.fragment_rank
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
         springview.setGive(SpringView.Give.NONE)

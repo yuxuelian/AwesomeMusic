@@ -20,7 +20,7 @@ class SongTitleItem : Item {
 
     companion object Controller : ItemController {
         override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-            val itemView: View = parent.inflate(R.layout.item_song_title_layout)
+            val itemView: View = parent.inflate(R.layout.item_song_title)
             return ViewHolder(itemView)
         }
 

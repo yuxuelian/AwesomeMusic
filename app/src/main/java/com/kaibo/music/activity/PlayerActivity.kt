@@ -20,8 +20,8 @@ import com.kaibo.music.play.DataSourceCommand
 import com.kaibo.music.play.SeekCommand
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_player.*
-import kotlinx.android.synthetic.main.include_play_bottom_layout.*
-import kotlinx.android.synthetic.main.include_play_top_layout.*
+import kotlinx.android.synthetic.main.include_play_bottom.*
+import kotlinx.android.synthetic.main.include_play_top.*
 import org.jetbrains.anko.backgroundDrawable
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.matchParent
@@ -122,7 +122,7 @@ class PlayerActivity : BasePlayerActivity() {
                     }
                     1 -> {
                         if (lrcLayout == null) {
-                            lrcLayout = layoutInflater.inflate(R.layout.item_lrc_layout, container, false)
+                            lrcLayout = layoutInflater.inflate(R.layout.item_lrc, container, false)
                         }
                         container.addView(lrcLayout)
                         // 上面已经判空过  lrcLayout  一定不为null

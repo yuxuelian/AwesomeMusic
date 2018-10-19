@@ -17,8 +17,8 @@ import com.kaibo.music.activity.SearchActivity
 import com.kaibo.music.fragment.rank.RankFragment
 import com.kaibo.music.fragment.recommend.RecommendFragment
 import com.kaibo.music.fragment.singer.SingerFragment
-import kotlinx.android.synthetic.main.fragment_home_layout.*
-import kotlinx.android.synthetic.main.include_bottom_play_layout.*
+import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.include_bottom_play.*
 
 /**
  * @author kaibo
@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.include_bottom_play_layout.*
 
 class HomeFragment : BaseFragment() {
 
-    override fun getLayoutRes() = R.layout.fragment_home_layout
+    override fun getLayoutRes() = R.layout.fragment_home
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
         appBarLayout.setPadding(0, activity!!.statusBarHeight, 0, 0)

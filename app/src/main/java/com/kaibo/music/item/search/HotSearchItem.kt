@@ -9,7 +9,7 @@ import com.kaibo.core.adapter.ItemController
 import com.kaibo.core.util.inflate
 import com.kaibo.music.R
 import com.kaibo.music.bean.HotSearchBean
-import kotlinx.android.synthetic.main.item_hot_search_layout.view.*
+import kotlinx.android.synthetic.main.item_hot_search.view.*
 
 /**
  * @author kaibo
@@ -24,7 +24,7 @@ class HotSearchItem(val hotSearchBean: HotSearchBean,
 
     companion object Controller : ItemController {
         override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-            val itemView: View = parent.inflate(R.layout.item_hot_search_layout)
+            val itemView: View = parent.inflate(R.layout.item_hot_search)
             return ViewHolder(itemView, itemView.hotSearchText)
         }
 

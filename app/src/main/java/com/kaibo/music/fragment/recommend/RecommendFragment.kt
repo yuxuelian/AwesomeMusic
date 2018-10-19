@@ -20,7 +20,7 @@ import com.kaibo.music.weight.AcFunOverView
 import com.liaoinstan.springview.widget.SpringView
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
-import kotlinx.android.synthetic.main.fragment_recommend_layout.*
+import kotlinx.android.synthetic.main.fragment_recommend.*
 
 /**
  * @author kaibo
@@ -35,7 +35,7 @@ class RecommendFragment : BaseFragment() {
         BannerItem()
     }
 
-    override fun getLayoutRes() = R.layout.fragment_recommend_layout
+    override fun getLayoutRes() = R.layout.fragment_recommend
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
         springview.setGive(SpringView.Give.NONE)

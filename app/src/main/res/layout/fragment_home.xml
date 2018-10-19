@@ -60,5 +60,5 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <include layout="@layout/include_bottom_play_layout" />
+    <include layout="@layout/include_bottom_play" />
 </LinearLayout>

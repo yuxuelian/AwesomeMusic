@@ -11,7 +11,7 @@ import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.util.inflate
 import com.kaibo.music.R
 import com.kaibo.music.bean.RecommendBean
-import kotlinx.android.synthetic.main.item_recommend_banner_layout.view.*
+import kotlinx.android.synthetic.main.item_recommend_banner.view.*
 
 /**
  * @author kaibo
@@ -25,7 +25,7 @@ class RecommendItem(val recommendBean: RecommendBean, val init: View.() -> Unit 
 
     companion object Controller : ItemController {
         override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-            val itemView: View = parent.inflate(R.layout.item_recommend_banner_layout)
+            val itemView: View = parent.inflate(R.layout.item_recommend_banner)
             return ViewHolder(itemView, itemView.recommendImg, itemView.nameText, itemView.dissnameText)
         }
 

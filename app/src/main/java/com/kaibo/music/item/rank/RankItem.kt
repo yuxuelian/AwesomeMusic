@@ -11,7 +11,7 @@ import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.util.inflate
 import com.kaibo.music.R
 import com.kaibo.music.bean.RankBean
-import kotlinx.android.synthetic.main.item_rank_layout.view.*
+import kotlinx.android.synthetic.main.item_rank.view.*
 
 /**
  * @author 56896
@@ -25,7 +25,7 @@ class RankItem(val rankBean: RankBean, val init: View.() -> Unit = {}) : Item {
 
     companion object Controller : ItemController {
         override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-            val itemView: View = parent.inflate(R.layout.item_rank_layout)
+            val itemView: View = parent.inflate(R.layout.item_rank)
             return ViewHolder(itemView, itemView.picImg, listOf(itemView.songOne, itemView.songTwo, itemView.songThree))
         }
 

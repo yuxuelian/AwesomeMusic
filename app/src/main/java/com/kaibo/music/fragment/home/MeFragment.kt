@@ -13,7 +13,7 @@ import com.kaibo.music.R
  */
 class MeFragment : BaseFragment() {
 
-    override fun getLayoutRes() = R.layout.fragment_me_layout
+    override fun getLayoutRes() = R.layout.fragment_me
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
 

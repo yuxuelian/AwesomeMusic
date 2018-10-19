@@ -11,7 +11,7 @@ import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.util.inflate
 import com.kaibo.music.R
 import com.kaibo.music.bean.SingerBean
-import kotlinx.android.synthetic.main.item_singer_layout.view.*
+import kotlinx.android.synthetic.main.item_singer.view.*
 
 /**
  * @author 56896
@@ -25,7 +25,7 @@ class SingerItem(val singerBean: SingerBean, val init: View.() -> Unit = {}) : I
 
     companion object Controller : ItemController {
         override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-            val itemView: View = parent.inflate(R.layout.item_singer_layout)
+            val itemView: View = parent.inflate(R.layout.item_singer)
             return ViewHolder(itemView, itemView.singerAvatar, itemView.singerName)
         }
 

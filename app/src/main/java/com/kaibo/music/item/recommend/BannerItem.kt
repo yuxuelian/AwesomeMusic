@@ -11,7 +11,7 @@ import com.kaibo.core.util.inflate
 import com.kaibo.music.R
 import com.kaibo.music.bean.BannerDataBean
 import com.stx.xhb.xbanner.XBanner
-import kotlinx.android.synthetic.main.item_banner_layout.view.*
+import kotlinx.android.synthetic.main.item_banner.view.*
 
 /**
  * @author kaibo
@@ -44,7 +44,7 @@ class BannerItem : Item {
 
     companion object Controller : ItemController {
         override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-            val itemView: View = parent.inflate(R.layout.item_banner_layout)
+            val itemView: View = parent.inflate(R.layout.item_banner)
             return ViewHolder(itemView, itemView.xbanner)
         }
 
