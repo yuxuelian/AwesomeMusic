@@ -8,6 +8,7 @@ import com.kaibo.core.BaseApplication;
 import com.kaibo.music.bean.SongBean;
 
 public class FloatLyricViewManager {
+
     private static final String TAG = "FloatLyricViewManager";
     private static WindowManager.LayoutParams mFloatLyricViewParams;
     private static WindowManager mWindowManager;

@@ -25,22 +25,18 @@ public class PlayManager {
     private static final WeakHashMap<Context, ServiceBinder> mConnectionMap;
 
     static {
-        mConnectionMap = new WeakHashMap<Context, ServiceBinder>();
+        mConnectionMap = new WeakHashMap<>();
     }
 
-    public static final ServiceToken bindToService(final Context context,
-                                                   final ServiceConnection callback) {
-
+    public static ServiceToken bindToService(Context context, ServiceConnection callback) {
         Activity realActivity = ((Activity) context).getParent();
         if (realActivity == null) {
             realActivity = (Activity) context;
         }
         final ContextWrapper contextWrapper = new ContextWrapper(realActivity);
         contextWrapper.startService(new Intent(contextWrapper, MusicPlayerService.class));
-        final ServiceBinder binder = new ServiceBinder(callback,
-                contextWrapper.getApplicationContext());
-        if (contextWrapper.bindService(
-                new Intent().setClass(contextWrapper, MusicPlayerService.class), binder, 0)) {
+        final ServiceBinder binder = new ServiceBinder(callback);
+        if (contextWrapper.bindService(new Intent().setClass(contextWrapper, MusicPlayerService.class), binder, 0)) {
             mConnectionMap.put(contextWrapper, binder);
             return new ServiceToken(contextWrapper);
         }
@@ -65,7 +61,6 @@ public class PlayManager {
     public static final boolean isPlaybackServiceConnected() {
         return mService != null;
     }
-
 
     public static void nextPlay(SongBean music) {
         try {
@@ -148,10 +143,10 @@ public class PlayManager {
         }
     }
 
-    public static void setLoopMode(int loopmode) {
+    public static void setPlayMode(int loopmode) {
         try {
             if (mService != null) {
-                mService.setLoopMode(loopmode);
+                mService.setPlayMode(loopmode);
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -314,16 +309,14 @@ public class PlayManager {
 
     public static final class ServiceBinder implements ServiceConnection {
         private final ServiceConnection mCallback;
-        private final Context mContext;
 
-
-        public ServiceBinder(final ServiceConnection callback, final Context context) {
+        public ServiceBinder(final ServiceConnection callback) {
             mCallback = callback;
-            mContext = context;
         }
 
         @Override
         public void onServiceConnected(final ComponentName className, final IBinder service) {
+            // 获取到远端的Binder
             mService = ISongService.Stub.asInterface(service);
             if (mCallback != null) {
                 mCallback.onServiceConnected(className, service);

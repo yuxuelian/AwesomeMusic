@@ -74,12 +74,12 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.liaoinstan.springview.widget.SpringView
-        android:id="@+id/springview"
+    <com.yan.pullrefreshlayout.PullRefreshLayout
+        android:id="@+id/pullRefresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:type="overlap">
+        app:prl_refreshEnable="false">
 
         <ScrollView
             android:id="@+id/searchScrollView"
@@ -146,5 +146,5 @@
                     android:overScrollMode="never" />
             </LinearLayout>
         </ScrollView>
-    </com.liaoinstan.springview.widget.SpringView>
+    </com.yan.pullrefreshlayout.PullRefreshLayout>
 </LinearLayout>

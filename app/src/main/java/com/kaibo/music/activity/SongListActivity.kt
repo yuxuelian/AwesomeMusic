@@ -10,7 +10,7 @@ import com.kaibo.core.util.checkResult
 import com.kaibo.core.util.statusBarHeight
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
-import com.kaibo.music.activity.base.BaseAnimActivity
+import com.kaibo.music.activity.base.BaseActivity
 import com.kaibo.music.bean.RankSongListBean
 import com.kaibo.music.bean.RecommendSongListBean
 import com.kaibo.music.bean.SingerSongListBean
@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.activity_song_list.*
  * @description：
  */
 
-class SongListActivity : BaseAnimActivity() {
+class SongListActivity : BaseActivity() {
 
     override fun getLayoutRes() = R.layout.activity_song_list
 

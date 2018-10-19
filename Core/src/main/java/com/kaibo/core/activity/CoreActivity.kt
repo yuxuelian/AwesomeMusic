@@ -24,7 +24,7 @@ import com.uber.autodispose.AutoDisposeConverter
  * description:
  */
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class CoreActivity : AppCompatActivity() {
 
     protected val rxPermissions by lazy {
         RxPermissions(this)

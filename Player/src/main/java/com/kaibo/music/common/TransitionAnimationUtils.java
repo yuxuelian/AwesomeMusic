@@ -68,8 +68,6 @@ public class TransitionAnimationUtils {
                 "y", startY, endY)
                 .setDuration(1000);
         objectAnimator.setInterpolator(new AccelerateInterpolator());
-
-
         objectAnimator.start();
     }
 }

@@ -14,7 +14,7 @@ interface ISongService {
     void stop();
     void prev();
     void next();
-    void setLoopMode(int loopmode);
+    void setPlayMode(int mode);
     void seekTo(int ms);
     int position();
     int getDuration();

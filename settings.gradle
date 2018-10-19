@@ -1,3 +1,4 @@
 include ':Core'
-include ':PullRefresh', ':Player'
+include ':PullRefresh'
+include ':Player'
 include ':app'

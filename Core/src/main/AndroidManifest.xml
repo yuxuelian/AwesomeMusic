@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.kaibo.core">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -11,7 +12,11 @@
     <!--8.0安装apk-->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
-    <application android:extractNativeLibs="false">
+    <application
+        android:extractNativeLibs="false"
+        android:largeHeap="true"
+        android:supportsRtl="true"
+        tools:targetApi="m">
 
         <!-- 全面屏适配 -->
         <meta-data
@@ -31,6 +36,5 @@
         </provider>
         <!-- 7.0文件权限结束 -->
 
-        <activity android:name=".activity.AppInstallApkActivity" />
     </application>
 </manifest>

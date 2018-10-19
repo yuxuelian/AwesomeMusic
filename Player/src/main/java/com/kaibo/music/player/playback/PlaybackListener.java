@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
  */
 
 public interface PlaybackListener {
+
     /**
      * 完成下一首
      */

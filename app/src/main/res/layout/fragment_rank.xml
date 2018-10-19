@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.liaoinstan.springview.widget.SpringView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.yan.pullrefreshlayout.PullRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/springview"
+    android:id="@+id/pullRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:type="overlap">
+    app:prl_refreshEnable="false">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rankList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never" />
-</com.liaoinstan.springview.widget.SpringView>
+</com.yan.pullrefreshlayout.PullRefreshLayout>

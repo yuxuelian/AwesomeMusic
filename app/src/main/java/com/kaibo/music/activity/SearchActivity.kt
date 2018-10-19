@@ -11,12 +11,10 @@ import com.kaibo.core.util.checkResult
 import com.kaibo.core.util.statusBarHeight
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
-import com.kaibo.music.activity.base.BaseAnimActivity
+import com.kaibo.music.activity.base.BaseActivity
 import com.kaibo.music.bean.HotSearchBean
 import com.kaibo.music.item.search.HotSearchItem
 import com.kaibo.music.net.Api
-import com.kaibo.music.weight.AcFunOverView
-import com.liaoinstan.springview.widget.SpringView
 import kotlinx.android.synthetic.main.activity_search.*
 import java.util.concurrent.TimeUnit
 
@@ -28,21 +26,12 @@ import java.util.concurrent.TimeUnit
  * @description：
  */
 
-class SearchActivity : BaseAnimActivity() {
+class SearchActivity : BaseActivity() {
 
     override fun getLayoutRes() = R.layout.activity_search
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
         appBarLayout.setPadding(0, statusBarHeight, 0, 0)
-        springview.setGive(SpringView.Give.NONE)
-        springview.setListener(object : SpringView.OnFreshListener {
-            override fun onRefresh() {}
-
-            override fun onLoadmore() {}
-        })
-        springview.header = AcFunOverView(this)
-        springview.footer = AcFunOverView(this)
-
         setSupportActionBar(searchToolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         Api.instance.getHotSearch().checkResult()

@@ -82,7 +82,9 @@ public class NotifyManager {
      * @param drawableId if != -1, sets the drawable with that id on the play/pause button
      */
     private synchronized void updateNotification(int drawableId) {
-        if (mNotificationBuilder == null) return;
+        if (mNotificationBuilder == null) {
+            return;
+        }
         if (drawableId != -1) {
             if (notRemoteView != null) {
                 notRemoteView.setImageViewResource(R.id.notificationPlayPause, drawableId);
@@ -95,18 +97,24 @@ public class NotifyManager {
     }
 
     private void setControlsOpacity(@IntRange(from = 0, to = 255) int opacity) {
-        if (notRemoteView != null)
+        if (notRemoteView != null) {
             notRemoteView.setInt(R.id.notificationPlayPause, setAlphaMethodName, opacity);
-        if (bigNotRemoteView != null)
+        }
+        if (bigNotRemoteView != null) {
             bigNotRemoteView.setInt(R.id.notificationPlayPause, setAlphaMethodName, opacity);
-        if (notRemoteView != null)
+        }
+        if (notRemoteView != null) {
             notRemoteView.setInt(R.id.notificationFForward, setAlphaMethodName, opacity);
-        if (bigNotRemoteView != null)
+        }
+        if (bigNotRemoteView != null) {
             bigNotRemoteView.setInt(R.id.notificationFForward, setAlphaMethodName, opacity);
-        if (notRemoteView != null)
+        }
+        if (notRemoteView != null) {
             notRemoteView.setInt(R.id.notificationFRewind, setAlphaMethodName, opacity);
-        if (bigNotRemoteView != null)
+        }
+        if (bigNotRemoteView != null) {
             bigNotRemoteView.setInt(R.id.notificationFRewind, setAlphaMethodName, opacity);
+        }
     }
 
     public void close() {

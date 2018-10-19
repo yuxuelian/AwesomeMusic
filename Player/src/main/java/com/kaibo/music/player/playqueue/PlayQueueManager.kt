@@ -1,5 +1,6 @@
 package com.kaibo.music.player.playqueue
 
+import androidx.annotation.IntDef
 import com.kaibo.music.utils.SPUtils
 
 /**
@@ -13,33 +14,33 @@ object PlayQueueManager {
     const val PLAY_MODE_LOOP = 0
     const val PLAY_MODE_REPEAT = 1
     const val PLAY_MODE_RANDOM = 2
-    //播放模式
-    private var playingModeId = 0
 
     private val playingMode = arrayOf("顺序播放", "单曲循环", "随机播放")
+
+    @Target(AnnotationTarget.VALUE_PARAMETER)
+    @IntDef(value = [PLAY_MODE_LOOP, PLAY_MODE_REPEAT, PLAY_MODE_RANDOM])
+    annotation class ModeTypeGuide
 
     /**
      * 更新播放模式
      */
-    fun updatePlayMode(): Int {
-        playingModeId = (playingModeId + 1) % 3
-        SPUtils.savePlayMode(playingModeId)
+    fun updatePlayMode(@ModeTypeGuide mode: Int): String {
+        SPUtils.savePlayMode(mode)
         // TODO 总线发送播放模式
-        return playingModeId
+        return playingMode[mode]
     }
 
     /**
      * 获取播放模式id
      */
     fun getPlayModeId(): Int {
-        playingModeId = SPUtils.getPlayMode()
-        return playingModeId
+        return SPUtils.getPlayMode()
     }
 
     /**
      * 获取播放模式
      */
     fun getPlayMode(): String {
-        return playingMode[playingModeId]
+        return playingMode[getPlayModeId()]
     }
 }

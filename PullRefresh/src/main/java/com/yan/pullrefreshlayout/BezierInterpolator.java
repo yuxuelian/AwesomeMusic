@@ -1,4 +1,12 @@
-package com.liaoinstan.springview.widget;
+package com.yan.pullrefreshlayout;
+
+/**
+ * @author kaibo
+ * @date 2018/10/19 14:34
+ * @GitHub：https://github.com/yuxuelian
+ * @email：kaibo1hao@gmail.com
+ * @description：
+ */
 
 import android.graphics.PointF;
 import android.view.animation.Interpolator;
@@ -54,3 +62,4 @@ public class BezierInterpolator implements Interpolator {
         return 3 * uu * t * p1 + 3 * u * tt * p2 + ttt;
     }
 }
+

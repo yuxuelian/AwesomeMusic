@@ -7,17 +7,14 @@ import com.kaibo.core.fragment.BaseFragment
 import com.kaibo.core.util.animInStartActivity
 import com.kaibo.core.util.checkResult
 import com.kaibo.core.util.toMainThread
-import com.kaibo.music.R
 import com.kaibo.music.activity.SongListActivity
 import com.kaibo.music.bean.BannerDataBean
+import com.kaibo.music.R
 import com.kaibo.music.bean.RecommendBean
 import com.kaibo.music.item.recommend.BannerItem
 import com.kaibo.music.item.recommend.RecommendItem
 import com.kaibo.music.item.recommend.SongTitleItem
 import com.kaibo.music.net.Api
-import com.kaibo.music.weight.AcFunOverView
-
-import com.liaoinstan.springview.widget.SpringView
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import kotlinx.android.synthetic.main.fragment_recommend.*
@@ -38,14 +35,6 @@ class RecommendFragment : BaseFragment() {
     override fun getLayoutRes() = R.layout.fragment_recommend
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
-        springview.setGive(SpringView.Give.NONE)
-        springview.setListener(object : SpringView.OnFreshListener {
-            override fun onRefresh() {}
-
-            override fun onLoadmore() {}
-        })
-        springview.header = AcFunOverView(context)
-        springview.footer = AcFunOverView(context)
         Observable
                 .zip(
                         Api.instance.getBannerList().checkResult(),

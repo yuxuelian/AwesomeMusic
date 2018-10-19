@@ -5,14 +5,12 @@ import android.os.Bundle
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.annotation.CallSuper
-import com.kaibo.core.activity.BaseActivity
-import com.kaibo.core.bus.RxBus
+import com.kaibo.core.activity.CoreActivity
 import com.kaibo.core.util.blur
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import org.jetbrains.anko.startService
 
 /**
  * @author kaibo
@@ -22,7 +20,7 @@ import org.jetbrains.anko.startService
  * @description：
  */
 
-abstract class BasePlayerActivity : BaseActivity() {
+abstract class BasePlayerActivity : CoreActivity() {
 
     protected val topLayoutIn: Animation by lazy {
         AnimationUtils.loadAnimation(this, R.anim.top_layout_in).apply {

@@ -238,17 +238,17 @@ configurations.all {
 //    api "tv.danmaku.ijk.media:ijkplayer-arm64:$ijkplayer_version"
 //    api "tv.danmaku.ijk.media:ijkplayer-x86_64:$ijkplayer_version"
         //SpringView核心库 (只包含DefaultHeader/Footer)
-//        api "com.liaoinstan.springview:library:$spring_view_version"
+//        api "com.liaoinstan.pullRefresh:library:$spring_view_version"
         //AcFun风格 （header and footer）
-//        api "com.liaoinstan.springview:AcfunHeader:$spring_view_version"
+//        api "com.liaoinstan.pullRefresh:AcfunHeader:$spring_view_version"
 //        //阿里旅行风格 （header and footer）
-//        api "com.liaoinstan.springview:AliHeader:$spring_view_version"
+//        api "com.liaoinstan.pullRefresh:AliHeader:$spring_view_version"
 //        //美团风格 （header and footer）
-//        api "com.liaoinstan.springview:MeituanHeader:$spring_view_version"
+//        api "com.liaoinstan.pullRefresh:MeituanHeader:$spring_view_version"
 //        //齿轮机械风格 （header and footer）
-//        api "com.liaoinstan.springview:RotationHeader:$spring_view_version"
+//        api "com.liaoinstan.pullRefresh:RotationHeader:$spring_view_version"
 //        //微信小程序header（只有header）
-//        api "com.liaoinstan.springview:WeixinHeader:$spring_view_version"
+//        api "com.liaoinstan.pullRefresh:WeixinHeader:$spring_view_version"
         //google地图
 //    api 'com.google.android.gms:play-services-maps:15.0.1'
     }

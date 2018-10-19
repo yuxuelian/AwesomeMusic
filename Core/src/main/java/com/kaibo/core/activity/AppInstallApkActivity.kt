@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.provider.Settings
 import com.kaibo.core.R
 import com.kaibo.core.utl.installApk
-import org.jetbrains.anko.sp
 
 
 /**
@@ -18,7 +17,7 @@ import org.jetbrains.anko.sp
  * @description：
  */
 
-class AppInstallApkActivity : BaseActivity() {
+class AppInstallApkActivity : CoreActivity() {
 
     companion object {
         const val GET_UNKNOWN_APP_SOURCES = 0x01

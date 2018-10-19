@@ -7,7 +7,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import com.jakewharton.rxbinding2.view.clicks
-import com.kaibo.core.activity.BaseActivity
+import com.kaibo.core.activity.CoreActivity
 import com.kaibo.core.util.animInStartActivity
 import com.kaibo.core.util.statusBarHeight
 import com.kaibo.music.R
@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.include_mini_play.*
  * @description：
  */
 
-class MainActivity : BaseActivity() {
+class MainActivity : CoreActivity() {
 
     override fun getLayoutRes(): Int {
         return R.layout.activity_main

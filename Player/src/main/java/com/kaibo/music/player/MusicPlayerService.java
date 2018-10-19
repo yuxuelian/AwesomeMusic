@@ -72,6 +72,7 @@ public class MusicPlayerService extends Service {
     public static final String ACTION_PLAY_PAUSE = "com.cyl.music_lake.notify.play_state";// 播放暂停广播
     public static final String ACTION_CLOSE = "com.cyl.music_lake.notify.close";// 播放暂停广播
     public static final String ACTION_LYRIC = "com.cyl.music_lake.notify.lyric";// 播放暂停广播
+
     public static final String PLAY_STATE_CHANGED = "com.cyl.music_lake.play_state";// 播放暂停广播
     public static final String PLAY_STATE_LOADING_CHANGED = "com.cyl.music_lake.play_state_loading";// 播放loading
     public static final String DURATION_CHANGED = "com.cyl.music_lake.duration";// 播放时长
@@ -110,10 +111,8 @@ public class MusicPlayerService extends Service {
      * 错误次数，超过最大错误次数，自动停止播放
      */
     private int playErrorTimes = 0;
-    private int MAX_ERROR_TIMES = 5;
-
+    private static final int MAX_ERROR_TIMES = 5;
     private static final boolean DEBUG = true;
-
     private MusicPlayerEngine mPlayer = null;
     public PowerManager.WakeLock mWakeLock;
     private PowerManager powerManager;
@@ -121,7 +120,6 @@ public class MusicPlayerService extends Service {
     private List<SongBean> mPlayQueue = new ArrayList<>();
     private List<Integer> mHistoryPos = new ArrayList<>();
     private int mPlayingPos = -1;
-    private int mNextPlayPos = -1;
     private String mPlaylistId = Constants.PLAYLIST_QUEUE_ID;
     //广播接收者
     ServiceReceiver mServiceReceiver;
@@ -139,8 +137,6 @@ public class MusicPlayerService extends Service {
 
     //暂时失去焦点，会再次回去音频焦点
     private boolean mPausedByTransientLossOfFocus = false;
-
-    public static int totalTime = 0;
 
     boolean mServiceInUse = false;
 
