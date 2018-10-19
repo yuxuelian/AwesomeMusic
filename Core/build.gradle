@@ -128,6 +128,7 @@ configurations.all {
         api "com.android.support:design:$android_support_version"
         api "com.android.support:multidex:$android_multidex_version"
 //    api "com.android.support:support-v4:$android_support_version"
+        api "com.android.support:support-v4:$android_support_version"
         api "com.android.support:cardview-v7:$android_support_version"
         api "com.android.support:appcompat-v7:$android_support_version"
         api "com.android.support:recyclerview-v7:$android_support_version"

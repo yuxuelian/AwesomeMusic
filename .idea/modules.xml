@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/Core/Core.iml" filepath="$PROJECT_DIR$/Core/Core.iml" />
       <module fileurl="file://$PROJECT_DIR$/DelicateMusic.iml" filepath="$PROJECT_DIR$/DelicateMusic.iml" />
       <module fileurl="file://$PROJECT_DIR$/Player/Player.iml" filepath="$PROJECT_DIR$/Player/Player.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PullRefresh/PullRefresh.iml" filepath="$PROJECT_DIR$/PullRefresh/PullRefresh.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

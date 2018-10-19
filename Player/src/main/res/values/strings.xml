@@ -13,4 +13,16 @@
     <string name="xiami">虾米音乐</string>
 
     <string name="setting_key_mobile_wifi">mobile_wifi</string>
+
+    <string name="cancel">取消</string>
+    <string name="now_play">正在播放</string>
+    <string name="unable_to_play">网络不给力,请检查网络!</string>
+    <string name="unable_to_play_exception">播放异常</string>
+    <string name="loading">努力加载中&#8230;</string>
+    <string name="lyric_loading">加载中&#8230;</string>
+    <string name="tip_empty_song">空空如也</string>
+    <string name="tip_empty_queue">播放队列为空</string>
+    <string name="tip_empty_playlist">暂无歌单，快去新建吧！</string>
+    <string name="recent_update">最近更新：%s</string>
+
 </resources>

@@ -10,6 +10,7 @@ import android.media.AudioManager;
 import android.media.session.MediaSession;
 import android.os.Build;
 
+import com.kaibo.music.utils.SystemUtils;
 import com.orhanobut.logger.Logger;
 
 import androidx.annotation.RequiresApi;
@@ -29,10 +30,11 @@ public class AudioAndFocusManager {
     private MediaSession mediaSession;
     private MusicPlayerService.MusicPlayerHandler mHandler;
 
-
     public AudioAndFocusManager(Context mContext, MusicPlayerService.MusicPlayerHandler mHandler) {
         this.mHandler = mHandler;
-        initAudioManager(mContext);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            initAudioManager(mContext);
+        }
     }
 
     /**
@@ -68,8 +70,8 @@ public class AudioAndFocusManager {
         } else {
             if (audioFocusChangeListener != null) {
                 boolean result = AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAudioManager.requestAudioFocus(audioFocusChangeListener,
-                                AudioManager.STREAM_MUSIC,
-                                AudioManager.AUDIOFOCUS_GAIN);
+                        AudioManager.STREAM_MUSIC,
+                        AudioManager.AUDIOFOCUS_GAIN);
                 Logger.e("requestAudioFocus=" + result);
             }
         }
@@ -80,9 +82,7 @@ public class AudioAndFocusManager {
      */
     public void abandonAudioFocus() {
         if (audioFocusChangeListener != null) {
-            boolean result = AudioManager.AUDIOFOCUS_REQUEST_GRANTED ==
-                    mAudioManager.abandonAudioFocus(audioFocusChangeListener);
-            Logger.e("requestAudioFocus=" + result);
+            boolean result = AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAudioManager.abandonAudioFocus(audioFocusChangeListener);
         }
     }
 

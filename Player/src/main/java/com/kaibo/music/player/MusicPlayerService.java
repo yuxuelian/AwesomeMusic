@@ -23,32 +23,34 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
-import android.provider.SyncStateContract;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
-import com.kaibo.core.toast.ToastUtils;
-import com.kaibo.music.R;
-import com.kaibo.music.activity.PlayerActivity;
 import com.kaibo.music.bean.SongBean;
+import com.kaibo.music.bean.data.PlayHistoryLoader;
+import com.kaibo.music.bean.data.PlayQueueLoader;
+import com.kaibo.music.common.Constants;
+import com.kaibo.music.common.Extras;
 import com.kaibo.music.player.playback.PlayProgressListener;
 import com.kaibo.music.player.playqueue.PlayQueueManager;
+import com.kaibo.music.utils.CoverLoader;
+import com.kaibo.music.utils.FileUtils;
+import com.kaibo.music.utils.SPUtils;
+import com.kaibo.music.utils.SystemUtils;
 import com.orhanobut.logger.Logger;
-import com.yalantis.ucrop.util.FileUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.media.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.media.session.MediaButtonReceiver;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -109,7 +111,9 @@ public class MusicPlayerService extends Service {
      */
     private int playErrorTimes = 0;
     private int MAX_ERROR_TIMES = 5;
+
     private static final boolean DEBUG = true;
+
     private MusicPlayerEngine mPlayer = null;
     public PowerManager.WakeLock mWakeLock;
     private PowerManager powerManager;
@@ -127,20 +131,23 @@ public class MusicPlayerService extends Service {
     private MediaSessionManager mediaSessionManager;
     private AudioAndFocusManager audioAndFocusManager;
     private NotificationManager mNotificationManager;
-    private Builder mNotificationBuilder;
+    private NotificationCompat.Builder mNotificationBuilder;
     private Notification mNotification;
     private IMusicServiceStub mBindStub = new IMusicServiceStub(this);
     private boolean isRunningForeground = false;
     private boolean isMusicPlaying = false;
+
     //暂时失去焦点，会再次回去音频焦点
     private boolean mPausedByTransientLossOfFocus = false;
 
     public static int totalTime = 0;
 
     boolean mServiceInUse = false;
+
     //工作线程和Handler
     private MusicPlayerHandler mHandler;
     private HandlerThread mWorkThread;
+
     //主线程Handler
     private Handler mMainHandler;
 
@@ -469,35 +476,20 @@ public class MusicPlayerService extends Service {
             }
             mPlayingMusic = mPlayQueue.get(mPlayingPos);
             notifyChange(META_CHANGED);
-            Logger.e(TAG, "playingSongInfo:" + mPlayingMusic.toString());
-            if (mPlayingMusic.getUri() == null || !Objects.equals(mPlayingMusic.getType(), Constants.LOCAL) || mPlayingMusic.getUri().equals("") || mPlayingMusic.getUri().equals("null")) {
-                ApiManager.request(MusicApi.INSTANCE.getMusicInfo(mPlayingMusic), new RequestCallBack<Music>() {
-                    @Override
-                    public void success(Music result) {
-                        Logger.e(TAG, "-----" + result.toString());
-                        mPlayingMusic = result;
-                        saveHistory();
-                        isMusicPlaying = true;
-                        playErrorTimes = 0;
-                        mPlayer.setDataSource(mPlayingMusic.getUri());
-                    }
-
-                    @Override
-                    public void error(String msg) {
-                        ToastUtils.show(msg);
-                    }
-                });
+            if (!Constants.LOCAL.equals(mPlayingMusic.getType()) || "".equals(mPlayingMusic.getUrl()) || "null".equals(mPlayingMusic.getUrl())) {
+                saveHistory();
+                isMusicPlaying = true;
+                playErrorTimes = 0;
+                mPlayer.setDataSource(mPlayingMusic.getUrl());
             }
             saveHistory();
             mHistoryPos.add(mPlayingPos);
             isMusicPlaying = true;
-            if (mPlayingMusic.getUri() != null) {
-                if (!mPlayingMusic.getUri().startsWith(Constants.IS_URL_HEADER) && !FileUtils.exists(mPlayingMusic.getUri())) {
-                    isAbnormalPlay();
-                } else {
-                    playErrorTimes = 0;
-                    mPlayer.setDataSource(mPlayingMusic.getUri());
-                }
+            if (!mPlayingMusic.getUrl().startsWith(Constants.IS_URL_HEADER) && !FileUtils.exists(mPlayingMusic.getUrl())) {
+                isAbnormalPlay();
+            } else {
+                playErrorTimes = 0;
+                mPlayer.setDataSource(mPlayingMusic.getUrl());
             }
             mediaSessionManager.updateMetaData(mPlayingMusic);
             audioAndFocusManager.requestAudioFocus();
@@ -511,7 +503,6 @@ public class MusicPlayerService extends Service {
                 //组件调到正常音量
                 mHandler.sendEmptyMessage(VOLUME_FADE_UP);
                 isMusicPlaying = true;
-//                notifyChange(PLAY_STATE_CHANGED);
             }
         }
     }
@@ -524,7 +515,8 @@ public class MusicPlayerService extends Service {
             pause();
         } else {
             playErrorTimes++;
-            ToastUtils.showInfo("播放地址异常，自动切换下一首");
+            // TODO 播放异常
+//            ToastUtils.showInfo("播放地址异常，自动切换下一首");
             next(false);
         }
     }
@@ -656,7 +648,6 @@ public class MusicPlayerService extends Service {
      * @param music
      */
     public void play(SongBean music) {
-        if (music == null) return;
         if (mPlayingPos == -1 || mPlayQueue.size() == 0) {
             mPlayQueue.add(music);
             mPlayingPos = 0;
@@ -688,7 +679,9 @@ public class MusicPlayerService extends Service {
      * 1、歌单不一样切换
      */
     public void play(List<SongBean> musicList, int id, String pid) {
-        if (musicList.size() <= id) return;
+        if (musicList.size() <= id) {
+            return;
+        }
         if (!mPlaylistId.equals(pid) || mPlayQueue.size() == 0 || mPlayQueue.size() != musicList.size()) {
             setPlayQueue(musicList);
             mPlaylistId = pid;
@@ -728,19 +721,18 @@ public class MusicPlayerService extends Service {
                 isMusicPlaying = false;
                 notifyChange(PLAY_STATE_CHANGED);
                 updateNotification(true);
-                TimerTask task = new TimerTask() {
-                    @Override
-                    public void run() {
-                        final Intent intent = new Intent(AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION);
-                        intent.putExtra(AudioEffect.EXTRA_AUDIO_SESSION, getAudioSessionId());
-                        intent.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, getPackageName());
-                        sendBroadcast(intent); //由系统接收,通知系统audio_session将关闭,不再使用音效
-
-                        mPlayer.pause();
-                    }
-                };
-                Timer timer = new Timer();
-                timer.schedule(task, 200);
+                // 实时向外发送播放器状态
+                Disposable subscribe = Observable
+                        .interval(200, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(aLong -> {
+                            final Intent intent = new Intent(AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION);
+                            intent.putExtra(AudioEffect.EXTRA_AUDIO_SESSION, getAudioSessionId());
+                            intent.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, getPackageName());
+                            //由系统接收,通知系统audio_session将关闭,不再使用音效
+                            sendBroadcast(intent);
+                            mPlayer.pause();
+                        });
             }
         }
     }
@@ -793,7 +785,6 @@ public class MusicPlayerService extends Service {
         SPUtils.savePosition(getCurrentPosition());
         notifyChange(PLAY_QUEUE_CHANGE);
     }
-
 
     private void saveHistory() {
         PlayHistoryLoader.INSTANCE.addSongToHistory(mPlayingMusic);
@@ -880,26 +871,23 @@ public class MusicPlayerService extends Service {
      * @param what 发送更新广播
      */
     private void notifyChange(final String what) {
-        if (DEBUG) Logger.d(TAG, "notifyChange: what = " + what);
         switch (what) {
             case META_CHANGED:
                 mFloatLyricViewManager.loadLyric(mPlayingMusic);
                 updateWidget(META_CHANGED);
                 notifyChange(PLAY_STATE_CHANGED);
-                EventBus.getDefault().post(new MetaChangedEvent(mPlayingMusic));
+                // TODO 发送通知
+//                EventBus.getDefault().post(new MetaChangedEvent(mPlayingMusic));
                 break;
             case PLAY_STATE_CHANGED:
                 updateWidget(PLAY_STATE_CHANGED);
                 mediaSessionManager.updatePlaybackState();
-                EventBus.getDefault().post(new StatusChangedEvent(isPrepared(), isPlaying()));
+//                EventBus.getDefault().post(new StatusChangedEvent(isPrepared(), isPlaying()));
                 break;
             case PLAY_QUEUE_CLEAR:
             case PLAY_QUEUE_CHANGE:
-                EventBus.getDefault().post(new PlaylistEvent(Constants.PLAYLIST_QUEUE_ID, null));
+//                EventBus.getDefault().post(new PlaylistEvent(Constants.PLAYLIST_QUEUE_ID, null));
                 break;
-//            case PLAY_STATE_LOADING_CHANGED:
-//                EventBus.getDefault().post(new StatusChangedEvent(false, isPlaying()));
-//                break;
             default:
                 break;
         }
@@ -924,7 +912,7 @@ public class MusicPlayerService extends Service {
      */
     public String getTitle() {
         if (mPlayingMusic != null) {
-            return mPlayingMusic.getTitle();
+            return mPlayingMusic.getSongname();
         }
         return null;
     }
@@ -936,7 +924,7 @@ public class MusicPlayerService extends Service {
      */
     public String getArtistName() {
         if (mPlayingMusic != null) {
-            return mPlayingMusic.getArtist();
+            return mPlayingMusic.getSingername();
         }
         return null;
     }
@@ -948,7 +936,7 @@ public class MusicPlayerService extends Service {
      */
     private String getAlbumName() {
         if (mPlayingMusic != null) {
-            return mPlayingMusic.getArtist();
+            return mPlayingMusic.getSingername();
         }
         return null;
     }
@@ -971,7 +959,7 @@ public class MusicPlayerService extends Service {
      *
      * @param playQueue 播放队列
      */
-    public void setPlayQueue(List<Music> playQueue) {
+    public void setPlayQueue(List<SongBean> playQueue) {
         mPlayQueue.clear();
         mHistoryPos.clear();
         mPlayQueue.addAll(playQueue);
@@ -990,7 +978,6 @@ public class MusicPlayerService extends Service {
         return mPlayQueue;
     }
 
-
     /**
      * 获取当前音乐在播放队列中的位置
      *
@@ -999,7 +986,9 @@ public class MusicPlayerService extends Service {
     public int getPlayPosition() {
         if (mPlayingPos >= 0) {
             return mPlayingPos;
-        } else return 0;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -1011,13 +1000,15 @@ public class MusicPlayerService extends Service {
         final String artistName = getArtistName();
         String text = TextUtils.isEmpty(albumName) ? artistName : artistName + " - " + albumName;
         int playButtonResId = isMusicPlaying ? R.drawable.ic_pause : R.drawable.ic_play;
-        Intent nowPlayingIntent = new Intent(this, PlayerActivity.class);
-        nowPlayingIntent.setAction(SyncStateContract.Constants.DEAULT_NOTIFICATION);
+        // 打开播放界面
+        Intent nowPlayingIntent = new Intent();
+        nowPlayingIntent.setClassName(this, "com.kaibo.music.activity.PlayerActivity");
+        nowPlayingIntent.setAction(Constants.DEAULT_NOTIFICATION);
         PendingIntent clickIntent = PendingIntent.getActivity(this, 0, nowPlayingIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         if (mNotificationPostTime == 0) {
             mNotificationPostTime = System.currentTimeMillis();
         }
-        mNotificationBuilder = new Builder(this, initChannelId())
+        mNotificationBuilder = new androidx.core.app.NotificationCompat.Builder(this, initChannelId())
                 .setSmallIcon(R.drawable.ic_icon)
                 .setContentIntent(clickIntent)
                 .setContentTitle(getTitle())
@@ -1028,14 +1019,12 @@ public class MusicPlayerService extends Service {
                 .addAction(R.drawable.ic_lyric, "", retrievePlaybackAction(ACTION_LYRIC))
                 .addAction(R.drawable.ic_clear, "", retrievePlaybackAction(ACTION_CLOSE))
                 .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP));
-        if (SystemUtils.isJellyBeanMR1()) {
-            mNotificationBuilder.setShowWhen(false);
-        }
         if (SystemUtils.isLollipop()) {
             //线控
             isRunningForeground = true;
-            mNotificationBuilder.setVisibility(Notification.VISIBILITY_PUBLIC);
-            NotificationCompat.MediaStyle style = new NotificationCompat.MediaStyle()
+            mNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+            NotificationCompat.Style style = new androidx.media.app.NotificationCompat
+                    .MediaStyle()
                     .setMediaSession(mediaSessionManager.getMediaSession())
                     .setShowActionsInCompactView(0, 1, 2, 3);
             mNotificationBuilder.setStyle(style);
@@ -1090,24 +1079,17 @@ public class MusicPlayerService extends Service {
         }
     }
 
-    private Timer lyricTimer;
+    private Disposable lyricTimer;
 
     public void showDesktopLyric(boolean show) {
         if (show) {
             // 开启定时器，每隔0.5秒刷新一次
-            if (lyricTimer == null) {
-                lyricTimer = new Timer();
-                lyricTimer.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        mFloatLyricViewManager.updateLyric(getCurrentPosition(), getDuration());
-                    }
-                }, 0, 1);
-            }
+            lyricTimer = Observable.interval(500, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(aLong -> mFloatLyricViewManager.updateLyric(getCurrentPosition(), getDuration()));
         } else {
-            if (lyricTimer != null) {
-                lyricTimer.cancel();
-                lyricTimer = null;
+            if (lyricTimer != null && !lyricTimer.isDisposed()) {
+                lyricTimer.dispose();
             }
             mFloatLyricViewManager.removeFloatLyricView(this);
         }
@@ -1159,10 +1141,11 @@ public class MusicPlayerService extends Service {
     }
 
     private void updateNotificationStatus() {
-        if (isPlaying())
+        if (isPlaying()) {
             mNotificationBuilder.mActions.get(0).icon = R.drawable.ic_pause;
-        else
+        } else {
             mNotificationBuilder.mActions.get(0).icon = R.drawable.ic_play;
+        }
     }
 
     /**
@@ -1194,8 +1177,9 @@ public class MusicPlayerService extends Service {
     private void handleCommandIntent(Intent intent) {
         final String action = intent.getAction();
         final String command = SERVICE_CMD.equals(action) ? intent.getStringExtra(CMD_NAME) : null;
-        if (DEBUG)
+        if (DEBUG) {
             Logger.d(TAG, "handleCommandIntent: action = " + action + ", command = " + command);
+        }
 
         if (CMD_NEXT.equals(command) || ACTION_NEXT.equals(action)) {
             next(false);
@@ -1273,15 +1257,15 @@ public class MusicPlayerService extends Service {
      * 耳机拔出广播接收器
      */
     private class HeadsetReceiver extends BroadcastReceiver {
-
         final IntentFilter filter;
         final BluetoothAdapter bluetoothAdapter;
 
         public HeadsetReceiver() {
             filter = new IntentFilter();
-            filter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY); //有线耳机拔出变化
-            filter.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED); //蓝牙耳机连接变化
-
+            //有线耳机拔出变化
+            filter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+            //蓝牙耳机连接变化
+            filter.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED);
             bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         }
 

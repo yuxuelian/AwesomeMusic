@@ -10,14 +10,10 @@ import android.widget.SeekBar
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.jakewharton.rxbinding2.view.clicks
-import com.kaibo.core.bus.RxBus
 import com.kaibo.core.util.statusBarHeight
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
 import com.kaibo.music.activity.base.BasePlayerActivity
-import com.kaibo.music.bean.SongBean
-import com.kaibo.music.play.DataSourceCommand
-import com.kaibo.music.play.SeekCommand
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_player.*
 import kotlinx.android.synthetic.main.include_play_bottom.*
@@ -79,12 +75,12 @@ class PlayerActivity : BasePlayerActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 isSeeking = false
                 // 松手后发送进度到Service
-                RxBus.post(SeekCommand(seekBar.progress))
+//                RxBus.post(SeekCommand(seekBar.progress))
             }
         })
 
         val playDataSource = "https://music.kaibo123.com/amobile.music.tc.qq.com/C400003OU9ul1LEU9T.m4a?guid=4715368380&vkey=F3DA36B2E856E4F87A02E2B55C27714B0DF3540E9E6CEBDB51337D852F2C9EDB17FAFE803BDFABD97FD19DE24BC2A8D0C68D2A9DCEE6A74A&uin=0&fromtag=999"
-        val playCommand = DataSourceCommand(SongBean(url = playDataSource))
+//        val playCommand = DataSourceCommand(SongBean(url = playDataSource))
 
         // 播放或者暂停
         playOrPauseBtn.clicks().`as`(bindLifecycle()).subscribe {
@@ -98,7 +94,7 @@ class PlayerActivity : BasePlayerActivity() {
                 playOrPauseBtn.setImageResource(R.drawable.big_pause)
             }
             // 发送命令
-            RxBus.post(playCommand)
+//            RxBus.post(playCommand)
         }
     }
 

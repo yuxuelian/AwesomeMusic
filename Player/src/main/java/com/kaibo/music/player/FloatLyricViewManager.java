@@ -1,37 +1,16 @@
 package com.kaibo.music.player;
 
 import android.content.Context;
-import android.graphics.PixelFormat;
-import android.graphics.Point;
-import android.os.Build;
 import android.os.Handler;
-import android.view.Gravity;
 import android.view.WindowManager;
 
-import com.kaibo.music.MusicApp;
-import com.kaibo.music.R;
-import com.kaibo.music.api.MusicApi;
-import com.kaibo.music.api.MusicApiServiceImpl;
-import com.kaibo.music.bean.Music;
-import com.kaibo.music.net.ApiManager;
-import com.kaibo.music.net.RequestCallBack;
-import com.kaibo.music.view.LyricView;
-import com.kaibo.music.view.lyric.FloatLyricView;
-import com.kaibo.music.view.lyric.LyricInfo;
-import com.kaibo.music.view.lyric.LyricParseUtils;
-import com.orhanobut.logger.Logger;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import io.reactivex.Observable;
+import com.kaibo.core.BaseApplication;
+import com.kaibo.music.bean.SongBean;
 
 public class FloatLyricViewManager {
     private static final String TAG = "FloatLyricViewManager";
-    private static FloatLyricView mFloatLyricView;
     private static WindowManager.LayoutParams mFloatLyricViewParams;
     private static WindowManager mWindowManager;
-    private static LyricInfo mLyricInfo;
     private Handler handler = new Handler();
     private String mSongName;
     private static boolean isFirstSettingLyric; //第一次设置歌词
@@ -53,48 +32,31 @@ public class FloatLyricViewManager {
     /**
      * ---------------------------歌词View更新-----------------------------
      */
-    private static List<LyricView> lyricViews = new ArrayList<>();
 
-    public static void setLyricChangeListener(LyricView lyricView) {
-        lyricViews.add(lyricView);
-    }
-
-    public static void removeLyricChangeListener(LyricView lyricView) {
-        lyricViews.remove(lyricView);
-    }
-
-    /**
-     * -----------------------------------------------------------------
-     */
     public void updatePlayStatus(boolean isPlaying) {
-        if (mFloatLyricView != null)
-            mFloatLyricView.setPlayStatus(isPlaying);
+//        if (mFloatLyricView != null) {
+//            mFloatLyricView.setPlayStatus(isPlaying);
+//        }
     }
 
     /**
      * 加载歌词
      */
-    public void loadLyric(Music mPlayingMusic) {
-        resetLyric(BaseApplication.Companion.getBaseApplication()().getString(R.string.lyric_loading));
+    public void loadLyric(SongBean mPlayingMusic) {
+        resetLyric(BaseApplication.Companion.getBaseApplication().getString(R.string.lyric_loading));
         if (mPlayingMusic != null) {
-            mSongName = mPlayingMusic.getTitle();
-            Observable<String> observable = MusicApi.INSTANCE.getLyricInfo(mPlayingMusic);
-            if (observable != null) {
-                ApiManager.request(observable, new RequestCallBack<String>() {
-                    @Override
-                    public void success(String result) {
-                        updateLyric(result);
-                    }
-
-                    @Override
-                    public void error(String msg) {
-                        updateLyric("");
-                        Logger.e("LoadLyric", msg);
-                    }
-                });
-            } else {
-                updateLyric("");
-            }
+            mSongName = mPlayingMusic.getSongname();
+            // TODO 获取歌词
+//            @Override
+//            public void success(String result) {
+//                updateLyric(result);
+//            }
+//
+//            @Override
+//            public void error(String msg) {
+//                updateLyric("");
+//                Logger.e("LoadLyric", msg);
+//            }
         } else {
             updateLyric("");
         }
@@ -107,24 +69,19 @@ public class FloatLyricViewManager {
      */
     public static void saveLyricInfo(String name, String artist, String info) {
         lyricInfo = info;
-        MusicApiServiceImpl.INSTANCE.saveLyricInfo(name, artist, info);
-        setLyric(lyricInfo);
-        for (int i = 0; i < lyricViews.size(); i++) {
-            lyricViews.get(i).setLyricContent(info);
-        }
+//        MusicApiServiceImpl.INSTANCE.saveLyricInfo(name, artist, info);
+//        setLyric(lyricInfo);
+//        for (int i = 0; i < lyricViews.size(); i++) {
+//            lyricViews.get(i).setLyricContent(info);
+//        }
     }
 
-    /**
-     * 重置
-     *
-     * @param info 歌词
-     */
     private void resetLyric(String info) {
         lyricInfo = info;
         setLyric(lyricInfo);
-        for (int i = 0; i < lyricViews.size(); i++) {
-            lyricViews.get(i).reset(info);
-        }
+//        for (int i = 0; i < lyricViews.size(); i++) {
+//            lyricViews.get(i).reset(info);
+//        }
     }
 
     /**
@@ -135,9 +92,9 @@ public class FloatLyricViewManager {
     private void updateLyric(String info) {
         lyricInfo = info;
         setLyric(lyricInfo);
-        for (int i = 0; i < lyricViews.size(); i++) {
-            lyricViews.get(i).setLyricContent(info);
-        }
+//        for (int i = 0; i < lyricViews.size(); i++) {
+//            lyricViews.get(i).setLyricContent(info);
+//        }
     }
 
 
@@ -147,21 +104,8 @@ public class FloatLyricViewManager {
      * @param lyricInfo 歌词信息
      */
     public static void setLyric(String lyricInfo) {
-        mLyricInfo = LyricParseUtils.setLyricResource(lyricInfo);
-        isFirstSettingLyric = true;
-    }
-
-
-    /**
-     * 判断当前界面是否是应用界面
-     */
-    private boolean isHome() {
-        try {
-            return MusicApp.count != 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
+//        mLyricInfo = LyricParseUtils.setLyricResource(lyricInfo);
+//        isFirstSettingLyric = true;
     }
 
 
@@ -171,40 +115,40 @@ public class FloatLyricViewManager {
      * @param context 必须为应用程序的Context.
      */
     private void createFloatLyricView(Context context) {
-        try {
-            WindowManager windowManager = getWindowManager();
-            Point size = new Point();
-            //获取屏幕宽高
-            windowManager.getDefaultDisplay().getSize(size);
-            int screenWidth = size.x;
-            int screenHeight = size.y;
-            if (mFloatLyricView == null) {
-                mFloatLyricView = new FloatLyricView(context);
-                if (mFloatLyricViewParams == null) {
-                    mFloatLyricViewParams = new WindowManager.LayoutParams();
-                    mFloatLyricViewParams.type = WindowManager.LayoutParams.TYPE_PHONE;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        mFloatLyricViewParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-                    } else {
-                        mFloatLyricViewParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
-                    }
-
-                    mFloatLyricViewParams.format = PixelFormat.RGBA_8888;
-                    mFloatLyricViewParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                            | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-                    mFloatLyricViewParams.gravity = Gravity.START | Gravity.TOP;
-                    mFloatLyricViewParams.width = mFloatLyricView.viewWidth;
-                    mFloatLyricViewParams.height = mFloatLyricView.viewHeight;
-                    mFloatLyricViewParams.x = screenWidth;
-                    mFloatLyricViewParams.y = screenHeight / 2;
-                }
-                mFloatLyricView.setParams(mFloatLyricViewParams);
-                windowManager.addView(mFloatLyricView, mFloatLyricViewParams);
-                setLyric(lyricInfo);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            WindowManager windowManager = getWindowManager();
+//            Point size = new Point();
+//            //获取屏幕宽高
+//            windowManager.getDefaultDisplay().getSize(size);
+//            int screenWidth = size.x;
+//            int screenHeight = size.y;
+//            if (mFloatLyricView == null) {
+//                mFloatLyricView = new FloatLyricView(context);
+//                if (mFloatLyricViewParams == null) {
+//                    mFloatLyricViewParams = new WindowManager.LayoutParams();
+//                    mFloatLyricViewParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                        mFloatLyricViewParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+//                    } else {
+//                        mFloatLyricViewParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+//                    }
+//
+//                    mFloatLyricViewParams.format = PixelFormat.RGBA_8888;
+//                    mFloatLyricViewParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+//                            | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+//                    mFloatLyricViewParams.gravity = Gravity.START | Gravity.TOP;
+//                    mFloatLyricViewParams.width = mFloatLyricView.viewWidth;
+//                    mFloatLyricViewParams.height = mFloatLyricView.viewHeight;
+//                    mFloatLyricViewParams.x = screenWidth;
+//                    mFloatLyricViewParams.y = screenHeight / 2;
+//                }
+//                mFloatLyricView.setParams(mFloatLyricViewParams);
+//                windowManager.addView(mFloatLyricView, mFloatLyricViewParams);
+//                setLyric(lyricInfo);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**
@@ -213,15 +157,15 @@ public class FloatLyricViewManager {
      * @param context 必须为应用程序的Context.
      */
     public void removeFloatLyricView(Context context) {
-        try {
-            if (mFloatLyricView != null) {
-                WindowManager windowManager = getWindowManager();
-                windowManager.removeView(mFloatLyricView);
-                mFloatLyricView = null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            if (mFloatLyricView != null) {
+//                WindowManager windowManager = getWindowManager();
+//                windowManager.removeView(mFloatLyricView);
+//                mFloatLyricView = null;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**
@@ -229,34 +173,23 @@ public class FloatLyricViewManager {
      */
     public void updateLyric(long positon, long duration) {
         // 当前界面不是本应用界面，且没有悬浮窗显示，则创建悬浮窗。
-        if (!isHome() && !isWindowShowing()) {
-            handler.post(() -> createFloatLyricView(mContext));
-        } else if (isHome() && isWindowShowing()) {
-            handler.post(() -> removeFloatLyricView(mContext));
-        } else if (isWindowShowing()) {
-            handler.post(() -> {
-                if (mFloatLyricView != null) {
-                    if (isFirstSettingLyric) {
-                        mFloatLyricView.mTitle.setText(mSongName);
-                        mFloatLyricView.mLyricText.setLyricInfo(mLyricInfo);
-                        isFirstSettingLyric = false;
-                    }
-                    mFloatLyricView.mLyricText.setCurrentTimeMillis(positon);
-                    mFloatLyricView.mLyricText.setDurationMillis(duration);
-                }
-            });
-        }
-
-    }
-
-    /**
-     * 是否有悬浮窗(包括小悬浮窗和大悬浮窗)显示在屏幕上。
-     *
-     * @return 有悬浮窗显示在桌面上返回true，没有的话返回false。
-     */
-
-    private static boolean isWindowShowing() {
-        return mFloatLyricView != null;
+//        if (!isHome() && !isWindowShowing()) {
+//            handler.post(() -> createFloatLyricView(mContext));
+//        } else if (isHome() && isWindowShowing()) {
+//            handler.post(() -> removeFloatLyricView(mContext));
+//        } else if (isWindowShowing()) {
+//            handler.post(() -> {
+//                if (mFloatLyricView != null) {
+//                    if (isFirstSettingLyric) {
+//                        mFloatLyricView.mTitle.setText(mSongName);
+//                        mFloatLyricView.mLyricText.setLyricInfo(mLyricInfo);
+//                        isFirstSettingLyric = false;
+//                    }
+//                    mFloatLyricView.mLyricText.setCurrentTimeMillis(positon);
+//                    mFloatLyricView.mLyricText.setDurationMillis(duration);
+//                }
+//            });
+//        }
     }
 
     /**
@@ -266,7 +199,7 @@ public class FloatLyricViewManager {
      */
     private static WindowManager getWindowManager() {
         if (mWindowManager == null) {
-            mWindowManager = (WindowManager) BaseApplication.Companion.getBaseApplication()().getSystemService(Context.WINDOW_SERVICE);
+            mWindowManager = (WindowManager) BaseApplication.Companion.getBaseApplication().getSystemService(Context.WINDOW_SERVICE);
         }
         return mWindowManager;
     }

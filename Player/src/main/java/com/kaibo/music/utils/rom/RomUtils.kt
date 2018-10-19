@@ -1,4 +1,4 @@
-package com.cyl.musiclake.utils.rom
+package com.kaibo.music.utils.rom
 
 import android.annotation.TargetApi
 import android.app.AppOpsManager
@@ -11,11 +11,11 @@ import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.provider.Settings
-import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
-import com.cyl.musiclake.common.Constants
+import androidx.appcompat.app.AppCompatActivity
+import com.kaibo.music.common.Constants
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -460,7 +460,7 @@ object RomUtils {
     val emuiVersion: Double
         get() {
             try {
-                val emuiVersion = RomUtils.getSystemProperty("ro.build.version.emui")
+                val emuiVersion = getSystemProperty("ro.build.version.emui")
                 val version = emuiVersion!!.substring(emuiVersion.indexOf("_") + 1)
                 return java.lang.Double.parseDouble(version)
             } catch (e: Exception) {
@@ -476,7 +476,7 @@ object RomUtils {
      */
     val miuiVersion: Int
         get() {
-            val version = RomUtils.getSystemProperty("ro.miui.ui.version.name")
+            val version = getSystemProperty("ro.miui.ui.version.name")
             if (version != null) {
                 try {
                     return Integer.parseInt(version.substring(1))
@@ -520,12 +520,12 @@ object RomUtils {
      * check if is miui ROM
      */
     fun checkIsMiuiRom(): Boolean {
-        return !TextUtils.isEmpty(RomUtils.getSystemProperty("ro.miui.ui.version.name"))
+        return !TextUtils.isEmpty(getSystemProperty("ro.miui.ui.version.name"))
     }
 
     fun checkIsMeizuRom(): Boolean {
         //return Build.MANUFACTURER.contains("Meizu");
-        val meizuFlymeOSFlag = RomUtils.getSystemProperty("ro.build.display.id")
+        val meizuFlymeOSFlag = getSystemProperty("ro.build.display.id")
         return if (TextUtils.isEmpty(meizuFlymeOSFlag)) {
             false
         } else meizuFlymeOSFlag!!.contains("flyme") || meizuFlymeOSFlag.toLowerCase().contains("flyme")

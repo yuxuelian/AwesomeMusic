@@ -9,7 +9,7 @@ import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.provider.Settings;
 
-import com.cyl.musiclake.utils.rom.FloatUtil;
+import com.kaibo.music.utils.rom.FloatUtil;
 import com.kaibo.core.BaseApplication;
 
 import java.util.List;
@@ -24,16 +24,11 @@ import androidx.annotation.RequiresApi;
  * 版本：2.5
  */
 public class SystemUtils {
-    //判断是否是android 6.0
-    public static boolean isJellyBeanMR1() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
-    }
 
     //判断是否是android 8.0
     public static boolean isO() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
-
 
     //判断是否是android 6.0
     public static boolean isMarshmallow() {
@@ -49,7 +44,6 @@ public class SystemUtils {
     public static boolean isKITKAT() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
     }
-
 
     /**
      * 判断是否打开“悬浮窗权限”
@@ -69,20 +63,18 @@ public class SystemUtils {
         FloatUtil.INSTANCE.applyOrShowFloatWindow(BaseApplication.Companion.getBaseApplication());
     }
 
-
     /**
      * 判断是否打开“有权查看使用权限的应用”这个选项
      *
      * @return
      */
     public static boolean isOpenUsageAccess() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isNoOptions()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1 && isNoOptions()) {
             return isNoSwitch();
         } else {
             return true;
         }
     }
-
 
     /**
      * 判断当前设备中有没有“有权查看使用权限的应用”这个选项
@@ -97,25 +89,20 @@ public class SystemUtils {
         return list.size() > 0;
     }
 
-
     /**
      * 判断调用该设备中“有权查看使用权限的应用”这个选项的APP有没有打开
      *
      * @return
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
     private static boolean isNoSwitch() {
         long dujinyang = System.currentTimeMillis();
         UsageStatsManager usageStatsManager = (UsageStatsManager) BaseApplication.Companion.getBaseApplication().getSystemService(Context.USAGE_STATS_SERVICE);
         List<UsageStats> queryUsageStats = null;
         if (usageStatsManager != null) {
-            queryUsageStats = usageStatsManager.queryUsageStats(
-                    UsageStatsManager.INTERVAL_BEST, 0, dujinyang);
+            queryUsageStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, 0, dujinyang);
         }
-        if (queryUsageStats == null || queryUsageStats.isEmpty()) {
-            return false;
-        }
-        return true;
+        return queryUsageStats != null && !queryUsageStats.isEmpty();
     }
 
 }

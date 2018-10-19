@@ -9,9 +9,7 @@ import com.kaibo.core.activity.BaseActivity
 import com.kaibo.core.bus.RxBus
 import com.kaibo.core.util.blur
 import com.kaibo.core.util.toMainThread
-import com.kaibo.music.IMyAidlInterface
 import com.kaibo.music.R
-import com.kaibo.music.play.*
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.startService
@@ -28,7 +26,6 @@ abstract class BasePlayerActivity : BaseActivity() {
 
     protected val topLayoutIn: Animation by lazy {
         AnimationUtils.loadAnimation(this, R.anim.top_layout_in).apply {
-            IMyAidlInterface.Stub
             fillAfter = true
         }
     }
@@ -80,29 +77,7 @@ abstract class BasePlayerActivity : BaseActivity() {
 
     @CallSuper
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        // 启动播放音乐的Service
-        startService<PlayerService>()
-        // 订阅进度总进度监听
-        RxBus.toObservable<PlayerStatus>().`as`(bindLifecycle()).subscribe {
-            when (it) {
-                is DataSourceStatus -> {
-                }
-                is PlayingStatus -> {
-                    when (it.status) {
-                        PlayingStatus.Status.PLAY -> playStatusChange(true)
-                        PlayingStatus.Status.PAUSE -> playStatusChange(false)
-                        else -> {
-                        }
-                    }
-                }
-                is DurationStatus -> {
-                    updateDuration(it.duration)
-                }
-                is SeekStatus -> {
-                    updateSeek(it.seek)
-                }
-            }
-        }
+
     }
 
     protected abstract fun updateDuration(duration: Int)

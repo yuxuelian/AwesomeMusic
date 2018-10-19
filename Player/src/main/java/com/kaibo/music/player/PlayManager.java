@@ -69,8 +69,9 @@ public class PlayManager {
 
     public static void nextPlay(SongBean music) {
         try {
-            if (mService != null)
+            if (mService != null) {
                 mService.nextPlay(music);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -78,8 +79,9 @@ public class PlayManager {
 
     public static void playOnline(SongBean music) {
         try {
-            if (mService != null)
+            if (mService != null) {
                 mService.playSong(music);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -87,8 +89,9 @@ public class PlayManager {
 
     public static void play(int id) {
         try {
-            if (mService != null)
+            if (mService != null) {
                 mService.play(id);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -106,8 +109,9 @@ public class PlayManager {
 
     public static int getAudioSessionId() {
         try {
-            if (mService != null)
+            if (mService != null) {
                 return mService.getAudioSessionId();
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -136,8 +140,9 @@ public class PlayManager {
 
     public static void next() {
         try {
-            if (mService != null)
+            if (mService != null) {
                 mService.next();
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -145,8 +150,9 @@ public class PlayManager {
 
     public static void setLoopMode(int loopmode) {
         try {
-            if (mService != null)
+            if (mService != null) {
                 mService.setLoopMode(loopmode);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -241,8 +247,9 @@ public class PlayManager {
 
     public static SongBean getPlayingMusic() {
         try {
-            if (mService != null)
+            if (mService != null) {
                 return mService.getPlayingSongBean();
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -251,8 +258,9 @@ public class PlayManager {
 
     public static String getPlayingId() {
         try {
-            if (mService != null && mService.getPlayingSongBean() != null)
+            if (mService != null && mService.getPlayingSongBean() != null) {
                 return mService.getPlayingSongBean().getMid();
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -261,8 +269,9 @@ public class PlayManager {
 
     public static List<SongBean> getPlayList() {
         try {
-            if (mService != null)
+            if (mService != null) {
                 return mService.getPlayList();
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -285,8 +294,9 @@ public class PlayManager {
 
     public static void removeFromQueue(int adapterPosition) {
         try {
-            if (mService != null)
+            if (mService != null) {
                 mService.removeFromQueue(adapterPosition);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -294,8 +304,9 @@ public class PlayManager {
 
     public static void showDesktopLyric(boolean isShow) {
         try {
-            if (mService != null)
+            if (mService != null) {
                 mService.showDesktopLyric(isShow);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }

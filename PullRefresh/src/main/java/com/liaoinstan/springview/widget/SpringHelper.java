@@ -34,7 +34,7 @@ class SpringHelper {
             }
             p = p.getParent();
         }
-        if (p instanceof CoordinatorLayout) {
+        if (p != null) {
             CoordinatorLayout coordinatorLayout = (CoordinatorLayout) p;
             final int childCount = coordinatorLayout.getChildCount();
             for (int i = childCount - 1; i >= 0; i--) {

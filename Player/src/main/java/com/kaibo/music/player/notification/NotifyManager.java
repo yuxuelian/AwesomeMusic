@@ -7,9 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
-import com.cyl.musiclake.common.NavigationHelper;
-import com.kaibo.music.BuildConfig;
-import com.kaibo.music.R;
+import com.kaibo.music.player.BuildConfig;
 import com.kaibo.music.player.R;
 
 import androidx.annotation.IntRange;
@@ -71,8 +69,8 @@ public class NotifyManager {
         }
         remoteViews.setOnClickPendingIntent(R.id.notificationPlayPause, PendingIntent.getBroadcast(mContext, NOTIFICATION_ID, new Intent(ACTION_PLAY_PAUSE), PendingIntent.FLAG_UPDATE_CURRENT));
         remoteViews.setOnClickPendingIntent(R.id.notificationStop, PendingIntent.getBroadcast(mContext, NOTIFICATION_ID, new Intent(ACTION_CLOSE), PendingIntent.FLAG_UPDATE_CURRENT));
-        final Intent intent = NavigationHelper.INSTANCE.getNowPlayingIntent(mContext);
-        remoteViews.setOnClickPendingIntent(R.id.notificationContent, PendingIntent.getActivity(mContext, NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT));
+//        final Intent intent = NavigationHelper.INSTANCE.getNowPlayingIntent(mContext);
+//        remoteViews.setOnClickPendingIntent(R.id.notificationContent, PendingIntent.getActivity(mContext, NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT));
         remoteViews.setOnClickPendingIntent(R.id.notificationFRewind, PendingIntent.getBroadcast(mContext, NOTIFICATION_ID, new Intent(ACTION_PREV), PendingIntent.FLAG_UPDATE_CURRENT));
         remoteViews.setOnClickPendingIntent(R.id.notificationFForward, PendingIntent.getBroadcast(mContext, NOTIFICATION_ID, new Intent(ACTION_NEXT), PendingIntent.FLAG_UPDATE_CURRENT));
     }

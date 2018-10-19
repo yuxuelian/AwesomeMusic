@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.kaibo.core.annotation.PoKo
+import com.kaibo.music.common.Constants
 
 /**
  * @author kaibo
@@ -31,6 +32,11 @@ data class SongBean(
      * 歌曲的播放时长
      */
     var duration: Int = 0
+
+    /**
+     * 歌曲类型  local  qq  等
+     */
+    var type: String = Constants.QQ
 
     constructor(parcel: Parcel) : this(
             parcel.readString(),

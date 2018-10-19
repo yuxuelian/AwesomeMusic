@@ -12,7 +12,6 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.view.KeyEvent;
 
-import com.kaibo.music.activity.MainActivity;
 import com.orhanobut.logger.Logger;
 
 import java.util.List;
@@ -58,7 +57,7 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
                         final Context context = (Context) msg.obj;
                         final Intent i = new Intent();
                         i.putExtra("autoshuffle", "true");
-                        i.setClass(context, MainActivity.class);
+                        i.setClassName(context, "com.kaibo.music.activity.MainActivity");
                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         context.startActivity(i);
                         mLaunched = true;

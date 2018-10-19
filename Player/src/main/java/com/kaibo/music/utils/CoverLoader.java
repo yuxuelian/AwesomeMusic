@@ -10,6 +10,11 @@ import android.widget.ImageView;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.kaibo.core.glide.GlideApp;
+import com.kaibo.music.bean.SongBean;
+import com.kaibo.music.player.R;
+
+import androidx.annotation.NonNull;
 
 
 /**
@@ -24,7 +29,7 @@ public class CoverLoader {
     }
 
     public static String getCoverUri(Context context, String albumId) {
-        if (albumId.equals("-1")) {
+        if ("-1".equals(albumId)) {
             return null;
         }
         String uri = null;
@@ -41,50 +46,14 @@ public class CoverLoader {
         return uri;
     }
 
-    /**
-     * 获取专辑图url，
-     *
-     * @param music 音乐
-     * @param isBig 是否是大图
-     * @return
-     */
-    private static String getCoverUriByMusic(Music music, boolean isBig) {
-        if (music.getCoverBig() != null && isBig) {
-            return music.getCoverBig();
-        } else if (music.getCoverUri() != null) {
-            return music.getCoverUri();
-        } else {
-            return music.getCoverSmall();
-        }
-    }
-
     public static int getCoverUriByRandom() {
-        int[] Bitmaps = {R.drawable.music_one, R.drawable.music_two, R.drawable.music_three,
+        int[] bitmaps = {R.drawable.music_one, R.drawable.music_two, R.drawable.music_three,
                 R.drawable.music_four, R.drawable.music_five, R.drawable.music_six,
                 R.drawable.music_seven, R.drawable.music_eight, R.drawable.music_nine,
                 R.drawable.music_ten, R.drawable.music_eleven, R.drawable.music_twelve};
-        int random = (int) (Math.random() * 12);
-        return R.drawable.default_cover;
+        int random = (int) (Math.random() * bitmaps.length);
+        return bitmaps[random];
     }
-
-//    public static void loadImageViewByDouban(Context mContext, String info, ImageView imageView, BitmapCallBack bitmapCallBack) {
-//        MusicApi.INSTANCE.getMusicAlbumPic(info, url -> {
-//            if (imageView != null) {
-//                loadImageView(mContext, url, imageView);
-//            } else if (bitmapCallBack != null) {
-//                loadBitmap(mContext, url, bitmapCallBack);
-//            }
-//            return null;
-//        }, () -> {
-//            if (imageView != null) {
-//                loadImageView(mContext, null, imageView);
-//            } else if (bitmapCallBack != null) {
-//                loadBitmap(mContext, null, bitmapCallBack);
-//            }
-//            return null;
-//        });
-//    }
-
 
     /**
      * 显示小图
@@ -93,12 +62,11 @@ public class CoverLoader {
      * @param music
      * @param callBack
      */
-    public static void loadImageViewByMusic(Context mContext, Music music, BitmapCallBack callBack) {
+    public static void loadImageViewByMusic(Context mContext, SongBean music, BitmapCallBack callBack) {
         if (music == null) {
             return;
         }
-        String url = getCoverUriByMusic(music, false);
-        loadBitmap(mContext, url, callBack);
+        loadBitmap(mContext, music.getImage(), callBack);
 
     }
 
@@ -107,12 +75,10 @@ public class CoverLoader {
      *
      * @param mContext
      */
-    public static void loadBigImageView(Context mContext, Music music, BitmapCallBack callBack) {
-        if (music == null) return;
-        String url = MusicUtils.INSTANCE.getAlbumPic(music.getCoverUri(), music.getType(), MusicUtils.INSTANCE.getPIC_SIZE_BIG());
+    public static void loadBigImageView(Context mContext, SongBean music, BitmapCallBack callBack) {
         GlideApp.with(mContext)
                 .asBitmap()
-                .load(url == null ? R.drawable.music_five : url)
+                .load(music.getImage())
                 .error(getCoverUriByRandom())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(new SimpleTarget<Bitmap>() {
@@ -125,12 +91,10 @@ public class CoverLoader {
                 });
     }
 
-    public static void loadBigImageView(Context mContext, Music music, ImageView imageView) {
-        if (music == null || imageView == null) return;
-        String url = getCoverUriByMusic(music, true);
+    public static void loadBigImageView(Context mContext, SongBean songBean, ImageView imageView) {
         GlideApp.with(mContext)
                 .asBitmap()
-                .load(url == null ? R.drawable.music_five : url)
+                .load(songBean.getImage())
                 .error(getCoverUriByRandom())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageView);
@@ -182,7 +146,6 @@ public class CoverLoader {
      * @param callBack
      */
     public static void loadBitmap(Context mContext, String url, BitmapCallBack callBack) {
-        if (mContext == null) return;
         GlideApp.with(mContext)
                 .asBitmap()
                 .load(url == null ? getCoverUriByRandom() : url)
@@ -198,9 +161,7 @@ public class CoverLoader {
                 });
     }
 
-
     public static Drawable createBlurredImageFromBitmap(Bitmap bitmap) {
         return ImageUtils.createBlurredImageFromBitmap(bitmap, 4);
     }
-
 }

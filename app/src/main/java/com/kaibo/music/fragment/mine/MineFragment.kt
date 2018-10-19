@@ -1,4 +1,4 @@
-package com.kaibo.music.fragment.home
+package com.kaibo.music.fragment.mine
 
 import android.os.Bundle
 import com.kaibo.core.fragment.BaseFragment
@@ -11,9 +11,9 @@ import com.kaibo.music.R
  * @email：kaibo1hao@gmail.com
  * @description：
  */
-class MeFragment : BaseFragment() {
+class MineFragment : BaseFragment() {
 
-    override fun getLayoutRes() = R.layout.fragment_me
+    override fun getLayoutRes() = R.layout.fragment_mine
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
 

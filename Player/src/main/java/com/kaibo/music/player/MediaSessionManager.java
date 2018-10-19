@@ -96,14 +96,12 @@ public class MediaSessionManager {
             mMediaSession.setMetadata(null);
             return;
         }
-
         MediaMetadataCompat.Builder metaDta = new MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, songInfo.getSongname())
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, songInfo.getArtist())
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, songInfo.getAlbum())
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, songInfo.getArtist())
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, songInfo.getSingername())
+//                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, songInfo.getAlbum())
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, songInfo.getSingername())
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, songInfo.getDuration());
-
         CoverLoader.loadBigImageView(context, songInfo, bitmap -> {
             metaDta.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap);
             mMediaSession.setMetadata(metaDta.build());

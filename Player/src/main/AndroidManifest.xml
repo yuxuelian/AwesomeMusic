@@ -1,2 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.kaibo.music.player" />
+    package="com.kaibo.music.player">
+
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <application>
+
+        <service
+            android:name=".MusicPlayerService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":player" />
+
+    </application>
+
+</manifest>

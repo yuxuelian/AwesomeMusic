@@ -10,6 +10,7 @@
         <item>推荐</item>
         <item>歌手</item>
         <item>排行</item>
+        <item>我的</item>
     </string-array>
 
     <string name="large_text">
