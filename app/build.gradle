@@ -84,4 +84,5 @@ dependencies {
     androidTestImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
     implementation project(':Core')
     implementation project(':Player')
+    implementation project(':PullRefresh')
 }

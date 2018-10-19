@@ -55,38 +55,45 @@ function _normalizeSinger(list) {
     return hot.concat(ret)
 }
 
-function singerListInit(apiRoutes) {
+function singerListInit(apiRoutes, redisClient) {
     // 根据关键字搜索歌曲
     apiRoutes.get('/getSingerList', function (request, response) {
-        const url = 'https://c.y.qq.com/v8/fcg-bin/v8.fcg'
-        const data = Object.assign({}, config.commonParams, {
-            channel: 'singer',
-            page: 'list',
-            key: 'all_all_all',
-            pagesize: 100,
-            pagenum: 1,
-            hostUin: 0,
-            needNewCode: 0,
-            platform: 'yqq'
+        const redisKey = 'getSingerList'
+        redisClient.getObj(redisKey).then((redisValue) => {
+            response.json(redisValue)
+        }).catch((redisErr) => {
+            const url = 'https://c.y.qq.com/v8/fcg-bin/v8.fcg'
+            const data = Object.assign({}, config.commonParams, {
+                channel: 'singer',
+                page: 'list',
+                key: 'all_all_all',
+                pagesize: 100,
+                pagenum: 1,
+                hostUin: 0,
+                needNewCode: 0,
+                platform: 'yqq'
+            })
+            axios
+                .get(url, {
+                    headers: config.commonHeaders,
+                    params: data
+                })
+                .then((axiosRes) => {
+                    let qqResData = axiosRes.data
+                    let res = {}
+                    res.qqResData = qqResData
+                    res.code = qqResData.code
+                    res.message = qqResData.message
+                    res.data = _normalizeSinger(qqResData.data.list)
+                    //缓存到redis
+                    redisClient.setObj(redisKey, res, config.redisTTL)
+                    response.json(res)
+                })
+                .catch((axiosErr) => {
+                    console.log(axiosErr)
+                    response.json(config.error)
+                })
         })
-        axios
-            .get(url, {
-                headers: config.commonHeaders,
-                params: data
-            })
-            .then((axiosRes) => {
-                let qqResData = axiosRes.data
-                let res = {}
-                res.qqResData = qqResData
-                res.code = qqResData.code
-                res.message = qqResData.message
-                res.data = _normalizeSinger(qqResData.data.list)
-                response.json(res)
-            })
-            .catch((axiosErr) => {
-                console.log(axiosErr)
-                response.json(config.error)
-            })
     })
 }
 
