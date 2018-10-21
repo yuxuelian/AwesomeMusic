@@ -7,10 +7,10 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import com.jakewharton.rxbinding2.view.clicks
-import com.kaibo.core.activity.CoreActivity
 import com.kaibo.core.util.animInStartActivity
 import com.kaibo.core.util.statusBarHeight
 import com.kaibo.music.R
+import com.kaibo.music.activity.base.BaseActivity
 import com.kaibo.music.fragment.mine.MineFragment
 import com.kaibo.music.fragment.rank.RankFragment
 import com.kaibo.music.fragment.recommend.RecommendFragment
@@ -27,13 +27,14 @@ import kotlinx.android.synthetic.main.include_mini_play.*
  * @description：
  */
 
-class MainActivity : CoreActivity() {
+class MainActivity : BaseActivity() {
 
     override fun getLayoutRes(): Int {
         return R.layout.activity_main
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
+        super.initOnCreate(savedInstanceState)
         appBarLayout.setPadding(0, statusBarHeight, 0, 0)
         initViewPager()
 
@@ -50,6 +51,9 @@ class MainActivity : CoreActivity() {
                 animInStartActivity<PlayerActivity>()
             }
         }
+
+        circleProgressBar.progress = 50
+        circleProgressBar.max = 100
     }
 
     private fun initViewPager() {
@@ -64,6 +68,13 @@ class MainActivity : CoreActivity() {
         }
         mainPager.offscreenPageLimit = 4
         tabLayout.setupWithViewPager(mainPager)
+    }
+
+    override fun onBackPressed() {
+        // 返回桌面
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_HOME)
+        startActivity(intent)
     }
 
 }

@@ -10,6 +10,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.kaibo.music.bean.SongBean;
 import com.kaibo.music.utils.CoverLoader;
+import com.orhanobut.logger.Logger;
 
 /**
  * MediaSession管理类
@@ -96,16 +97,24 @@ public class MediaSessionManager {
             mMediaSession.setMetadata(null);
             return;
         }
+
+
+        Logger.d("updateMetaData");
+
         MediaMetadataCompat.Builder metaDta = new MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, songInfo.getSongname())
                 .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, songInfo.getSingername())
 //                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, songInfo.getAlbum())
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, songInfo.getSingername())
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, songInfo.getDuration());
-        CoverLoader.loadBigImageView(context, songInfo, bitmap -> {
-            metaDta.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap);
-            mMediaSession.setMetadata(metaDta.build());
-        });
+
+        Logger.d("updateMetaData");
+//        CoverLoader.loadBigImageView(context, songInfo, bitmap -> {
+//            Logger.d("updateMetaData");
+//            metaDta.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap);
+//            mMediaSession.setMetadata(metaDta.build());
+//            Logger.d("updateMetaData");
+//        });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             metaDta.putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, getCount());
         }

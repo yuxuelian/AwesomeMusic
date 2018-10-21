@@ -17,6 +17,7 @@ import com.kaibo.music.bean.SingerSongListBean
 import com.kaibo.music.bean.SongBean
 import com.kaibo.music.item.song.SongItem
 import com.kaibo.music.net.Api
+import com.kaibo.music.player.PlayManager
 import kotlinx.android.synthetic.main.activity_song_list.*
 
 /**
@@ -32,6 +33,7 @@ class SongListActivity : BaseActivity() {
     override fun getLayoutRes() = R.layout.activity_song_list
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
+        super.initOnCreate(savedInstanceState)
         toolbar.layoutParams = toolbar.layoutParams.apply {
             (this as FrameLayout.LayoutParams).topMargin = statusBarHeight
         }
@@ -82,7 +84,9 @@ class SongListActivity : BaseActivity() {
         songListView.layoutManager = LinearLayoutManager(this)
         songListView.withItems(songList.map { songBean: SongBean ->
             SongItem(songBean) {
-
+                setOnClickListener {
+                    PlayManager.playOnline(songBean)
+                }
             }
         })
     }

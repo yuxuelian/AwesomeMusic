@@ -18,23 +18,34 @@ import static com.kaibo.music.player.MusicPlayerService.TRACK_PLAY_ERROR;
 import static com.kaibo.music.player.MusicPlayerService.TRACK_WENT_TO_NEXT;
 
 /**
- * Created by D22434 on 2018/1/16.
+ * Mediaplayer的回调
  */
 
-public class MusicPlayerEngine implements MediaPlayer.OnErrorListener,
-        MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener {
+class MusicPlayerEngine implements
+        MediaPlayer.OnErrorListener,
+        MediaPlayer.OnCompletionListener,
+        MediaPlayer.OnBufferingUpdateListener,
+        MediaPlayer.OnPreparedListener {
 
-    private String TAG = "MusicPlayerEngine";
+    private static final String TAG = "MusicPlayerEngine";
 
     private final WeakReference<MusicPlayerService> mService;
 
+    /**
+     * 真正的播放器
+     */
     private MediaPlayer mCurrentMediaPlayer = new MediaPlayer();
 
     private Handler mHandler;
 
-    //是否已经初始化
+    /**
+     * 是否已经初始化
+     */
     private boolean mIsInitialized = false;
-    //是否已经初始化
+
+    /**
+     * 是否已经初始化
+     */
     private boolean mIsPrepared = false;
 
     MusicPlayerEngine(final MusicPlayerService service) {
@@ -42,8 +53,79 @@ public class MusicPlayerEngine implements MediaPlayer.OnErrorListener,
         mCurrentMediaPlayer.setWakeMode(mService.get(), PowerManager.PARTIAL_WAKE_LOCK);
     }
 
-    public void setDataSource(final String path) {
+    void setDataSource(final String path) {
         mIsInitialized = setDataSourceImpl(mCurrentMediaPlayer, path);
+    }
+
+    void setHandler(final Handler handler) {
+        mHandler = handler;
+    }
+
+    boolean isInitialized() {
+        return mIsInitialized;
+    }
+
+    boolean isPrepared() {
+        return mIsPrepared;
+    }
+
+    void start() {
+        mCurrentMediaPlayer.start();
+    }
+
+    void stop() {
+        try {
+            mCurrentMediaPlayer.reset();
+            mIsInitialized = false;
+            mIsPrepared = false;
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void release() {
+        mCurrentMediaPlayer.release();
+    }
+
+    void pause() {
+        mCurrentMediaPlayer.pause();
+    }
+
+    boolean isPlaying() {
+        return mCurrentMediaPlayer.isPlaying();
+    }
+
+    /**
+     * getDuration 只能在prepared之后才能调用，不然会报-38错误
+     *
+     * @return
+     */
+    int duration() {
+        if (mIsPrepared) {
+            return mCurrentMediaPlayer.getDuration();
+        } else {
+            return 0;
+        }
+    }
+
+    int position() {
+        try {
+            return mCurrentMediaPlayer.getCurrentPosition();
+        } catch (IllegalStateException e) {
+            return -1;
+        }
+    }
+
+    void seek(final int whereto) {
+        mCurrentMediaPlayer.seekTo(whereto);
+    }
+
+    void setVolume(final float vol) {
+        mCurrentMediaPlayer.setVolume(vol, vol);
+    }
+
+    int getAudioSessionId() {
+        return mCurrentMediaPlayer.getAudioSessionId();
     }
 
     private boolean setDataSourceImpl(final MediaPlayer player, final String path) {
@@ -67,97 +149,18 @@ public class MusicPlayerEngine implements MediaPlayer.OnErrorListener,
             player.setOnErrorListener(this);
             player.setOnCompletionListener(this);
         } catch (Exception todo) {
+            todo.printStackTrace();
             return false;
         }
         return true;
     }
 
-    public void setHandler(final Handler handler) {
-        mHandler = handler;
-    }
-
-
-    public boolean isInitialized() {
-        return mIsInitialized;
-    }
-
-    public boolean isPrepared() {
-        return mIsPrepared;
-    }
-
-    public void start() {
-        mCurrentMediaPlayer.start();
-    }
-
-
-    public void stop() {
-        try {
-            mCurrentMediaPlayer.reset();
-            mIsInitialized = false;
-            mIsPrepared = false;
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public void release() {
-        mCurrentMediaPlayer.release();
-    }
-
-
-    public void pause() {
-        mCurrentMediaPlayer.pause();
-    }
-
-    public boolean isPlaying() {
-        return mCurrentMediaPlayer.isPlaying();
-    }
-
-
-    /**
-     * getDuration 只能在prepared之后才能调用，不然会报-38错误
-     *
-     * @return
-     */
-    public int duration() {
-        if (mIsPrepared) {
-            return mCurrentMediaPlayer.getDuration();
-        } else {
-            return 0;
-        }
-    }
-
-
-    public int position() {
-        try {
-            return mCurrentMediaPlayer.getCurrentPosition();
-        } catch (IllegalStateException e) {
-            return -1;
-        }
-    }
-
-    public void seek(final long whereto) {
-        mCurrentMediaPlayer.seekTo((int) whereto);
-    }
-
-
-    public void setVolume(final float vol) {
-        mCurrentMediaPlayer.setVolume(vol, vol);
-    }
-
-    public int getAudioSessionId() {
-        return mCurrentMediaPlayer.getAudioSessionId();
-    }
-
     @Override
     public boolean onError(final MediaPlayer mp, final int what, final int extra) {
-        Logger.e(TAG, "Music Server Error what: " + what + " extra: " + extra);
         switch (what) {
             case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
                 final MusicPlayerService service = mService.get();
-                final TrackErrorInfo errorInfo = new TrackErrorInfo(service.getAudioId(),
-                        service.getTitle());
+                final TrackErrorInfo errorInfo = new TrackErrorInfo(service.getAudioId(), service.getSongName());
                 mIsInitialized = false;
                 mCurrentMediaPlayer.release();
                 mCurrentMediaPlayer = new MediaPlayer();
@@ -170,7 +173,6 @@ public class MusicPlayerEngine implements MediaPlayer.OnErrorListener,
         }
         return true;
     }
-
 
     @Override
     public void onCompletion(final MediaPlayer mp) {
@@ -186,7 +188,6 @@ public class MusicPlayerEngine implements MediaPlayer.OnErrorListener,
 
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        Logger.e(TAG, "onBufferingUpdate" + percent);
         Message message = mHandler.obtainMessage(PREPARE_ASYNC_UPDATE, percent);
         mHandler.sendMessage(message);
     }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mine_play_layout"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="60dp"
     android:background="@drawable/btn_50_selector"
     android:clickable="true"
     android:focusable="true">
@@ -47,22 +47,44 @@
         app:layout_constraintStart_toEndOf="@id/songImg"
         app:layout_constraintTop_toBottomOf="@+id/songName" />
 
-    <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+    <FrameLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:background="@drawable/btn_50_selector"
         android:clickable="true"
         android:focusable="true"
-        android:padding="10dp"
-        android:src="@drawable/play"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/playListBtn"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.kaibo.music.weight.CircleProgressBar
+            android:id="@+id/circleProgressBar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            app:drawBackgroundOutsideProgress="false"
+            app:progress_background_color="@color/colorTheme"
+            app:progress_diff_radius="1dp"
+            app:progress_end_color="@color/colorTheme"
+            app:progress_shader="linear"
+            app:progress_start_color="@color/colorTheme"
+            app:progress_stroke_cap="round"
+            app:progress_stroke_width="1dp"
+            app:progress_text_color="@color/translucent"
+            app:style="solid_line" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:src="@drawable/ic_pause"
+            android:tint="@color/colorTheme" />
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/playListBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:background="@drawable/btn_50_selector"
         android:clickable="true"
         android:focusable="true"

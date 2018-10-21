@@ -31,6 +31,7 @@ class SearchActivity : BaseActivity() {
     override fun getLayoutRes() = R.layout.activity_search
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
+        super.initOnCreate(savedInstanceState)
         appBarLayout.setPadding(0, statusBarHeight, 0, 0)
         setSupportActionBar(searchToolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)

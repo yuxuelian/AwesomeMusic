@@ -25,9 +25,6 @@ import static com.kaibo.music.player.MusicPlayerService.AUDIO_FOCUS_CHANGE;
 public class AudioAndFocusManager {
 
     private AudioManager mAudioManager;
-    private ComponentName mediaButtonReceiverComponent;
-    private PendingIntent mPendingIntent;
-    private MediaSession mediaSession;
     private MusicPlayerService.MusicPlayerHandler mHandler;
 
     public AudioAndFocusManager(Context mContext, MusicPlayerService.MusicPlayerHandler mHandler) {
@@ -44,14 +41,14 @@ public class AudioAndFocusManager {
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void initAudioManager(Context mContext) {
-        mediaSession = new MediaSession(mContext, "AudioAndFocusManager");
+        MediaSession mediaSession = new MediaSession(mContext, "AudioAndFocusManager");
         mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-        mediaButtonReceiverComponent = new ComponentName(mContext.getPackageName(), MediaButtonIntentReceiver.class.getName());
+        ComponentName mediaButtonReceiverComponent = new ComponentName(mContext.getPackageName(), MediaButtonIntentReceiver.class.getName());
         mContext.getPackageManager().setComponentEnabledSetting(mediaButtonReceiverComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
         mAudioManager.registerMediaButtonEventReceiver(mediaButtonReceiverComponent);
         Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
         mediaButtonIntent.setComponent(mediaButtonReceiverComponent);
-        mPendingIntent = PendingIntent.getBroadcast(mContext, 0, mediaButtonIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent mPendingIntent = PendingIntent.getBroadcast(mContext, 0, mediaButtonIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         mediaSession.setMediaButtonReceiver(mPendingIntent);
     }
 
@@ -85,7 +82,6 @@ public class AudioAndFocusManager {
             boolean result = AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAudioManager.abandonAudioFocus(audioFocusChangeListener);
         }
     }
-
 
     /**
      * 音频焦点改变监听器

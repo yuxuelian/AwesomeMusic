@@ -19,7 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.kaibo.music.activity.SearchActivity" />
+        <activity
+            android:name="com.kaibo.music.activity.SearchActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name="com.kaibo.music.activity.SongListActivity" />
         <activity android:name="com.kaibo.music.activity.PlayerActivity" />
     </application>

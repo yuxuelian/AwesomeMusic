@@ -14,7 +14,7 @@ object PlayHistoryLoader {
      */
     fun addSongToHistory(music: SongBean) {
         try {
-//            DaoLitepal.addToPlaylist(music, Constants.PLAYLIST_HISTORY_ID)
+//            DaoLitepal.addToPlaylist(music, LAYLIST_HISTORY_ID)
         } catch (e: Throwable) {
             e.printStackTrace()
         }
@@ -24,7 +24,7 @@ object PlayHistoryLoader {
      * 获取播放历史
      */
     fun getPlayHistory(): MutableList<SongBean> {
-//        return DaoLitepal.getMusicList(Constants.PLAYLIST_HISTORY_ID, "updateDate desc")
+//        return DaoLitepal.getMusicList(PLAYLIST_HISTORY_ID, "updateDate desc")
         return ArrayList()
     }
 
@@ -33,7 +33,7 @@ object PlayHistoryLoader {
      */
     fun clearPlayHistory() {
         try {
-//            DaoLitepal.clearPlaylist(Constants.PLAYLIST_HISTORY_ID)
+//            DaoLitepal.clearPlaylist(PLAYLIST_HISTORY_ID)
         } catch (e: Throwable) {
             e.printStackTrace()
         }

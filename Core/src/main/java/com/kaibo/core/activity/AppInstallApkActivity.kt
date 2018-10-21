@@ -17,7 +17,7 @@ import com.kaibo.core.utl.installApk
  * @description：
  */
 
-class AppInstallApkActivity : CoreActivity() {
+class AppInstallApkActivity : SuperActivity() {
 
     companion object {
         const val GET_UNKNOWN_APP_SOURCES = 0x01

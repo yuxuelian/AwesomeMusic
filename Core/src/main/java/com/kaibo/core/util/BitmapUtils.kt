@@ -24,6 +24,8 @@ import java.io.FileOutputStream
  * @description：
  */
 
+private const val TAG = "BitmapUtilKt"
+
 fun Bitmap.toBase64(): String {
     // 要返回的字符串
     ByteArrayOutputStream().use {
@@ -32,8 +34,6 @@ fun Bitmap.toBase64(): String {
         return Base64.encodeToString(it.toByteArray(), Base64.DEFAULT)
     }
 }
-
-private const val TAG = "BitmapUtilKt"
 
 /**
  * 将 Bitmap 保存到指定的文件
@@ -82,7 +82,7 @@ fun Bitmap.blur(context: Context,
 
     val startTime = System.currentTimeMillis()
     //首先将图片缩小一下  1.提高模糊效率   2.防止内存溢出
-    val outputBitmap = this.resizeByScale(1.0F / scale)
+    val outputBitmap = this.resizeOfScale(1.0F / scale)
     val rs = RenderScript.create(context)
     val input = Allocation.createFromBitmap(rs, outputBitmap)
     val output = Allocation.createTyped(rs, input.type)
@@ -109,7 +109,7 @@ fun Bitmap.blur(context: Context,
  * @param scale  scale>1是放大   scale<1  是缩小
  * @return
  */
-fun Bitmap.resizeByScale(scale: Float): Bitmap {
+fun Bitmap.resizeOfScale(scale: Float): Bitmap {
     if (scale <= 0) {
         throw IllegalArgumentException("scale must be > 0")
     }
@@ -136,7 +136,7 @@ fun Bitmap.resizeByScale(scale: Float): Bitmap {
  * @param h
  * @return
  */
-fun Bitmap.resizeBySize(w: Int, h: Int): Bitmap {
+fun Bitmap.resize(w: Int, h: Int): Bitmap {
     val width = this.width
     val height = this.height
 

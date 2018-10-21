@@ -2,7 +2,7 @@ package com.kaibo.music.bean.data
 
 import com.kaibo.music.bean.Playlist
 import com.kaibo.music.bean.SongBean
-import com.kaibo.music.common.Constants
+import com.kaibo.music.player.MusicPlayerService
 
 /**
  * 作者：yonglong on 2016/11/6 17:02
@@ -27,12 +27,12 @@ object PlaylistLoader {
     }
 
     fun getHistoryPlaylist(): Playlist {
-//        return DaoLitepal.getPlaylist(Constants.PLAYLIST_HISTORY_ID)
+//        return DaoLitepal.getPlaylist(PLAYLIST_HISTORY_ID)
         return Playlist()
     }
 
     fun getFavoritePlaylist(): Playlist {
-//        return DaoLitepal.getPlaylist(Constants.PLAYLIST_LOVE_ID)
+//        return DaoLitepal.getPlaylist(PLAYLIST_LOVE_ID)
         return Playlist()
     }
 
@@ -48,7 +48,7 @@ object PlaylistLoader {
         playlist.date = System.currentTimeMillis()
         playlist.updateDate = System.currentTimeMillis()
         playlist.name = name
-        if (pid != Constants.PLAYLIST_QUEUE_ID)
+        if (pid != MusicPlayerService.PLAYLIST_QUEUE_ID)
             playlist.order = "updateDate desc"
 //        return DaoLitepal.saveOrUpdatePlaylist(playlist)
         return true

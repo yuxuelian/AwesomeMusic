@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.annotation.CallSuper
-import com.kaibo.core.activity.CoreActivity
 import com.kaibo.core.util.blur
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
@@ -20,7 +19,7 @@ import io.reactivex.schedulers.Schedulers
  * @description：
  */
 
-abstract class BasePlayerActivity : CoreActivity() {
+abstract class BasePlayerActivity : BaseActivity() {
 
     protected val topLayoutIn: Animation by lazy {
         AnimationUtils.loadAnimation(this, R.anim.top_layout_in).apply {
@@ -71,11 +70,6 @@ abstract class BasePlayerActivity : CoreActivity() {
                 String.format("%02d:%02d", second / 60, second % 60)
             }
         }
-    }
-
-    @CallSuper
-    override fun initOnCreate(savedInstanceState: Bundle?) {
-
     }
 
     protected abstract fun updateDuration(duration: Int)

@@ -15,8 +15,8 @@ object PlayQueueLoader {
      * 获取播放队列
      */
     fun getPlayQueue(): List<SongBean> {
-//        return DaoLitepal.getMusicList(Constants.PLAYLIST_QUEUE_ID)
-        return emptyList()
+//        return DaoLitepal.getMusicList(PLAYLIST_QUEUE_ID)
+        return ArrayList()
     }
 
     /**
@@ -26,7 +26,7 @@ object PlayQueueLoader {
         doAsync {
             clearQueue()
             musics.forEach {
-                //                DaoLitepal.addToPlaylist(it, Constants.PLAYLIST_QUEUE_ID)
+                //                DaoLitepal.addToPlaylist(it, PLAYLIST_QUEUE_ID)
             }
         }
     }
@@ -36,7 +36,7 @@ object PlayQueueLoader {
      */
     fun clearQueue() {
         try {
-//            DaoLitepal.clearPlaylist(Constants.PLAYLIST_QUEUE_ID)
+//            DaoLitepal.clearPlaylist(PLAYLIST_QUEUE_ID)
         } catch (e: Throwable) {
             e.printStackTrace()
         }

@@ -74,12 +74,12 @@ public class IMusicServiceStub extends ISongService.Stub {
 
     @Override
     public String getSongName() throws RemoteException {
-        return mService.get().getTitle();
+        return mService.get().getSongName();
     }
 
     @Override
     public String getSongArtist() throws RemoteException {
-        return mService.get().getArtistName();
+        return mService.get().getSingerName();
     }
 
     @Override

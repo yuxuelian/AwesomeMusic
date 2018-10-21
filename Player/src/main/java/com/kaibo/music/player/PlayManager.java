@@ -11,6 +11,7 @@ import android.os.RemoteException;
 
 import com.kaibo.music.ISongService;
 import com.kaibo.music.bean.SongBean;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +39,12 @@ public class PlayManager {
         final ServiceBinder binder = new ServiceBinder(callback);
         if (contextWrapper.bindService(new Intent().setClass(contextWrapper, MusicPlayerService.class), binder, 0)) {
             mConnectionMap.put(contextWrapper, binder);
+            Logger.d("绑定成功");
             return new ServiceToken(contextWrapper);
+        }else {
+            Logger.d("绑定失败");
+            return null;
         }
-        return null;
     }
 
     public static void unbindFromService(final ServiceToken token) {
