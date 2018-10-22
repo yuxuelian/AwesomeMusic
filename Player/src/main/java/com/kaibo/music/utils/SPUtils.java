@@ -21,15 +21,10 @@ public class SPUtils {
     private static final String PLAY_POSITION = "play_position";
     private static final String PLAY_MODE = "play_mode";
     private static final String SPLASH_URL = "splash_url";
-    private static final String WIFI_MODE = "wifi_mode";
-    private static final String LYRIC_MODE = "lyric_mode";
     private static final String NIGHT_MODE = "night_mode";
     private static final String POSITION = "position";
     private static final String DESKTOP_LYRIC_SIZE = "desktop_lyric_size";
     private static final String DESKTOP_LYRIC_COLOR = "desktop_lyric_color";
-    public static final String QQ_OPEN_ID = "qq_open_id";
-    public static final String QQ_ACCESS_TOKEN = "qq_access_token";
-    public static final String QQ_EXPIRES_IN = "expires_in";
 
     private static Context context = BaseApplication.Companion.getBaseApplication();
 

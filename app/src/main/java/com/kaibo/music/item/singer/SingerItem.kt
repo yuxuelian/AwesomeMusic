@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.item_singer.view.*
 
 /**
  * @author 56896
- * @date 2018/10/14 15:34
+ * @createDate 2018/10/14 15:34
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：

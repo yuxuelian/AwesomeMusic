@@ -15,12 +15,14 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.kaibo.music.player.MusicPlayerService
+import com.kaibo.music.player.Constants
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 
-
+/**
+ * 不同的Rom相关的操作
+ */
 object HuaweiUtils {
     private val TAG = "HuaweiUtils"
 
@@ -30,8 +32,11 @@ object HuaweiUtils {
     fun checkFloatWindowPermission(context: Context): Boolean {
         val version = Build.VERSION.SDK_INT
         return if (version >= 19) {
-            checkOp(context, 24) //OP_SYSTEM_ALERT_WINDOW = 24;
-        } else true
+            //OP_SYSTEM_ALERT_WINDOW = 24
+            checkOp(context, 24)
+        } else {
+            true
+        }
     }
 
     /**
@@ -48,12 +53,12 @@ object HuaweiUtils {
             intent.component = comp
             if (RomUtils.emuiVersion == 3.1) {
                 //emui 3.1 的适配
-                (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
+                (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
             } else {
                 //emui 3.0 的适配
                 comp = ComponentName("com.huawei.systemmanager", "com.huawei.notificationmanager.ui.NotificationManagmentActivity")//悬浮窗管理页面
                 intent.component = comp
-                (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
+                (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
             }
         } catch (e: SecurityException) {
             val intent = Intent()
@@ -63,7 +68,7 @@ object HuaweiUtils {
                     "com.huawei.permissionmanager.ui.MainActivity")//华为权限管理，跳转到本app的权限管理页面,这个需要华为接口权限，未解决
             //      ComponentName comp = new ComponentName("com.huawei.systemmanager","com.huawei.systemmanager.addviewmonitor.AddViewMonitorActivity");//悬浮窗管理页面
             intent.component = comp
-            (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
+            (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
             Log.e(TAG, Log.getStackTraceString(e))
         } catch (e: ActivityNotFoundException) {
             /**
@@ -75,7 +80,7 @@ object HuaweiUtils {
             val comp = ComponentName("com.Android.settings", "com.android.settings.permission.TabItem")//权限管理页面 android4.4
             //   ComponentName comp = new ComponentName("com.android.settings","com.android.settings.permission.single_app_activity");//此处可跳转到指定app对应的权限管理页面，但是需要相关权限，未解决
             intent.component = comp
-            (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
+            (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
             e.printStackTrace()
             Log.e(TAG, Log.getStackTraceString(e))
         } catch (e: Exception) {
@@ -128,7 +133,7 @@ object MeizuUtils {
             //            intent.setClassName("com.meizu.safe", "com.meizu.safe.security.AppSecActivity");//remove this line code for fix flyme6.3
             intent.putExtra("packageName", context.packageName)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
+            (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
         } catch (e: Exception) {
             try {
                 Log.e(TAG, "获取悬浮窗权限, 打开AppSecActivity失败, " + Log.getStackTraceString(e))
@@ -253,8 +258,8 @@ object MiuiUtils {
         intent.data = uri
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         if (isIntentAvailable(intent, context)) {
-//            (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
-            (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
+//            (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
+            (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
         } else {
             Log.e(TAG, "intent is not available!")
         }
@@ -272,7 +277,7 @@ object MiuiUtils {
         //        intent.putExtra("extra_package_uid", pInfo.applicationInfo.uid);
         //        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //        if (isIntentAvailable(intent, context)) {
-        //            (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW);
+        //            (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW);
         //        } else {
         //            AVLogUtils.e(TAG, "Intent is not available!");
         //        }
@@ -288,8 +293,8 @@ object MiuiUtils {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
         if (isIntentAvailable(intent, context)) {
-//            (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
-            (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
+//            (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
+            (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
         } else {
             Log.e(TAG, "Intent is not available!")
         }
@@ -305,8 +310,8 @@ object MiuiUtils {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
         if (isIntentAvailable(intent, context)) {
-//            (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
-            (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
+//            (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
+            (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
         } else {
             Log.e(TAG, "Intent is not available!")
         }
@@ -323,8 +328,8 @@ object MiuiUtils {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
         if (isIntentAvailable(intent, context)) {
-//            (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
-            (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
+//            (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
+            (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
         } else {
             intent = Intent("miui.intent.action.APP_PERM_EDITOR")
             intent.setPackage("com.miui.securitycenter")
@@ -332,8 +337,8 @@ object MiuiUtils {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
             if (isIntentAvailable(intent, context)) {
-//                (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
-                (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
+//                (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
+                (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
             } else {
                 Log.e(TAG, "Intent is not available!")
             }
@@ -385,7 +390,7 @@ object OppoUtils {
             //com.coloros.safecenter/.sysfloatwindow.FloatWindowListActivity
             val comp = ComponentName("com.coloros.safecenter", "com.coloros.safecenter.sysfloatwindow.FloatWindowListActivity")//悬浮窗管理页面
             intent.component = comp
-            (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
+            (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -432,11 +437,11 @@ object QikuUtils {
         intent.setClassName("com.android.settings", "com.android.settings.Settings\$OverlaySettingsActivity")
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         if (isIntentAvailable(intent, context)) {
-            (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
+            (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
         } else {
             intent.setClassName("com.qihoo360.mobilesafe", "com.qihoo360.mobilesafe.ui.index.AppEnterActivity")
             if (isIntentAvailable(intent, context)) {
-                (context as AppCompatActivity).startActivityForResult(intent, MusicPlayerService.REQUEST_CODE_FLOAT_WINDOW)
+                (context as AppCompatActivity).startActivityForResult(intent, Constants.REQUEST_CODE_FLOAT_WINDOW)
             } else {
                 Log.e(TAG, "can't open permission page with particular name, please use " + "\"adb shell dumpsys activity\" command and tell me the name of the float window permission page")
             }

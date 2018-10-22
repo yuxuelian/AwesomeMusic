@@ -1,4 +1,4 @@
-package com.kaibo.music.player;
+package com.kaibo.music.player.receiver;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
@@ -12,7 +12,8 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.view.KeyEvent;
 
-import com.orhanobut.logger.Logger;
+import com.kaibo.music.player.Constants;
+import com.kaibo.music.player.service.MusicPlayerService;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ import java.util.List;
  */
 
 public class MediaButtonIntentReceiver extends BroadcastReceiver {
-    private static final boolean DEBUG = true;
+
     private static final String TAG = "ButtonIntentReceiver";
 
     private static final int MSG_LONGPRESS_TIMEOUT = 1;
@@ -50,9 +51,6 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
         public void handleMessage(final Message msg) {
             switch (msg.what) {
                 case MSG_LONGPRESS_TIMEOUT:
-                    if (DEBUG) {
-                        Logger.v(TAG, "Handling longpress timeout, launched " + mLaunched);
-                    }
                     if (!mLaunched) {
                         final Context context = (Context) msg.obj;
                         final Intent i = new Intent();
@@ -67,18 +65,15 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
                     //双击时间阈值内
                     final int clickCount = msg.arg1;
                     final String command;
-                    if (DEBUG) {
-                        Logger.v(TAG, "Handling headset click, count = " + clickCount);
-                    }
                     switch (clickCount) {
                         case 1:
-                            command = MusicPlayerService.CMD_TOGGLE_PAUSE;
+                            command = Constants.CMD_TOGGLE_PAUSE;
                             break;
                         case 2:
-                            command = MusicPlayerService.CMD_NEXT;
+                            command = Constants.CMD_NEXT;
                             break;
                         case 3:
-                            command = MusicPlayerService.CMD_PREVIOUS;
+                            command = Constants.CMD_PREVIOUS;
                             break;
                         default:
                             command = null;
@@ -104,9 +99,9 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
      */
     private static void startService(Context context, String command) {
         final Intent i = new Intent(context, MusicPlayerService.class);
-        i.setAction(MusicPlayerService.SERVICE_CMD);
-        i.putExtra(MusicPlayerService.CMD_NAME, command);
-        i.putExtra(MusicPlayerService.FROM_MEDIA_BUTTON, true);
+        i.setAction(Constants.SERVICE_CMD);
+        i.putExtra(Constants.CMD_NAME, command);
+        i.putExtra(Constants.FROM_MEDIA_BUTTON, true);
         context.startService(i);
     }
 
@@ -119,9 +114,6 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
             //设置无论请求多少次vakelock,都只需一次释放
             mWakeLock.setReferenceCounted(false);
         }
-        if (DEBUG) {
-            Logger.v(TAG, "Acquiring wake lock and sending " + msg.what);
-        }
         // Make sure we don't indefinitely hold the wake lock under any circumstances
         //防止无期限hold住wakelock
         mWakeLock.acquire(10000);
@@ -133,15 +125,9 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
      */
     private static void releaseWakeLockIfHandlerIdle() {
         if (mHandler.hasMessages(MSG_LONGPRESS_TIMEOUT) || mHandler.hasMessages(MSG_HEADSET_DOUBLE_CLICK_TIMEOUT)) {
-            if (DEBUG) {
-                Logger.v(TAG, "Handler still has messages pending, not releasing wake lock");
-            }
             return;
         }
         if (mWakeLock != null) {
-            if (DEBUG) {
-                Logger.v(TAG, "Releasing wake lock");
-            }
             mWakeLock.release();
             mWakeLock = null;
         }
@@ -150,60 +136,54 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         final String intentAction = intent.getAction();
-        Logger.e(TAG, "intentAction = " + intentAction);
         if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intentAction)) {
             //当耳机拔出时暂停播放
             if (isMusicServiceRunning(context)) {
                 Intent i = new Intent(context, MusicPlayerService.class);
-                i.setAction(MusicPlayerService.SERVICE_CMD);
-                i.putExtra(MusicPlayerService.CMD_NAME, MusicPlayerService.CMD_PAUSE);
-                //for multi user,when use BT play music,should start service match current user
+                i.setAction(Constants.SERVICE_CMD);
+                i.putExtra(Constants.CMD_NAME, Constants.CMD_PAUSE);
                 context.startService(i);
             }
         } else if (Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
             //耳机按钮事件
             final KeyEvent event = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-            Logger.e(TAG, "keycode = " + event.getKeyCode());
             final int keycode = event.getKeyCode();
             final int action = event.getAction();
             final long eventtime = event.getEventTime();
             String command = null;
             switch (keycode) {
                 case KeyEvent.KEYCODE_MEDIA_STOP:
-                    command = MusicPlayerService.CMD_STOP;
+                    command = Constants.CMD_STOP;
                     break;
                 case KeyEvent.KEYCODE_HEADSETHOOK:
                 case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-                    command = MusicPlayerService.CMD_TOGGLE_PAUSE;
+                    command = Constants.CMD_TOGGLE_PAUSE;
                     break;
                 case KeyEvent.KEYCODE_MEDIA_NEXT:
-                    command = MusicPlayerService.CMD_NEXT;
+                    command = Constants.CMD_NEXT;
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                    command = MusicPlayerService.CMD_PREVIOUS;
+                    command = Constants.CMD_PREVIOUS;
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PAUSE:
-                    command = MusicPlayerService.CMD_PAUSE;
+                    command = Constants.CMD_PAUSE;
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PLAY:
-                    command = MusicPlayerService.CMD_PLAY;
+                    command = Constants.CMD_PLAY;
                     break;
-                /// M: AVRCP and Android Music AP supports the FF/REWIND @{
                 case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
-                    command = MusicPlayerService.CMD_FORWARD;
+                    command = Constants.CMD_FORWARD;
                     break;
                 case KeyEvent.KEYCODE_MEDIA_REWIND:
-                    command = MusicPlayerService.CMD_REWIND;
+                    command = Constants.CMD_REWIND;
                     break;
                 default:
                     break;
-                /// @}
             }
             if (command != null) {
                 if (action == KeyEvent.ACTION_DOWN) {
                     if (mDown) {
-                        if (MusicPlayerService.CMD_TOGGLE_PAUSE.equals(command)
-                                || MusicPlayerService.CMD_PLAY.equals(command)) {
+                        if (Constants.CMD_TOGGLE_PAUSE.equals(command) || Constants.CMD_PLAY.equals(command)) {
                             if (mLastClickTime != 0
                                     && eventtime - mLastClickTime > LONG_PRESS_DELAY) {
                                 acquireWakeLockAndSendMessage(context,
@@ -216,9 +196,6 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
                                 mClickCounter = 0;
                             }
                             mClickCounter++;
-                            if (DEBUG) {
-                                Logger.v(TAG, "Got headset click, count = " + mClickCounter);
-                            }
                             mHandler.removeMessages(MSG_HEADSET_DOUBLE_CLICK_TIMEOUT);
                             Message msg = mHandler.obtainMessage(MSG_HEADSET_DOUBLE_CLICK_TIMEOUT, mClickCounter, 0, context);
                             long delay = mClickCounter < 3 ? DOUBLE_CLICK : 0;
@@ -245,12 +222,6 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
         }
     }
 
-    /**
-     * M: Check whether Music service is running.
-     *
-     * @param context The context
-     * @return If running, return true, otherwise false.
-     */
     private boolean isMusicServiceRunning(Context context) {
         boolean isServiceRuning = false;
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -262,7 +233,6 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
                 break;
             }
         }
-        Logger.d(TAG, "isMusicServiceRunning " + isServiceRuning + ", Runing service num is " + list.size());
         return isServiceRuning;
     }
 }

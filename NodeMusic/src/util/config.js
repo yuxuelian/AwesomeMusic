@@ -1,5 +1,6 @@
 module.exports = {
-    redisTTL: 24 * 60 * 60 * 1000,
+    //redisTTL 单位是秒
+    redisTTL: 24 * 60 * 60,
     commonParams: {
         g_tk: 1928093487,
         inCharset: 'utf-8',

@@ -3,6 +3,7 @@ package com.kaibo.core
 import android.app.Application
 import android.content.Context
 import androidx.multidex.MultiDex
+import androidx.room.Room
 import com.kaibo.core.http.HttpRequestManager
 import com.kaibo.core.toast.ToastUtils
 import com.orhanobut.logger.AndroidLogAdapter

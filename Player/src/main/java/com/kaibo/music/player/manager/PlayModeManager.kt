@@ -1,4 +1,4 @@
-package com.kaibo.music.player.playqueue
+package com.kaibo.music.player.manager
 
 import androidx.annotation.IntDef
 import com.kaibo.music.utils.SPUtils
@@ -7,7 +7,8 @@ import com.kaibo.music.utils.SPUtils
  * Created by master on 2018/5/14.
  */
 
-object PlayQueueManager {
+object PlayModeManager {
+
     /**
      * 播放模式 0：顺序播放，1：单曲循环，2：随机播放
      */

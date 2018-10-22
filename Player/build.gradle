@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-noarg'
 apply plugin: 'kotlin-allopen'
+apply plugin: 'kotlin-kapt'
 
 noArg {
     annotation("com.kaibo.core.annotation.PoKo")
@@ -14,8 +15,6 @@ allOpen {
 
 android {
     compileSdkVersion 28
-
-
 
     defaultConfig {
         minSdkVersion 19
@@ -50,4 +49,6 @@ dependencies {
     androidTestImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
 
     implementation project(':Core')
+
+    kapt "android.arch.persistence.room:compiler:$android_room_version"
 }

@@ -11,6 +11,7 @@ import com.kaibo.core.util.animInStartActivity
 import com.kaibo.core.util.statusBarHeight
 import com.kaibo.music.R
 import com.kaibo.music.activity.base.BaseActivity
+import com.kaibo.music.database.PlayListDatabase
 import com.kaibo.music.fragment.mine.MineFragment
 import com.kaibo.music.fragment.rank.RankFragment
 import com.kaibo.music.fragment.recommend.RecommendFragment
@@ -21,7 +22,7 @@ import kotlinx.android.synthetic.main.include_mini_play.*
 
 /**
  * @author kaibo
- * @date 2018/10/9 11:02
+ * @createDate 2018/10/9 11:02
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：

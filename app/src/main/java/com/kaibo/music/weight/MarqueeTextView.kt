@@ -7,7 +7,7 @@ import androidx.appcompat.widget.AppCompatTextView
 
 /**
  * @author:Administrator
- * @date:2018/4/3 0003 上午 11:06
+ * @createDate:2018/4/3 0003 上午 11:06
  * GitHub:
  * email:
  * description:跑马灯 TextView

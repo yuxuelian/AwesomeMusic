@@ -1,10 +1,10 @@
-package com.kaibo.music.player;
+package com.kaibo.music.player.service;
 
 import android.os.RemoteException;
 
 import com.kaibo.music.ISongService;
 import com.kaibo.music.bean.SongBean;
-import com.kaibo.music.player.playqueue.PlayQueueManager;
+import com.kaibo.music.player.manager.PlayModeManager;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -28,8 +28,8 @@ public class IMusicServiceStub extends ISongService.Stub {
     }
 
     @Override
-    public void playPlaylist(List<SongBean> songs, int id, String pid) throws RemoteException {
-        mService.get().play(songs, id, pid);
+    public void playPlaylist(List<SongBean> songs, int id, String playListId) throws RemoteException {
+        mService.get().play(songs, id, playListId);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class IMusicServiceStub extends ISongService.Stub {
 
     @Override
     public void setPlayMode(int mode) throws RemoteException {
-        PlayQueueManager.INSTANCE.updatePlayMode(PlayQueueManager.PLAY_MODE_LOOP);
+        PlayModeManager.INSTANCE.updatePlayMode(PlayModeManager.PLAY_MODE_LOOP);
     }
 
     @Override

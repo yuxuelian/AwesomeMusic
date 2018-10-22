@@ -1,4 +1,4 @@
-package com.kaibo.music.player;
+package com.kaibo.music.player.engine;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -6,28 +6,20 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 
-import com.orhanobut.logger.Logger;
+import com.kaibo.music.player.Constants;
+import com.kaibo.music.player.service.MusicPlayerService;
 
 import java.lang.ref.WeakReference;
 
-import static com.kaibo.music.player.MusicPlayerService.PLAYER_PREPARED;
-import static com.kaibo.music.player.MusicPlayerService.PREPARE_ASYNC_UPDATE;
-import static com.kaibo.music.player.MusicPlayerService.RELEASE_WAKELOCK;
-import static com.kaibo.music.player.MusicPlayerService.TRACK_PLAY_ENDED;
-import static com.kaibo.music.player.MusicPlayerService.TRACK_PLAY_ERROR;
-import static com.kaibo.music.player.MusicPlayerService.TRACK_WENT_TO_NEXT;
-
 /**
- * Mediaplayer的回调
+ * 封装后的MediaPlayer播放器
  */
 
-class MusicPlayerEngine implements
+public class MusicPlayerEngine implements
         MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener,
         MediaPlayer.OnBufferingUpdateListener,
         MediaPlayer.OnPreparedListener {
-
-    private static final String TAG = "MusicPlayerEngine";
 
     private final WeakReference<MusicPlayerService> mService;
 
@@ -48,32 +40,34 @@ class MusicPlayerEngine implements
      */
     private boolean mIsPrepared = false;
 
-    MusicPlayerEngine(final MusicPlayerService service) {
+    public MusicPlayerEngine(final MusicPlayerService service) {
         mService = new WeakReference<>(service);
-        mCurrentMediaPlayer.setWakeMode(mService.get(), PowerManager.PARTIAL_WAKE_LOCK);
+        // 设置屏幕长亮
+        mCurrentMediaPlayer.setWakeMode(service, PowerManager.PARTIAL_WAKE_LOCK);
     }
 
-    void setDataSource(final String path) {
+    public void setDataSource(final String path) {
+        // 返回是否初始化成功
         mIsInitialized = setDataSourceImpl(mCurrentMediaPlayer, path);
     }
 
-    void setHandler(final Handler handler) {
+    public void setHandler(final Handler handler) {
         mHandler = handler;
     }
 
-    boolean isInitialized() {
+    public boolean isInitialized() {
         return mIsInitialized;
     }
 
-    boolean isPrepared() {
+    public boolean isPrepared() {
         return mIsPrepared;
     }
 
-    void start() {
+    public void start() {
         mCurrentMediaPlayer.start();
     }
 
-    void stop() {
+    public void stop() {
         try {
             mCurrentMediaPlayer.reset();
             mIsInitialized = false;
@@ -83,15 +77,15 @@ class MusicPlayerEngine implements
         }
     }
 
-    void release() {
+    public void release() {
         mCurrentMediaPlayer.release();
     }
 
-    void pause() {
+    public void pause() {
         mCurrentMediaPlayer.pause();
     }
 
-    boolean isPlaying() {
+    public boolean isPlaying() {
         return mCurrentMediaPlayer.isPlaying();
     }
 
@@ -100,7 +94,7 @@ class MusicPlayerEngine implements
      *
      * @return
      */
-    int duration() {
+    public int duration() {
         if (mIsPrepared) {
             return mCurrentMediaPlayer.getDuration();
         } else {
@@ -108,7 +102,7 @@ class MusicPlayerEngine implements
         }
     }
 
-    int position() {
+    public int position() {
         try {
             return mCurrentMediaPlayer.getCurrentPosition();
         } catch (IllegalStateException e) {
@@ -116,22 +110,24 @@ class MusicPlayerEngine implements
         }
     }
 
-    void seek(final int whereto) {
+    public void seek(final int whereto) {
         mCurrentMediaPlayer.seekTo(whereto);
     }
 
-    void setVolume(final float vol) {
+    /**
+     * 音量控制
+     *
+     * @param vol
+     */
+    public void setVolume(final float vol) {
         mCurrentMediaPlayer.setVolume(vol, vol);
     }
 
-    int getAudioSessionId() {
+    public int getAudioSessionId() {
         return mCurrentMediaPlayer.getAudioSessionId();
     }
 
-    private boolean setDataSourceImpl(final MediaPlayer player, final String path) {
-        if (path == null) {
-            return false;
-        }
+    private boolean setDataSourceImpl(MediaPlayer player, String path) {
         try {
             if (player.isPlaying()) {
                 player.stop();
@@ -148,24 +144,28 @@ class MusicPlayerEngine implements
             player.setOnBufferingUpdateListener(this);
             player.setOnErrorListener(this);
             player.setOnCompletionListener(this);
+            return true;
         } catch (Exception todo) {
             todo.printStackTrace();
             return false;
         }
-        return true;
     }
 
     @Override
     public boolean onError(final MediaPlayer mp, final int what, final int extra) {
         switch (what) {
             case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
-                final MusicPlayerService service = mService.get();
-                final TrackErrorInfo errorInfo = new TrackErrorInfo(service.getAudioId(), service.getSongName());
                 mIsInitialized = false;
+                // 释放上一个播放器的资源
                 mCurrentMediaPlayer.release();
+                // 重新创建一个新的播放器
                 mCurrentMediaPlayer = new MediaPlayer();
+                MusicPlayerService service = mService.get();
+                // 屏幕长亮
                 mCurrentMediaPlayer.setWakeMode(service, PowerManager.PARTIAL_WAKE_LOCK);
-                Message msg = mHandler.obtainMessage(TRACK_PLAY_ERROR, errorInfo);
+                // 将错误信息发送出去
+                TrackErrorInfo errorInfo = new TrackErrorInfo(service.getAudioId(), service.getSongName());
+                Message msg = mHandler.obtainMessage(Constants.TRACK_PLAY_ERROR, errorInfo);
                 mHandler.sendMessageDelayed(msg, 2000);
                 return true;
             default:
@@ -176,28 +176,29 @@ class MusicPlayerEngine implements
 
     @Override
     public void onCompletion(final MediaPlayer mp) {
-        Logger.e(TAG, "onCompletion");
         if (mp == mCurrentMediaPlayer) {
-            mHandler.sendEmptyMessage(TRACK_WENT_TO_NEXT);
+            // 播放完成  切换下一首歌
+            mHandler.sendEmptyMessage(Constants.TRACK_WENT_TO_NEXT);
         } else {
             mService.get().mWakeLock.acquire(30000);
-            mHandler.sendEmptyMessage(TRACK_PLAY_ENDED);
-            mHandler.sendEmptyMessage(RELEASE_WAKELOCK);
+            mHandler.sendEmptyMessage(Constants.TRACK_PLAY_ENDED);
+            mHandler.sendEmptyMessage(Constants.RELEASE_WAKELOCK);
         }
     }
 
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        Message message = mHandler.obtainMessage(PREPARE_ASYNC_UPDATE, percent);
-        mHandler.sendMessage(message);
+        // 正在加载 percent 加载进度
+        mHandler.obtainMessage(Constants.PREPARE_ASYNC_UPDATE, percent).sendToTarget();
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+        // 准备完成
         mp.start();
+        // 准备结束标记置为true
         mIsPrepared = true;
-        Message message = mHandler.obtainMessage(PLAYER_PREPARED);
-        mHandler.sendMessage(message);
+        mHandler.obtainMessage(Constants.PLAYER_PREPARED).sendToTarget();
     }
 
     private class TrackErrorInfo {

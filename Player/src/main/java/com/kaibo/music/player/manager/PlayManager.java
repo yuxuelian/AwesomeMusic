@@ -1,4 +1,4 @@
-package com.kaibo.music.player;
+package com.kaibo.music.player.manager;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -11,6 +11,7 @@ import android.os.RemoteException;
 
 import com.kaibo.music.ISongService;
 import com.kaibo.music.bean.SongBean;
+import com.kaibo.music.player.service.MusicPlayerService;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
@@ -18,16 +19,13 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 /**
- * Created by D22434 on 2017/9/20.
+ * 对外提供的播放控制
  */
-
 public class PlayManager {
-    public static ISongService mService = null;
-    private static final WeakHashMap<Context, ServiceBinder> mConnectionMap;
 
-    static {
-        mConnectionMap = new WeakHashMap<>();
-    }
+    private static ISongService mService = null;
+
+    private static WeakHashMap<Context, ServiceBinder> mConnectionMap = new WeakHashMap<>();
 
     public static ServiceToken bindToService(Context context, ServiceConnection callback) {
         Activity realActivity = ((Activity) context).getParent();
@@ -41,7 +39,7 @@ public class PlayManager {
             mConnectionMap.put(contextWrapper, binder);
             Logger.d("绑定成功");
             return new ServiceToken(contextWrapper);
-        }else {
+        } else {
             Logger.d("绑定失败");
             return null;
         }
@@ -60,10 +58,6 @@ public class PlayManager {
         if (mConnectionMap.isEmpty()) {
             mService = null;
         }
-    }
-
-    public static final boolean isPlaybackServiceConnected() {
-        return mService != null;
     }
 
     public static void nextPlay(SongBean music) {
@@ -208,7 +202,7 @@ public class PlayManager {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        return "湖科音乐";
+        return " DelicateMusic";
     }
 
     public static String getSongArtist() {
@@ -219,7 +213,7 @@ public class PlayManager {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        return "湖科音乐";
+        return " DelicateMusic";
     }
 
     public static boolean isPlaying() {
@@ -244,6 +238,11 @@ public class PlayManager {
         return false;
     }
 
+    /**
+     * 获取正在播放的歌曲
+     *
+     * @return
+     */
     public static SongBean getPlayingMusic() {
         try {
             if (mService != null) {
@@ -255,6 +254,11 @@ public class PlayManager {
         return null;
     }
 
+    /**
+     * 获取正在播放音乐的mid
+     *
+     * @return
+     */
     public static String getPlayingId() {
         try {
             if (mService != null && mService.getPlayingSongBean() != null) {
@@ -263,7 +267,7 @@ public class PlayManager {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        return "-1";
+        return "";
     }
 
     public static List<SongBean> getPlayList() {

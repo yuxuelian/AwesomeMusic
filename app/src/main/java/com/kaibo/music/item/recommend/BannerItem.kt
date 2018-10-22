@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.item_banner.view.*
 
 /**
  * @author kaibo
- * @date 2018/10/10 12:55
+ * @createDate 2018/10/10 12:55
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：

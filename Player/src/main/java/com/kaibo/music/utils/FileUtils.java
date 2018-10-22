@@ -1,6 +1,5 @@
 package com.kaibo.music.utils;
 
-import android.content.Context;
 import android.os.Environment;
 
 import java.io.BufferedInputStream;
@@ -8,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -19,22 +17,17 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
-/**
- * 作者：yonglong on 2016/9/9 04:02
- * 邮箱：643872807@qq.com
- * 版本：2.5
- */
 public class FileUtils {
+
     /**
      * 获取APP根目录
      *
      * @return
      */
     private static String getAppDir() {
-        return Environment.getExternalStorageDirectory() + "/musicLake/";
+        return Environment.getExternalStorageDirectory() + "/DelicateMusic/";
     }
 
     public static String getMusicDir() {
@@ -48,8 +41,8 @@ public class FileUtils {
         return mkdirs(dir);
     }
 
-    public static String getImageDir() {
-        String dir = getAppDir() + "cache/";
+    public static String getImageCacheDir() {
+        String dir = getAppDir() + "ImageCache/";
         return mkdirs(dir);
     }
 
@@ -63,24 +56,13 @@ public class FileUtils {
         return mkdirs(dir);
     }
 
-    public static String getSplashDir(Context context) {
-        String dir = context.getFilesDir() + "/splash/";
-        return mkdirs(dir);
-    }
-
-    public static String getRelativeMusicDir() {
-        String dir = "hkMusic/Music/";
-        return mkdirs(dir);
-    }
-
     private static String mkdirs(String dir) {
         File file = new File(dir);
         if (!file.exists()) {
-            file.mkdirs();
+            boolean res = file.mkdirs();
         }
         return dir;
     }
-
 
     /**
      * 判断外部存储是否可用
@@ -88,28 +70,8 @@ public class FileUtils {
      * @return true: 可用
      */
     public static boolean isSDcardAvailable() {
-        String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state);
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
-
-    /**
-     * 可创建多个文件夹
-     * dirPath 文件路径
-     */
-    public static boolean mkDir(String dirPath) {
-        String[] dirArray = dirPath.split("/");
-        String pathTemp = "";
-        boolean mkdir = false;
-        for (int i = 0; i < dirArray.length; i++) {
-            pathTemp = pathTemp + "/" + dirArray[i];
-            File newF = new File(dirArray[0] + pathTemp);
-            if (!newF.exists()) {
-                mkdir = newF.mkdir();
-            }
-        }
-        return mkdir;
-    }
-
 
     /**
      * 创建文件
@@ -117,14 +79,14 @@ public class FileUtils {
      * dirpath 文件目录
      * fileName 文件名称
      */
-    public static boolean creatFile(String dirPath, String fileName) {
+    public static boolean createFile(String dirPath, String fileName) {
         File file = new File(dirPath, fileName);
         boolean newFile = false;
         if (!file.exists()) {
             try {
                 newFile = file.createNewFile();
             } catch (IOException e) {
-                newFile = false;
+                e.printStackTrace();
             }
         }
         return newFile;
@@ -134,14 +96,14 @@ public class FileUtils {
      * 创建文件
      * filePath 文件路径
      */
-    public static boolean creatFile(String filePath) {
+    public static boolean createFile(String filePath) {
         File file = new File(filePath);
         boolean newFile = false;
         if (!file.exists()) {
             try {
                 newFile = file.createNewFile();
             } catch (IOException e) {
-                newFile = false;
+                e.printStackTrace();
             }
         }
         return newFile;
@@ -151,14 +113,13 @@ public class FileUtils {
      * 创建文件
      * file 文件
      */
-    public static boolean creatFile(File file) {
+    public static boolean createFile(File file) {
         boolean newFile = false;
         if (!file.exists()) {
             try {
                 newFile = file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
-                newFile = false;
             }
         }
         return newFile;
@@ -172,9 +133,7 @@ public class FileUtils {
     public static boolean delFile(String dirpath, String fileName) {
         File file = new File(dirpath, fileName);
         boolean delete = false;
-        if (file == null || !file.exists() || file.isDirectory()) {
-            delete = false;
-        } else {
+        if (file.exists() && !file.isDirectory()) {
             delete = file.delete();
         }
         return delete;
@@ -187,9 +146,7 @@ public class FileUtils {
     public static boolean delFile(String filepath) {
         File file = new File(filepath);
         boolean delete = false;
-        if (file == null || !file.exists() || file.isDirectory()) {
-            delete = false;
-        } else {
+        if (file.exists() && !file.isDirectory()) {
             delete = file.delete();
         }
         return delete;
@@ -197,13 +154,13 @@ public class FileUtils {
 
     /**
      * 删除文件
-     * filepath 文件路径
+     *
+     * @param filepath
+     * @return
      */
     public static boolean delFile(File filepath) {
         boolean delete = false;
-        if (filepath == null || !filepath.exists() || filepath.isDirectory()) {
-            delete = false;
-        } else {
+        if (filepath != null && filepath.exists() && !filepath.isDirectory()) {
             delete = filepath.delete();
         }
         return delete;
@@ -334,8 +291,7 @@ public class FileUtils {
         if (!iscopy) {
             return false;
         } else {
-            delFile(srcFile);
-            return true;
+            return delFile(srcFile);
         }
     }
 
@@ -350,13 +306,13 @@ public class FileUtils {
         }
 
         File[] srcDirFiles = srcDir.listFiles();
-        for (int i = 0; i < srcDirFiles.length; i++) {
-            if (srcDirFiles[i].isFile()) {
-                File oneDestFile = new File(destDir.getAbsolutePath(), srcDirFiles[i].getName());
-                moveFileTo(srcDirFiles[i], oneDestFile);
+        for (File srcDirFile : srcDirFiles) {
+            if (srcDirFile.isFile()) {
+                File oneDestFile = new File(destDir.getAbsolutePath(), srcDirFile.getName());
+                boolean b = moveFileTo(srcDirFile, oneDestFile);
             } else {
-                File oneDestFile = new File(destDir.getAbsolutePath(), srcDirFiles[i].getName());
-                moveFilesTo(srcDirFiles[i], oneDestFile);
+                File oneDestFile = new File(destDir.getAbsolutePath(), srcDirFile.getName());
+                boolean b = moveFilesTo(srcDirFile, oneDestFile);
             }
         }
         return true;
@@ -366,20 +322,14 @@ public class FileUtils {
      * 文件转byte数组
      * file 文件路径
      */
-
     public static byte[] file2byte(File file) throws IOException {
         byte[] bytes = null;
         if (file != null) {
             InputStream is = new FileInputStream(file);
             int length = (int) file.length();
-            if (length > Integer.MAX_VALUE) {// 当文件的长度超过了int的最大值
-                System.out.println("this file is max ");
-                is.close();
-                return null;
-            }
             bytes = new byte[length];
             int offset = 0;
-            int numRead = 0;
+            int numRead;
             while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
                 offset += numRead;
             }
@@ -399,7 +349,6 @@ public class FileUtils {
      * filePath 文件路径
      */
     public static String readFile(File filePath) {
-
         BufferedReader bufferedReader = null;
         StringBuilder fileStr = new StringBuilder();
         if (!filePath.exists() || filePath.isDirectory()) {
@@ -407,8 +356,7 @@ public class FileUtils {
         }
         try {
             bufferedReader = new BufferedReader(new FileReader(filePath));
-            String tempFileStr = "";
-
+            String tempFileStr;
             while ((tempFileStr = bufferedReader.readLine()) != null) {
                 fileStr.append(tempFileStr);
                 fileStr.append("\n");
@@ -426,7 +374,6 @@ public class FileUtils {
             }
         }
         return fileStr.toString();
-
     }
 
     /**
@@ -450,9 +397,9 @@ public class FileUtils {
             }
             inputStream.close();
             outputStream.close();
-        } catch (IOException var5) {
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
         return outputStream.toString();
     }
 
@@ -472,9 +419,9 @@ public class FileUtils {
             }
             outputStream.close();
             inputStream.close();
-        } catch (IOException var5) {
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
         return outputStream.toByteArray();
     }
 
@@ -482,13 +429,13 @@ public class FileUtils {
      * BufferedReader 转字符串
      */
     public static String readBuff(BufferedReader bufferedReader) {
-        String readerstr = "";
+        StringBuilder readerstr = new StringBuilder();
         try {
-            String tempstr = "";
+            String tempstr;
             while ((tempstr = bufferedReader.readLine()) != null) {
-                readerstr += tempstr;
+                readerstr.append(tempstr);
             }
-            return readerstr;
+            return readerstr.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -538,11 +485,10 @@ public class FileUtils {
      */
     public static InputStream file2Inp(String absPath) {
         File file = new File(absPath);
-//        FLogUtils.getInstance().e(file.length());
         if (!file.exists()) {
             return null;
         }
-        InputStream is = null;
+        InputStream is;
         try {
             is = new BufferedInputStream(new FileInputStream(file));
             return is;
@@ -550,8 +496,6 @@ public class FileUtils {
             e.printStackTrace();
             return null;
         }
-
-
     }
 
     /**
@@ -562,7 +506,7 @@ public class FileUtils {
      * @return
      */
     public static boolean writeText(File filePath, String content) {
-        creatFile(filePath);
+        createFile(filePath);
         BufferedWriter bufferedWriter = null;
         try {
             bufferedWriter = new BufferedWriter(new FileWriter(filePath));
@@ -614,7 +558,7 @@ public class FileUtils {
      * @return
      */
     public static boolean appendText(File filePath, String content) {
-        creatFile(filePath);
+        createFile(filePath);
         FileWriter writer = null;
         try {
             // 打开一个写文件器，构造函数中的第二个参数true表示以追加形式写文件
@@ -672,7 +616,8 @@ public class FileUtils {
                 tmpOut.write(buff, 0, hasRead);
             }
             //插入需要指定添加的数据
-            raf.seek(fileLength);//返回原来的插入处
+            //返回原来的插入处
+            raf.seek(fileLength);
             //追加需要追加的内容
             raf.write(content.getBytes());
             //最后追加临时文件中的内容
@@ -689,7 +634,6 @@ public class FileUtils {
                     e.printStackTrace();
                 }
             }
-
             if (tmpIn != null) {
                 try {
                     tmpIn.close();
@@ -753,12 +697,8 @@ public class FileUtils {
      * @return
      */
     public static boolean exists(String filePath) {
-        if (new File(filePath).exists()) {
-            return true;
-        }
-        return false;
+        return new File(filePath).exists();
     }
-
 
     /**
      * 按文件时间排序
@@ -769,21 +709,15 @@ public class FileUtils {
      */
     public static File[] orderByDate(File fliePath, boolean desc) {
         File[] fs = fliePath.listFiles();
-        Arrays.sort(fs, new Comparator<File>() {
-            public int compare(File f1, File f2) {
-                long diff = f1.lastModified() - f2.lastModified();
-                if (diff > 0)
-                    return 1;
-                else if (diff == 0)
-                    return 0;
-                else
-                    return -1;
+        Arrays.sort(fs, (f1, f2) -> {
+            long diff = f1.lastModified() - f2.lastModified();
+            if (diff > 0) {
+                return 1;
+            } else if (diff == 0) {
+                return 0;
+            } else {
+                return -1;
             }
-
-            public boolean equals(Object obj) {
-                return true;
-            }
-
         });
         if (desc) {
             File[] nfs = new File[fs.length];
@@ -805,15 +739,14 @@ public class FileUtils {
      */
     public static File[] orderByName(File fliePath, boolean desc) {
         File[] files = fliePath.listFiles();
-        Arrays.sort(files, new Comparator<File>() {
-            @Override
-            public int compare(File o1, File o2) {
-                if (o1.isDirectory() && o2.isFile())
-                    return -1;
-                if (o1.isFile() && o2.isDirectory())
-                    return 1;
-                return o1.getName().compareTo(o2.getName());
+        Arrays.sort(files, (o1, o2) -> {
+            if (o1.isDirectory() && o2.isFile()) {
+                return -1;
             }
+            if (o1.isFile() && o2.isDirectory()) {
+                return 1;
+            }
+            return o1.getName().compareTo(o2.getName());
         });
 
         if (desc) {
@@ -835,22 +768,16 @@ public class FileUtils {
      */
     public static File[] orderByLength(File fliePath, boolean desc) {
         File[] files = fliePath.listFiles();
-        Arrays.sort(files, new Comparator<File>() {
-            public int compare(File f1, File f2) {
-                long diff = f1.length() - f2.length();
-                if (diff > 0)
-                    return 1;
-                else if (diff == 0)
-                    return 0;
-                else
-                    return -1;
-            }
-
-            public boolean equals(Object obj) {
-                return true;
+        Arrays.sort(files, (f1, f2) -> {
+            long diff = f1.length() - f2.length();
+            if (diff > 0) {
+                return 1;
+            } else if (diff == 0) {
+                return 0;
+            } else {
+                return -1;
             }
         });
-
         if (desc) {
             File[] nfs = new File[files.length];
             for (int i = files.length - 1; i > -1; i--) {
@@ -862,7 +789,6 @@ public class FileUtils {
         }
     }
 
-
     /**
      * 文件筛选
      *
@@ -873,9 +799,9 @@ public class FileUtils {
     public static List<File> filter(File[] files, String filter) {
         List<File> filels = new ArrayList<>();
         if (files != null) {
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].getName().contains(filter)) {
-                    filels.add(files[i]);
+            for (File file : files) {
+                if (file.getName().contains(filter)) {
+                    filels.add(file);
                 }
             }
         }
@@ -893,18 +819,7 @@ public class FileUtils {
         if (!file.isDirectory()) {
             return null;
         }
-        File[] files = file.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                if (pathname.getName().contains(filterName)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-        return files;
-
+        return file.listFiles(pathname -> pathname.getName().contains(filterName));
     }
 
     /**
@@ -927,5 +842,4 @@ public class FileUtils {
         }
         return fileDir.listFiles();
     }
-
 }

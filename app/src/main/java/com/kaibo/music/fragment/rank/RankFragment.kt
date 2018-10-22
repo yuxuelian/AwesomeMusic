@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_rank.*
 
 /**
  * @author kaibo
- * @date 2018/10/9 10:32
+ * @createDate 2018/10/9 10:32
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：

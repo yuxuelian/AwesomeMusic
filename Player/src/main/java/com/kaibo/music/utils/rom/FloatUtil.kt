@@ -8,9 +8,10 @@ import android.provider.Settings
 import android.util.Log
 
 /**
- * Created by cyl on 2018/6/29.
+ * 悬浮窗管理类
  */
 object FloatUtil {
+
     fun applyOrShowFloatWindow(context: Context) {
         if (checkPermission(context)) {
         } else {

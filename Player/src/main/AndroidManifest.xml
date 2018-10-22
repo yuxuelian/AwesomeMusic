@@ -49,12 +49,12 @@
         tools:targetApi="m">
 
         <service
-            android:name=".MusicPlayerService"
+            android:name=".service.MusicPlayerService"
             android:enabled="true"
             android:exported="true"
             android:process=":player" />
 
-        <receiver android:name=".MediaButtonIntentReceiver">
+        <receiver android:name=".receiver.MediaButtonIntentReceiver">
             <intent-filter android:priority="2147483647">
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />
                 <action android:name="android.intent.action.MEDIA_BUTTON" />

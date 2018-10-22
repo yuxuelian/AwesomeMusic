@@ -2,50 +2,53 @@ package com.kaibo.music.bean
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.*
 import com.google.gson.annotations.SerializedName
 import com.kaibo.core.annotation.PoKo
-import com.kaibo.music.player.MusicPlayerService
 
 /**
  * @author kaibo
- * @date 2018/10/17 10:57
+ * @createDate 2018/10/17 10:57
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：
  * 歌曲详细信息
  */
 
+@Entity(tableName = "song",
+        indices = [Index("mid")])
 @PoKo
 data class SongBean(
+        @PrimaryKey
         // 歌曲id
-        @SerializedName("songmid") val mid: String = "",
+        @ColumnInfo(name = "mid")
+        @SerializedName("songmid")
+        var mid: String,
         // 歌手名
-        @SerializedName("singername") val singername: String = "",
+        @ColumnInfo(name = "singer_name")
+        @SerializedName("singername")
+        var singername: String,
         // 歌曲名
-        @SerializedName("songname") val songname: String = "",
+        @ColumnInfo(name = "song_name")
+        @SerializedName("songname")
+        var songname: String,
         // 歌曲的图片地址
-        @SerializedName("image") val image: String = "",
+        @ColumnInfo(name = "image")
+        @SerializedName("image")
+        var image: String,
         // 歌曲的播放地址
-        @SerializedName("url") val url: String = ""
+        @ColumnInfo(name = "url")
+        @SerializedName("url")
+        var url: String
 ) : Parcelable {
-    /**
-     * 歌曲的播放时长
-     */
-    var duration: Int = 0
 
-    /**
-     * 歌曲类型  local  qq  等
-     */
-    var type: String = MusicPlayerService.QQ
-
+    @Ignore
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
-            parcel.readString()) {
-        duration = parcel.readInt()
-    }
+            parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(mid)
@@ -53,7 +56,6 @@ data class SongBean(
         parcel.writeString(songname)
         parcel.writeString(image)
         parcel.writeString(url)
-        parcel.writeInt(duration)
     }
 
     override fun describeContents(): Int {

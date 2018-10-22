@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 
 /**
  * @author kaibo
- * @date 2018/10/15 14:08
+ * @createDate 2018/10/15 14:08
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：

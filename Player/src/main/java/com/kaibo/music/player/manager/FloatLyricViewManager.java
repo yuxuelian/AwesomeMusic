@@ -1,4 +1,4 @@
-package com.kaibo.music.player;
+package com.kaibo.music.player.manager;
 
 import android.content.Context;
 import android.os.Handler;
@@ -6,6 +6,7 @@ import android.view.WindowManager;
 
 import com.kaibo.core.BaseApplication;
 import com.kaibo.music.bean.SongBean;
+import com.kaibo.music.player.R;
 
 public class FloatLyricViewManager {
 
@@ -26,7 +27,7 @@ public class FloatLyricViewManager {
      */
     private Context mContext;
 
-    FloatLyricViewManager(Context context) {
+    public FloatLyricViewManager(Context context) {
         mContext = context;
     }
 

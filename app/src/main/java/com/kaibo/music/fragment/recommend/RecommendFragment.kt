@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.fragment_recommend.*
 
 /**
  * @author kaibo
- * @date 2018/10/9 10:31
+ * @createDate 2018/10/9 10:31
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：

@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.item_rank.view.*
 
 /**
  * @author 56896
- * @date 2018/10/14 23:06
+ * @createDate 2018/10/14 23:06
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：

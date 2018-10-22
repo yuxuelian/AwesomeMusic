@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.item_recommend_banner.view.*
 
 /**
  * @author kaibo
- * @date 2018/10/9 10:58
+ * @createDate 2018/10/9 10:58
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：

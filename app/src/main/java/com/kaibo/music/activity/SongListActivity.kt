@@ -17,12 +17,12 @@ import com.kaibo.music.bean.SingerSongListBean
 import com.kaibo.music.bean.SongBean
 import com.kaibo.music.item.song.SongItem
 import com.kaibo.music.net.Api
-import com.kaibo.music.player.PlayManager
+import com.kaibo.music.player.manager.PlayManager
 import kotlinx.android.synthetic.main.activity_song_list.*
 
 /**
  * @author kaibo
- * @date 2018/10/15 15:40
+ * @createDate 2018/10/15 15:40
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：

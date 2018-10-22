@@ -22,7 +22,7 @@ import com.kaibo.music.R
 
 /**
  * @author kaibo
- * @date 2018/7/18 13:36
+ * @createDate 2018/7/18 13:36
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：

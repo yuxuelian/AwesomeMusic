@@ -1,4 +1,4 @@
-package com.kaibo.music.player;
+package com.kaibo.music.player.manager;
 
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -10,12 +10,12 @@ import android.media.AudioManager;
 import android.media.session.MediaSession;
 import android.os.Build;
 
+import com.kaibo.music.player.Constants;
+import com.kaibo.music.player.receiver.MediaButtonIntentReceiver;
+import com.kaibo.music.player.handler.MusicPlayerHandler;
 import com.kaibo.music.utils.SystemUtils;
-import com.orhanobut.logger.Logger;
 
 import androidx.annotation.RequiresApi;
-
-import static com.kaibo.music.player.MusicPlayerService.AUDIO_FOCUS_CHANGE;
 
 /**
  * 音频管理类
@@ -25,9 +25,19 @@ import static com.kaibo.music.player.MusicPlayerService.AUDIO_FOCUS_CHANGE;
 public class AudioAndFocusManager {
 
     private AudioManager mAudioManager;
-    private MusicPlayerService.MusicPlayerHandler mHandler;
+    private MusicPlayerHandler mHandler;
+    /**
+     * 音频焦点改变监听器
+     */
+    private AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+        @Override
+        public void onAudioFocusChange(int focusChange) {
+            // 发送音频焦点
+            mHandler.obtainMessage(Constants.AUDIO_FOCUS_CHANGE, focusChange, 0).sendToTarget();
+        }
+    };
 
-    public AudioAndFocusManager(Context mContext, MusicPlayerService.MusicPlayerHandler mHandler) {
+    public AudioAndFocusManager(Context mContext, MusicPlayerHandler mHandler) {
         this.mHandler = mHandler;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             initAudioManager(mContext);
@@ -57,20 +67,12 @@ public class AudioAndFocusManager {
      */
     public void requestAudioFocus() {
         if (SystemUtils.isO()) {
-            AudioFocusRequest mAudioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                    .setOnAudioFocusChangeListener(audioFocusChangeListener)
-                    .build();
+            AudioFocusRequest mAudioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(audioFocusChangeListener).build();
             int res = mAudioManager.requestAudioFocus(mAudioFocusRequest);
             if (res == 1) {
-                Logger.e("requestAudioFocus=" + true);
             }
         } else {
-            if (audioFocusChangeListener != null) {
-                boolean result = AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAudioManager.requestAudioFocus(audioFocusChangeListener,
-                        AudioManager.STREAM_MUSIC,
-                        AudioManager.AUDIOFOCUS_GAIN);
-                Logger.e("requestAudioFocus=" + result);
-            }
+            boolean result = AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAudioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         }
     }
 
@@ -78,20 +80,6 @@ public class AudioAndFocusManager {
      * 关闭音频焦点
      */
     public void abandonAudioFocus() {
-        if (audioFocusChangeListener != null) {
-            boolean result = AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAudioManager.abandonAudioFocus(audioFocusChangeListener);
-        }
+        boolean result = AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAudioManager.abandonAudioFocus(audioFocusChangeListener);
     }
-
-    /**
-     * 音频焦点改变监听器
-     */
-    private AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
-        @Override
-        public void onAudioFocusChange(int focusChange) {
-            Logger.e("OnAudioFocusChangeListener", focusChange + "---");
-            mHandler.obtainMessage(AUDIO_FOCUS_CHANGE, focusChange, 0).sendToTarget();
-        }
-    };
-
 }
