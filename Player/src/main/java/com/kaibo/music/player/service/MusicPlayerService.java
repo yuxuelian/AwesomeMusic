@@ -885,6 +885,9 @@ public class MusicPlayerService extends Service {
         mNotificationBuilder = new NotificationCompat.Builder(this, initNotifyChannel())
                 .setSmallIcon(R.drawable.ic_icon)
                 .setContentIntent(clickIntent)
+                .setWhen(System.currentTimeMillis())
+                .setOngoing(true)
+                .setAutoCancel(false)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP));
 
@@ -1027,6 +1030,8 @@ public class MusicPlayerService extends Service {
                     mFloatLyricViewManager.updatePlayStatus(isMusicPlaying);
                     // 显示到通知栏
                     startForeground(NOTIFICATION_ID, mNotification);
+                    // 必须要主动发送一次到通知栏,否则会有兼容问题
+                    mNotificationManager.notify(NOTIFICATION_ID, mNotification);
                 }, Throwable::printStackTrace);
     }
 

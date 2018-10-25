@@ -211,6 +211,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     private OnTargetScrollCheckListener onTargetScrollCheckListener;
 
+    private OnMoveTargetViewtListener onMoveTargetViewtListener;
+
     private OverScroller scroller;
 
     private ValueAnimator startRefreshAnimator;
@@ -439,13 +441,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     private boolean scrollOver(int currScrollOffset) {
-        if (pullTwinkEnable
+        return pullTwinkEnable
                 && (overScrollFlingState() == 1
                 || overScrollFlingState() == 2)
-                && overScrollBackDell(overScrollFlingState(), currScrollOffset)) {
-            return true;
-        }
-        return false;
+                && overScrollBackDell(overScrollFlingState(), currScrollOffset);
     }
 
     /**
@@ -1344,6 +1343,13 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         void onLoading();
     }
 
+    /**
+     * 用于监听TargetView的移动
+     */
+    public interface OnMoveTargetViewtListener {
+        void onMoveDistance(int distance);
+    }
+
     public static class OnRefreshListenerAdapter implements OnRefreshListener {
         @Override
         public void onRefresh() {
@@ -1415,7 +1421,15 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         if (isMoveWithContent) {
             pullContentLayout.setTranslationY(moveDistance);
+            // 回调移动了多少距离
+            if (onMoveTargetViewtListener != null) {
+                onMoveTargetViewtListener.onMoveDistance(moveDistance);
+            }
         }
+    }
+
+    public void setOnMoveTargetViewtListener(OnMoveTargetViewtListener onMoveTargetViewtListener) {
+        this.onMoveTargetViewtListener = onMoveTargetViewtListener;
     }
 
     public final void cancelAllAnimation() {

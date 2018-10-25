@@ -43,6 +43,7 @@ fun Bitmap.saveToFile(file: File) {
     if (file.exists()) {
         file.delete()
     }
+    file.createNewFile()
     val out = FileOutputStream(file)
     this.compress(Bitmap.CompressFormat.PNG, 90, out)
     out.flush()
@@ -146,4 +147,31 @@ fun Bitmap.resize(w: Int, h: Int): Bitmap {
     val matrix = Matrix()
     matrix.postScale(scaleWidth, scaleHeight)
     return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+}
+
+/**
+ * 保持图片不变形  从左上角裁剪图片到指定的宽高比
+ * @param aspectRatio 宽高比
+ */
+fun Bitmap.clipTo(@FloatRange(from = .0) aspectRatio: Double): Bitmap {
+    val currentAspectRatio = this.width.toDouble() / this.height
+    return when {
+        currentAspectRatio > aspectRatio -> {
+            Bitmap.createBitmap(this,
+                    0,
+                    0,
+                    (this.height * aspectRatio + .5).toInt(),
+                    this.height)
+        }
+        currentAspectRatio == aspectRatio -> {
+            this
+        }
+        else -> {
+            Bitmap.createBitmap(this,
+                    0,
+                    0,
+                    this.width,
+                    (this.width / aspectRatio + .5).toInt())
+        }
+    }
 }

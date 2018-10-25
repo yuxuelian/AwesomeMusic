@@ -106,4 +106,5 @@
     <!--transition-->
     <string name="transition_recommend_logo">recommendLogo</string>
     <string name="transition_share_song_img">shareSongImage</string>
+    <string name="random_play_all">随机播放全部</string>
 </resources>

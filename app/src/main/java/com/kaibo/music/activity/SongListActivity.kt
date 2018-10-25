@@ -1,14 +1,13 @@
 package com.kaibo.music.activity
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding2.view.clicks
 import com.kaibo.core.adapter.withItems
 import com.kaibo.core.glide.GlideApp
-import com.kaibo.core.util.checkResult
-import com.kaibo.core.util.statusBarHeight
-import com.kaibo.core.util.toMainThread
+import com.kaibo.core.util.*
 import com.kaibo.music.R
 import com.kaibo.music.activity.base.BaseActivity
 import com.kaibo.music.bean.RankSongListBean
@@ -18,7 +17,11 @@ import com.kaibo.music.bean.SongBean
 import com.kaibo.music.item.song.SongItem
 import com.kaibo.music.net.Api
 import com.kaibo.music.player.manager.PlayManager
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_song_list.*
+import java.util.concurrent.TimeUnit
 
 /**
  * @author kaibo
@@ -29,6 +32,14 @@ import kotlinx.android.synthetic.main.activity_song_list.*
  */
 
 class SongListActivity : BaseActivity() {
+
+    private var sourceBitmap: Bitmap? = null
+    private var transform: Bitmap? = null
+
+    private val imgWidth by lazy { deviceWidth }
+    // 原始高度
+    private val imgHeight by lazy { headerView.layoutParams.height }
+    private val aspectRatio by lazy { imgWidth.toDouble() / imgHeight }
 
     override fun getLayoutRes() = R.layout.activity_song_list
 
@@ -45,8 +56,7 @@ class SongListActivity : BaseActivity() {
                 val disstid = intent.getStringExtra("disstid")
                 Api.instance.getRecommendSongList(disstid).checkResult()
                         .toMainThread().`as`(bindLifecycle()).subscribe({ recommendSongListBean: RecommendSongListBean ->
-                            // 加载Logo
-                            GlideApp.with(this).load(recommendSongListBean.logo).into(songListLogo)
+                            loadHeaderImage(recommendSongListBean.logo)
                             titleText.text = recommendSongListBean.dissname
                             initSongList(recommendSongListBean.songList)
                         }) {
@@ -57,8 +67,7 @@ class SongListActivity : BaseActivity() {
                 val singermid = intent.getStringExtra("singermid")
                 Api.instance.getSingerSongList(singermid).checkResult()
                         .toMainThread().`as`(bindLifecycle()).subscribe({ singerSongListBean: SingerSongListBean ->
-                            // 加载Logo
-                            GlideApp.with(this).load(singerSongListBean.singerAvatar).into(songListLogo)
+                            loadHeaderImage(singerSongListBean.singerAvatar)
                             titleText.text = singerSongListBean.singerName
                             initSongList(singerSongListBean.songList)
                         }) {
@@ -69,8 +78,7 @@ class SongListActivity : BaseActivity() {
                 val topid = intent.getIntExtra("topid", 0)
                 Api.instance.getRankSongList(topid).checkResult()
                         .toMainThread().`as`(bindLifecycle()).subscribe({ rankSongListBean: RankSongListBean ->
-                            // 加载Logo
-                            GlideApp.with(this).load(rankSongListBean.rankImage).into(songListLogo)
+                            loadHeaderImage(rankSongListBean.rankImage)
                             titleText.text = rankSongListBean.rankName
                             initSongList(rankSongListBean.songList)
                         }) {
@@ -78,6 +86,51 @@ class SongListActivity : BaseActivity() {
                         }
             }
         }
+
+        // 原始高度
+        val firstHeight = imgHeight
+        Observable
+                .create<Int> {
+                    // 监听滑动的距离
+                    pullRefresh.setOnMoveTargetViewtListener { distance ->
+                        if (distance >= 0) {
+                            // 下拉
+                            it.onNext(distance)
+                        }
+                    }
+                }
+                .toMainThread()
+                .`as`(bindLifecycle())
+                .subscribe {
+                    // 修改headerView的高度
+                    headerView.layoutParams = headerView.layoutParams.apply {
+                        height = firstHeight + it
+                    }
+                }
+    }
+
+    private fun loadHeaderImage(headerImageUrl: String) {
+        Observable
+                .create<Bitmap> {
+                    try {
+                        val bitmap = GlideApp.with(this).asBitmap().load(headerImageUrl).submit().get()
+                        // 处理一下Bitmap
+                        it.onNext(bitmap.clipTo(aspectRatio))
+                        it.onComplete()
+                    } catch (e: Throwable) {
+                        it.onError(e)
+                    }
+                }
+                .subscribeOn(Schedulers.io())
+                .toMainThread()
+                .`as`(bindLifecycle())
+                .subscribe({
+                    // 获取到的bitmap 保存到全局并设置给ImageView显示
+                    sourceBitmap = it
+                    songListLogo.setImageBitmap(it)
+                }) {
+                    it.printStackTrace()
+                }
     }
 
     private fun initSongList(songList: List<SongBean>) {
