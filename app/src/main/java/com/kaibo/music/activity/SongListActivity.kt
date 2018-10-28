@@ -3,6 +3,7 @@ package com.kaibo.music.activity
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.widget.FrameLayout
+import androidx.annotation.FloatRange
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding2.view.clicks
 import com.kaibo.core.adapter.withItems
@@ -18,10 +19,9 @@ import com.kaibo.music.item.song.SongItem
 import com.kaibo.music.net.Api
 import com.kaibo.music.player.manager.PlayManager
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_song_list.*
-import java.util.concurrent.TimeUnit
+import org.jetbrains.anko.dip
 
 /**
  * @author kaibo
@@ -34,12 +34,22 @@ import java.util.concurrent.TimeUnit
 class SongListActivity : BaseActivity() {
 
     private var sourceBitmap: Bitmap? = null
-    private var transform: Bitmap? = null
 
     private val imgWidth by lazy { deviceWidth }
     // 原始高度
     private val imgHeight by lazy { headerView.layoutParams.height }
     private val aspectRatio by lazy { imgWidth.toDouble() / imgHeight }
+
+    // 放大按钮需要用到
+    private val pullDownMaxDistance by lazy { dip(200) }
+    private val playBtnWidthScope by lazy { Pair(dip(130), dip(210)) }
+    private val playBtnHeightScope by lazy { Pair(dip(30), dip(48)) }
+    private val imageSizeScope by lazy { Pair(dip(16), dip(26)) }
+    private val btnTextSizeScope by lazy { Pair(12, 20) }
+
+    private fun Pair<Int, Int>.calcValue(@FloatRange(from = 0.0, to = 1.0) ratio: Float): Int {
+        return first + ((second - first) * ratio).toInt()
+    }
 
     override fun getLayoutRes() = R.layout.activity_song_list
 
@@ -106,7 +116,20 @@ class SongListActivity : BaseActivity() {
                     headerView.layoutParams = headerView.layoutParams.apply {
                         height = firstHeight + it
                     }
+                    val currentRatio = it.toFloat() / pullDownMaxDistance
+                    playBtn.layoutParams = playBtn.layoutParams.apply {
+                        width = playBtnWidthScope.calcValue(currentRatio)
+                        height = playBtnHeightScope.calcValue(currentRatio)
+                    }
+                    playBtnImage.layoutParams = playBtnImage.layoutParams.apply {
+                        width = imageSizeScope.calcValue(currentRatio)
+                        height = width
+                    }
+                    playBtnText.textSize = btnTextSizeScope.calcValue(currentRatio).toFloat()
                 }
+
+        // 设置最大下拉距离
+        pullRefresh.pullDownMaxDistance = pullDownMaxDistance
     }
 
     private fun loadHeaderImage(headerImageUrl: String) {

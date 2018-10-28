@@ -12,9 +12,9 @@ import org.jetbrains.anko.doAsync
  */
 object PlayListHelper {
 
-    private val playListBeanDao = PlayListDatabase.INSTANCE.playListBeanDao()
-    private val songListRelBeanDao = PlayListDatabase.INSTANCE.songListRelBeanDao()
-    private val songBeanDao = PlayListDatabase.INSTANCE.songBeanDao()
+    private val playListBeanDao = PlayListDatabase.playListBeanDao()
+    private val songListRelBeanDao = PlayListDatabase.songListRelBeanDao()
+    private val songBeanDao = PlayListDatabase.songBeanDao()
 
     /**
      * 初始化几个播放歌单

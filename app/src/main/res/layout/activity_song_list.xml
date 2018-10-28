@@ -18,6 +18,7 @@
             android:transitionName="@string/transition_recommend_logo" />
 
         <LinearLayout
+            android:id="@+id/playBtn"
             android:layout_width="130dp"
             android:layout_height="30dp"
             android:layout_gravity="center_horizontal|bottom"
@@ -29,11 +30,13 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/playBtnImage"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/play" />
 
             <TextView
+                android:id="@+id/playBtnText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -95,8 +98,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:prl_pullDownMaxDistance="200dp"
-        app:prl_pullUpMaxDistance="200dp">
+        app:prl_pullDownMaxDistance="200dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/songListView"

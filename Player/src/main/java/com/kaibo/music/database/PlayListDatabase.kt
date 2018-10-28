@@ -30,10 +30,20 @@ abstract class PlayListDatabase : RoomDatabase() {
     abstract fun songListRelBeanDao(): SongListRelBeanDao
 
     companion object {
-        val INSTANCE
-            get() = playListDatabase
 
         private lateinit var playListDatabase: PlayListDatabase
+
+        fun songBeanDao(): SongBeanDao{
+            return playListDatabase.songBeanDao()
+        }
+
+        fun playListBeanDao(): PlayListBeanDao{
+            return playListDatabase.playListBeanDao()
+        }
+
+        fun songListRelBeanDao(): SongListRelBeanDao{
+            return playListDatabase.songListRelBeanDao()
+        }
 
         fun init(context: Context) {
             // 创建数据库
