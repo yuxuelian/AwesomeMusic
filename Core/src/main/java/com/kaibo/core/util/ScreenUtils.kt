@@ -36,7 +36,7 @@ fun Activity.immersive(isLight: Boolean) {
                 //清除状态栏默认状态
                 clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
                 // 不加下面这句话可能某些手机无法正常实现沉浸式
-//                addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+                addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
                 //SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN 布局设置为全屏布局
                 //SYSTEM_UI_FLAG_LAYOUT_STABLE
                 //SYSTEM_UI_FLAG_LIGHT_STATUS_BAR

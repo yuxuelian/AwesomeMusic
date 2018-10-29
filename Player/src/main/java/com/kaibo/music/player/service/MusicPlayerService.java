@@ -31,15 +31,14 @@ import com.kaibo.music.bean.PlayListBean;
 import com.kaibo.music.bean.SongBean;
 import com.kaibo.music.database.PlayListHelper;
 import com.kaibo.music.player.Constants;
-import com.kaibo.music.player.engine.MusicPlayerEngine;
 import com.kaibo.music.player.R;
+import com.kaibo.music.player.engine.MusicPlayerEngine;
 import com.kaibo.music.player.handler.MusicPlayerHandler;
 import com.kaibo.music.player.manager.AudioAndFocusManager;
 import com.kaibo.music.player.manager.FloatLyricViewManager;
 import com.kaibo.music.player.manager.MediaSessionManager;
 import com.kaibo.music.player.manager.PlayModeManager;
 import com.kaibo.music.utils.DownLoadManager;
-import com.kaibo.music.utils.FileUtils;
 import com.kaibo.music.utils.SPUtils;
 import com.kaibo.music.utils.SystemUtils;
 import com.orhanobut.logger.Logger;
@@ -291,7 +290,7 @@ public class MusicPlayerService extends Service {
     }
 
     /**
-     * 重新加载当前进度
+     * 重新加载当前播放进度
      */
     public void reloadPlayQueue() {
         // 加载播放历史
@@ -377,31 +376,31 @@ public class MusicPlayerService extends Service {
         // 从播放队列中获取需要播放的音乐
         mPlayingMusic = mPlayQueue.get(mPlayingPos);
         notifyChange(Constants.META_CHANGED);
-        if ("".equals(mPlayingMusic.getUrl()) || "null".equals(mPlayingMusic.getUrl())) {
-            playErrorTimes = 0;
-            mPlayer.setDataSource(mPlayingMusic.getUrl());
-        }
+        // 保存播放历史
         saveHistory();
+        // 设置为正在播放
         isMusicPlaying = true;
-        if (!mPlayingMusic.getUrl().startsWith(Constants.IS_URL_HEADER) && !FileUtils.exists(mPlayingMusic.getUrl())) {
-            isAbnormalPlay();
-        } else {
-            playErrorTimes = 0;
-            mPlayer.setDataSource(mPlayingMusic.getUrl());
-        }
+        playErrorTimes = 0;
+        // 设置播放源
+        mPlayer.setDataSource(mPlayingMusic.getUrl());
+        // 更新媒体状态
         mediaSessionManager.updateMetaData(mPlayingMusic);
+        // 请求音频焦点
         audioAndFocusManager.requestAudioFocus();
+        // 更新通知栏
         updateNotification(false);
+
+        // 发送广播  通知系统媒体
         final Intent intent = new Intent(AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION);
         intent.putExtra(AudioEffect.EXTRA_AUDIO_SESSION, getAudioSessionId());
         intent.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, getPackageName());
         sendBroadcast(intent);
-        if (mPlayer.isInitialized()) {
-            mHandler.removeMessages(Constants.VOLUME_FADE_DOWN);
-            //组件调到正常音量
-            mHandler.sendEmptyMessage(Constants.VOLUME_FADE_UP);
-            isMusicPlaying = true;
-        }
+
+        // 判断是否初始化
+        mHandler.removeMessages(Constants.VOLUME_FADE_DOWN);
+        //组件调到正常音量
+        mHandler.sendEmptyMessage(Constants.VOLUME_FADE_UP);
+        isMusicPlaying = true;
     }
 
     /**
@@ -550,7 +549,6 @@ public class MusicPlayerService extends Service {
         } else {
             mPlayQueue.add(mPlayQueue.size(), music);
         }
-        Logger.e(TAG, music.toString());
         mPlayingMusic = music;
         playCurrentAndNext();
     }
@@ -638,6 +636,7 @@ public class MusicPlayerService extends Service {
      * 跳到输入的进度
      */
     public void seekTo(int pos) {
+        // mPlayingMusic!=null  已经指定了播放歌曲
         if (mPlayer != null && mPlayer.isInitialized() && mPlayingMusic != null) {
             mPlayer.seek(pos);
         }
@@ -668,7 +667,7 @@ public class MusicPlayerService extends Service {
             //保存歌曲id
             SPUtils.saveCurrentSongId(mPlayingMusic.getMid());
         }
-        //保存歌曲id
+        //保存播放的位置
         SPUtils.setPlayPosition(mPlayingPos);
         //保存歌曲进度
         SPUtils.savePosition(getCurrentPosition());

@@ -1,15 +1,12 @@
 package com.kaibo.music.activity.base
 
-import android.graphics.Bitmap
-import android.os.Bundle
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import androidx.annotation.CallSuper
-import com.kaibo.core.util.blur
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.disposables.Disposable
+import java.util.concurrent.TimeUnit
 
 /**
  * @author kaibo
@@ -57,11 +54,19 @@ abstract class BasePlayerActivity : BaseActivity() {
         }
     }
 
+    protected val rotate360: Animation by lazy {
+        AnimationUtils.loadAnimation(this, R.anim.rotate_360).apply {
+            fillAfter = true
+            // 无限旋转
+            repeatCount = Animation.INFINITE
+        }
+    }
+
     /**
      * 将毫秒数转化成字符串
      */
-    protected fun Int.formatMunite(): String {
-        // 5999000 99:59
+    protected fun Int.formatMinute(): String {
+        // 5999000 99:59 minute
         return when {
             this >= 5999000 -> "99:59"
             this <= 0 -> "00:00"
@@ -72,23 +77,24 @@ abstract class BasePlayerActivity : BaseActivity() {
         }
     }
 
-    protected abstract fun updateDuration(duration: Int)
-    protected abstract fun updateSeek(seek: Int)
-    protected abstract fun playStatusChange(playing: Boolean)
-
     /**
-     * 模糊背景图片
+     * 每隔200ms执行一次
      */
-    protected fun blurBitmap(bitmap: Bitmap) = Observable
-            .create<Bitmap> {
-                try {
-                    it.onNext(bitmap.blur(this))
-                    it.onComplete()
-                } catch (e: Exception) {
-                    it.onError(e)
-                }
-            }
-            .subscribeOn(Schedulers.io())
-            .toMainThread()
-            .`as`(bindLifecycle())
+    protected abstract fun tickTask()
+
+    private var tickDisposable: Disposable? = null
+
+    override fun onResume() {
+        super.onResume()
+        tickDisposable = Observable.interval(10L, 200L, TimeUnit.MILLISECONDS).toMainThread().subscribe {
+            tickTask()
+        }
+    }
+
+    override fun onPause() {
+        tickDisposable?.dispose()
+        super.onPause()
+    }
+
+
 }

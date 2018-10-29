@@ -36,8 +36,9 @@ class SongListActivity : BaseActivity() {
     private var sourceBitmap: Bitmap? = null
 
     private val imgWidth by lazy { deviceWidth }
-    // 原始高度
+    // 头部布局的原始高度
     private val imgHeight by lazy { headerView.layoutParams.height }
+    // 布局的宽高比
     private val aspectRatio by lazy { imgWidth.toDouble() / imgHeight }
 
     // 放大按钮需要用到

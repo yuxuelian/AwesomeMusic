@@ -53,7 +53,7 @@ object DownLoadManager {
                                 val bitmap: Bitmap = BitmapFactory.decodeStream(it.byteStream())
                                 // 缓存到磁盘
                                 localImage?.let {
-                                    bitmap.saveToFile(it)
+//                                    bitmap.saveToFile(it)
                                 }
                                 // 发射bitmap出去
                                 emitter.onNext(bitmap)

@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:textColor="@color/white"
+                    android:textColor="@color/color_303030"
                     android:textSize="14sp"
                     tools:text="@string/song_title" />
 
@@ -62,7 +62,8 @@
                 android:focusable="true"
                 android:padding="5dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_clear" />
+                android:src="@drawable/ic_clear"
+                android:tint="@color/color_303030" />
         </FrameLayout>
 
         <LinearLayout
@@ -79,7 +80,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="5dp"
-                android:src="@drawable/ic_clear" />
+                android:src="@drawable/ic_clear"
+                android:tint="@color/color_303030" />
 
             <ImageView
                 android:id="@+id/notificationFRewind"
@@ -89,7 +91,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="5dp"
-                android:src="@drawable/ic_skip_previous" />
+                android:src="@drawable/ic_skip_previous"
+                android:tint="@color/color_303030" />
 
             <ImageView
                 android:id="@+id/notificationPlayPause"
@@ -99,7 +102,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="5dp"
-                android:src="@drawable/ic_pause" />
+                android:src="@drawable/ic_pause"
+                android:tint="@color/color_303030" />
 
             <ImageView
                 android:id="@+id/notificationFForward"
@@ -109,7 +113,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="5dp"
-                android:src="@drawable/ic_skip_next" />
+                android:src="@drawable/ic_skip_next"
+                android:tint="@color/color_303030" />
 
             <ImageView
                 android:id="@+id/notificationLyric"
@@ -119,7 +124,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="5dp"
-                android:src="@drawable/ic_lyric" />
+                android:src="@drawable/ic_lyric"
+                android:tint="@color/color_303030" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

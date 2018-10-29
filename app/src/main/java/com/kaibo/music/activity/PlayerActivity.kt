@@ -1,20 +1,28 @@
 package com.kaibo.music.activity
 
-import android.graphics.BitmapFactory
+import android.animation.ValueAnimator
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.jakewharton.rxbinding2.view.clicks
+import com.kaibo.core.glide.GlideApp
+import com.kaibo.core.util.blur
 import com.kaibo.core.util.statusBarHeight
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
 import com.kaibo.music.activity.base.BasePlayerActivity
+import com.kaibo.music.bean.SongBean
+import com.kaibo.music.player.manager.PlayManager
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_player.*
 import kotlinx.android.synthetic.main.include_play_bottom.*
 import kotlinx.android.synthetic.main.include_play_top.*
@@ -22,6 +30,8 @@ import org.jetbrains.anko.backgroundDrawable
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.matchParent
 import java.util.concurrent.TimeUnit
+import android.view.animation.RotateAnimation
+
 
 /**
  * @author kaibo
@@ -33,7 +43,10 @@ import java.util.concurrent.TimeUnit
 
 class PlayerActivity : BasePlayerActivity() {
 
-    private var isPlaying = false
+    /**
+     * 当前是否正在拖动
+     */
+    private var isSeeking = false
 
     override fun getLayoutRes() = R.layout.activity_player
 
@@ -50,12 +63,15 @@ class PlayerActivity : BasePlayerActivity() {
         }
 
         // 模糊背景图
-        blurBitmap(BitmapFactory.decodeResource(resources, R.drawable.test_play_img))
-                .subscribe({
-                    playRootView.backgroundDrawable = BitmapDrawable(resources, it)
-                }) {
-                    it.printStackTrace()
-                }
+//        blurBitmap(BitmapFactory.decodeResource(resources, R.drawable.test_play_img))
+//                .subscribeOn(Schedulers.io())
+//                .toMainThread()
+//                .`as`(bindLifecycle())
+//                .subscribe({
+//                    playRootView.backgroundDrawable = BitmapDrawable(resources, it)
+//                }) {
+//                    it.printStackTrace()
+//                }
 
         // 初始化歌词显示页
         initLrcLayout()
@@ -64,7 +80,7 @@ class PlayerActivity : BasePlayerActivity() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
                     // 拖动的同时修改时间显示
-                    currentSeek.text = progress.formatMunite()
+                    currentSeek.text = progress.formatMinute()
                 }
             }
 
@@ -74,27 +90,107 @@ class PlayerActivity : BasePlayerActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 isSeeking = false
-                // 松手后发送进度到Service
-//                RxBus.post(SeekCommand(seekBar.progress))
+                // 设置播放进度
+                PlayManager.seekTo(seekBar.progress)
             }
         })
 
-        val playDataSource = "https://music.kaibo123.com/amobile.music.tc.qq.com/C400003OU9ul1LEU9T.m4a?guid=4715368380&vkey=F3DA36B2E856E4F87A02E2B55C27714B0DF3540E9E6CEBDB51337D852F2C9EDB17FAFE803BDFABD97FD19DE24BC2A8D0C68D2A9DCEE6A74A&uin=0&fromtag=999"
-//        val playCommand = DataSourceCommand(SongBean(url = playDataSource))
-
         // 播放或者暂停
         playOrPauseBtn.clicks().`as`(bindLifecycle()).subscribe {
-            if (isPlaying) {
-                isPlaying = false
-                // 显示暂停图标
-                playOrPauseBtn.setImageResource(R.drawable.big_play)
+            PlayManager.playPause()
+            playOrPauseBtn.setImageResource(if (PlayManager.isPlaying) {
+                R.drawable.big_play
             } else {
-                isPlaying = true
-                // 显示播放图标
-                playOrPauseBtn.setImageResource(R.drawable.big_pause)
+                R.drawable.big_pause
+            })
+        }
+    }
+
+    private var currentSongBean: SongBean? = null
+    private var isPlaying = false
+
+    /**
+     * 这个方法会被定时执行
+     */
+    override fun tickTask() {
+        val playingMusic: SongBean? = PlayManager.playingMusic
+        if (playingMusic != null && playingMusic != currentSongBean) {
+            // 赋值
+            currentSongBean = playingMusic
+            // 修改歌曲名
+            songName.text = playingMusic.songname
+            singerName.text = playingMusic.singername
+
+            // 重启一下旋转动画
+            mRotateAnimation.resume()
+            // 旋转位置归0
+            playRotaImg.rotation = 0f
+
+            // 修改背景
+            Observable
+                    .create<Bitmap> {
+                        try {
+                            it.onNext(GlideApp.with(this).asBitmap().load(playingMusic.image).submit().get())
+                            it.onComplete()
+                        } catch (e: Throwable) {
+                            it.onError(e)
+                        }
+                    }
+                    .subscribeOn(Schedulers.io())
+                    .toMainThread()
+                    .doOnNext {
+                        // 设置到旋转的ImageView
+                        playRotaImg.setImageBitmap(it)
+                    }
+                    .observeOn(Schedulers.io())
+                    .map {
+                        // 模糊图片
+                        it.blur(this)
+                    }
+                    .toMainThread()
+                    .`as`(bindLifecycle())
+                    .subscribe({
+                        // 设置背景
+                        playRootView.backgroundDrawable = BitmapDrawable(resources, it)
+                    }) {
+                        it.printStackTrace()
+                    }
+        }
+
+        // 更新进度(这个需要时刻更新)
+        if (!isSeeking) {
+            val duration = PlayManager.duration
+            val currentPosition = PlayManager.currentPosition
+            // 修改文字进度
+            maxSeek.text = duration.formatMinute()
+            currentSeek.text = currentPosition.formatMinute()
+            // 修改进度条
+            playerSeek.max = duration
+            playerSeek.progress = currentPosition
+        }
+
+        // 播放状态发生改变
+        if (isPlaying != PlayManager.isPlaying) {
+            isPlaying = PlayManager.isPlaying
+            if (PlayManager.isPlaying) {
+                // 正在播放则旋转图片
+                val rotate = RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+                rotate.duration = 10000
+                rotate.repeatCount = Animation.INFINITE
+                rotate.fillAfter = true
+                rotate.interpolator = LinearInterpolator()
+                playRotaImg.startAnimation(rotate)
+            } else {
+                playRotaImg.clearAnimation()
             }
-            // 发送命令
-//            RxBus.post(playCommand)
+        }
+    }
+
+    private val mRotateAnimation by lazy {
+        ValueAnimator.ofFloat(0f, 360f).apply {
+            duration = 10000
+            repeatCount = Animation.INFINITE
+            interpolator = LinearInterpolator()
         }
     }
 
@@ -184,33 +280,6 @@ class PlayerActivity : BasePlayerActivity() {
                 throw IllegalStateException("position error")
             }
         }
-    }
-
-    /**
-     * 当前是否正在拖动
-     */
-    private var isSeeking = false
-
-    override fun updateDuration(duration: Int) {
-        // 设置总进度
-        playerSeek.max = duration
-        maxSeek.text = duration.formatMunite()
-    }
-
-    override fun updateSeek(seek: Int) {
-        if (!isSeeking) {
-            playerSeek.progress = seek
-            currentSeek.text = seek.formatMunite()
-        }
-    }
-
-    override fun playStatusChange(playing: Boolean) {
-        if (playing) {
-            playOrPauseBtn.setImageResource(R.drawable.big_pause)
-        } else {
-            playOrPauseBtn.setImageResource(R.drawable.big_play)
-        }
-        isPlaying = playing
     }
 
     override fun onResume() {

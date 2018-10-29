@@ -41,14 +41,13 @@ data class SongBean(
         @SerializedName("url")
         var url: String
 ) : Parcelable {
-
-    @Ignore
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
-            parcel.readString())
+            parcel.readString()) {
+    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(mid)
@@ -71,4 +70,6 @@ data class SongBean(
             return arrayOfNulls(size)
         }
     }
+
+
 }
