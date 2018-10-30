@@ -1,36 +1,33 @@
 package com.kaibo.music.activity
 
-import android.animation.ValueAnimator
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.jakewharton.rxbinding2.view.clicks
 import com.kaibo.core.glide.GlideApp
-import com.kaibo.core.util.blur
-import com.kaibo.core.util.statusBarHeight
-import com.kaibo.core.util.toMainThread
+import com.kaibo.core.util.*
 import com.kaibo.music.R
 import com.kaibo.music.activity.base.BasePlayerActivity
 import com.kaibo.music.bean.SongBean
 import com.kaibo.music.player.manager.PlayManager
+import com.kaibo.music.player.manager.PlayModeManager
+import com.kaibo.music.utils.AnimatorUtils
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_player.*
 import kotlinx.android.synthetic.main.include_play_bottom.*
 import kotlinx.android.synthetic.main.include_play_top.*
-import org.jetbrains.anko.backgroundDrawable
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.matchParent
+import java.io.File
+import java.io.FileInputStream
 import java.util.concurrent.TimeUnit
-import android.view.animation.RotateAnimation
 
 
 /**
@@ -48,6 +45,16 @@ class PlayerActivity : BasePlayerActivity() {
      */
     private var isSeeking = false
 
+    /**
+     * 旋转动画
+     */
+    private val rotateAnimator by lazy {
+        AnimatorUtils.getRotateAnimator(playRotaImg)
+    }
+
+    private var currentSongBean: SongBean? = null
+    private var isPlaying = false
+
     override fun getLayoutRes() = R.layout.activity_player
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
@@ -62,19 +69,21 @@ class PlayerActivity : BasePlayerActivity() {
             lrcPager.currentItem = 1
         }
 
-        // 模糊背景图
-//        blurBitmap(BitmapFactory.decodeResource(resources, R.drawable.test_play_img))
-//                .subscribeOn(Schedulers.io())
-//                .toMainThread()
-//                .`as`(bindLifecycle())
-//                .subscribe({
-//                    playRootView.backgroundDrawable = BitmapDrawable(resources, it)
-//                }) {
-//                    it.printStackTrace()
-//                }
+        // 模糊背景图(初始化模糊一张)
+        Observable
+                .create<Bitmap> {
+                    it.onNext(BitmapFactory.decodeResource(resources, R.drawable.test_play_img).blur(this))
+                }
+                .subscribeOn(Schedulers.io())
+                .toMainThread()
+                .`as`(bindLifecycle())
+                .subscribe {
+                    blurBackGround.setImageBitmap(it)
+                }
 
         // 初始化歌词显示页
         initLrcLayout()
+
         // 设置SeekBar的拖动监听
         playerSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -95,19 +104,37 @@ class PlayerActivity : BasePlayerActivity() {
             }
         })
 
-        // 播放或者暂停
+        // 点击播放暂停按钮
         playOrPauseBtn.clicks().`as`(bindLifecycle()).subscribe {
             PlayManager.playPause()
             playOrPauseBtn.setImageResource(if (PlayManager.isPlaying) {
-                R.drawable.big_play
-            } else {
                 R.drawable.big_pause
+            } else {
+                R.drawable.big_play
+
             })
         }
-    }
 
-    private var currentSongBean: SongBean? = null
-    private var isPlaying = false
+        // 播放上一曲
+        prePlay.clicks().`as`(bindLifecycle()).subscribe {
+            PlayManager.prev()
+        }
+
+        // 播放下一曲
+        nextPlay.clicks().`as`(bindLifecycle()).subscribe {
+            PlayManager.next()
+        }
+
+        // 更新播放模式
+        prePlay.clicks().`as`(bindLifecycle()).subscribe {
+            PlayModeManager.updatePlayMode()
+        }
+
+        // 点击收藏按钮
+        collectionBtn.clicks().`as`(bindLifecycle()).subscribe {
+            // TODO 收藏到我的喜欢列表
+        }
+    }
 
     /**
      * 这个方法会被定时执行
@@ -121,16 +148,19 @@ class PlayerActivity : BasePlayerActivity() {
             songName.text = playingMusic.songname
             singerName.text = playingMusic.singername
 
-            // 重启一下旋转动画
-            mRotateAnimation.resume()
-            // 旋转位置归0
+            // 切换歌曲时 旋转动画复位
             playRotaImg.rotation = 0f
+            rotateAnimator.cancel()
 
+            val blurTempFile = File(filesDir, "blur-temp-file.png")
             // 修改背景
             Observable
                     .create<Bitmap> {
                         try {
-                            it.onNext(GlideApp.with(this).asBitmap().load(playingMusic.image).submit().get())
+                            val bitmap = GlideApp.with(this).asBitmap().load(playingMusic.image).submit().get()
+                            // 先把图片保存到本地  然后再从本地读取图片进行模糊  否则不能模糊成功
+                            bitmap.saveToFile(blurTempFile)
+                            it.onNext(bitmap)
                             it.onComplete()
                         } catch (e: Throwable) {
                             it.onError(e)
@@ -144,14 +174,14 @@ class PlayerActivity : BasePlayerActivity() {
                     }
                     .observeOn(Schedulers.io())
                     .map {
-                        // 模糊图片
-                        it.blur(this)
+                        // 从本地获取图片然后进行模糊
+                        BitmapFactory.decodeStream(FileInputStream(blurTempFile)).blur(this)
                     }
                     .toMainThread()
                     .`as`(bindLifecycle())
                     .subscribe({
                         // 设置背景
-                        playRootView.backgroundDrawable = BitmapDrawable(resources, it)
+                        blurBackGround.startTransition(it)
                     }) {
                         it.printStackTrace()
                     }
@@ -171,27 +201,36 @@ class PlayerActivity : BasePlayerActivity() {
 
         // 播放状态发生改变
         if (isPlaying != PlayManager.isPlaying) {
+            // 获取播放状态并记录状态
             isPlaying = PlayManager.isPlaying
-            if (PlayManager.isPlaying) {
-                // 正在播放则旋转图片
-                val rotate = RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
-                rotate.duration = 10000
-                rotate.repeatCount = Animation.INFINITE
-                rotate.fillAfter = true
-                rotate.interpolator = LinearInterpolator()
-                playRotaImg.startAnimation(rotate)
+
+            // 播放状态发生改变
+            playOrPauseBtn.setImageResource(if (isPlaying) {
+                R.drawable.big_pause
             } else {
-                playRotaImg.clearAnimation()
+                R.drawable.big_play
+            })
+
+            if (isPlaying) {
+                // 启动旋转动画
+                if (rotateAnimator.isPaused) {
+                    rotateAnimator.resume()
+                } else {
+                    rotateAnimator.start()
+                }
+            } else {
+                // 取消旋转动画
+                rotateAnimator.pause()
             }
         }
     }
 
-    private val mRotateAnimation by lazy {
-        ValueAnimator.ofFloat(0f, 360f).apply {
-            duration = 10000
-            repeatCount = Animation.INFINITE
-            interpolator = LinearInterpolator()
+    override fun onDestroy() {
+        // 退出的时候停止旋转动画
+        if (rotateAnimator.isRunning) {
+            rotateAnimator.cancel()
         }
+        super.onDestroy()
     }
 
     private fun initLrcLayout() {
@@ -234,6 +273,7 @@ class PlayerActivity : BasePlayerActivity() {
 
             override fun getCount() = 2
         }
+        // 滑动歌词页
         lrcPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
 
@@ -252,6 +292,9 @@ class PlayerActivity : BasePlayerActivity() {
         })
     }
 
+    /**
+     * 修改指示器状态
+     */
     private fun selectIndicator(position: Int) {
         when (position) {
             0 -> {

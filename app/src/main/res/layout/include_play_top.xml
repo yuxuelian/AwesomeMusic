@@ -21,23 +21,25 @@
         android:layout_marginBottom="10dp"
         android:orientation="vertical">
 
-        <TextView
+        <com.kaibo.music.weight.MarqueeTextView
             android:id="@+id/songName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:maxWidth="200dp"
             android:text="演员"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
-        <TextView
+        <com.kaibo.music.weight.MarqueeTextView
             android:id="@+id/singerName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp"
+            android:maxWidth="200dp"
             android:text="薛之谦"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
     </LinearLayout>
 </FrameLayout>

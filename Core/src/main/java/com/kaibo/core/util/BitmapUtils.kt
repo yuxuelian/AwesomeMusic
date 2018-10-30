@@ -60,7 +60,7 @@ fun Bitmap.saveToFile(file: File) {
 fun File.toBitmap(): Bitmap = BitmapFactory.decodeStream(FileInputStream(this))
 
 /**
- * 自定义模糊背景
+ * 自定义模糊图片   只能模糊本地图片   从网络获取的bitmap需要先保存到本地   否则不能模糊成功
  * 耗时操作    请在子线程执行
  *
  * @param scale  缩放大小 (>1.0), 例如若想将输入图片放大2倍然后再模糊(提高模糊效率), 则传入2.
@@ -71,8 +71,8 @@ fun File.toBitmap(): Bitmap = BitmapFactory.decodeStream(FileInputStream(this))
  * @return
  */
 fun Bitmap.blur(context: Context,
-                @FloatRange(from = 1.0, fromInclusive = false) scale: Float = 2.0f,
-                @FloatRange(from = 0.0, to = 25.0, fromInclusive = false) radius: Float = 10f): Bitmap {
+                @FloatRange(from = 1.0, fromInclusive = false) scale: Float = 10.0f,
+                @FloatRange(from = 0.0, to = 25.0, fromInclusive = false) radius: Float = 25f): Bitmap {
     if (scale < 1F) {
         throw IllegalArgumentException("Value must be > 0.0 (was $scale)")
     }
@@ -89,13 +89,11 @@ fun Bitmap.blur(context: Context,
     val output = Allocation.createTyped(rs, input.type)
 
     //开始模糊操作
-    ScriptIntrinsicBlur
-            .create(rs, Element.U8_4(rs))
-            .run {
-                setRadius(radius)
-                setInput(input)
-                forEach(output)
-            }
+    ScriptIntrinsicBlur.create(rs, Element.U8_4(rs)).run {
+        setRadius(radius)
+        setInput(input)
+        forEach(output)
+    }
 
     output.copyTo(outputBitmap)
     rs.destroy()

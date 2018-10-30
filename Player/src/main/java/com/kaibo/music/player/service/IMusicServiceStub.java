@@ -63,11 +63,6 @@ public class IMusicServiceStub extends ISongService.Stub {
     }
 
     @Override
-    public void setPlayMode(int mode) throws RemoteException {
-        PlayModeManager.INSTANCE.updatePlayMode(PlayModeManager.PLAY_MODE_LOOP);
-    }
-
-    @Override
     public void seekTo(int ms) throws RemoteException {
         mService.get().seekTo(ms);
     }

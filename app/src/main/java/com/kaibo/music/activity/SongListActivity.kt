@@ -18,6 +18,7 @@ import com.kaibo.music.bean.SongBean
 import com.kaibo.music.item.song.SongItem
 import com.kaibo.music.net.Api
 import com.kaibo.music.player.manager.PlayManager
+import com.yan.pullrefreshlayout.PullRefreshLayout
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_song_list.*
@@ -103,12 +104,14 @@ class SongListActivity : BaseActivity() {
         Observable
                 .create<Int> {
                     // 监听滑动的距离
-                    pullRefresh.setOnMoveTargetViewtListener { distance ->
-                        if (distance >= 0) {
-                            // 下拉
-                            it.onNext(distance)
+                    pullRefresh.setOnMoveTargetViewListener(object : PullRefreshLayout.OnMoveTargetViewListener {
+                        override fun onMoveDistance(distance: Int) {
+                            if (distance >= 0) {
+                                // 下拉
+                                it.onNext(distance)
+                            }
                         }
-                    }
+                    })
                 }
                 .toMainThread()
                 .`as`(bindLifecycle())

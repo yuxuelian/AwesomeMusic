@@ -54,14 +54,6 @@ abstract class BasePlayerActivity : BaseActivity() {
         }
     }
 
-    protected val rotate360: Animation by lazy {
-        AnimationUtils.loadAnimation(this, R.anim.rotate_360).apply {
-            fillAfter = true
-            // 无限旋转
-            repeatCount = Animation.INFINITE
-        }
-    }
-
     /**
      * 将毫秒数转化成字符串
      */

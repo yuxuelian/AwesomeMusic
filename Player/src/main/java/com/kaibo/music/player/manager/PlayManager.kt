@@ -271,17 +271,6 @@ object PlayManager {
 
     }
 
-    fun setPlayMode(loopmode: Int) {
-        try {
-            if (mService != null) {
-                mService!!.setPlayMode(loopmode)
-            }
-        } catch (e: RemoteException) {
-            e.printStackTrace()
-        }
-
-    }
-
     fun seekTo(ms: Int) {
         try {
             if (mService != null) {

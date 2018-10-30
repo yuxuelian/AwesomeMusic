@@ -7,12 +7,14 @@ import android.os.Message;
 import android.os.PowerManager;
 
 import com.kaibo.music.player.Constants;
+import com.kaibo.music.player.handler.MusicPlayerHandler;
 import com.kaibo.music.player.service.MusicPlayerService;
 
 import java.lang.ref.WeakReference;
 
 /**
  * 封装后的MediaPlayer播放器
+ * 以每一首歌为播放单元
  */
 
 public class MusicPlayerEngine implements
@@ -28,6 +30,9 @@ public class MusicPlayerEngine implements
      */
     private MediaPlayer mCurrentMediaPlayer = new MediaPlayer();
 
+    /**
+     * Handler
+     */
     private Handler mHandler;
 
     /**
@@ -40,19 +45,16 @@ public class MusicPlayerEngine implements
      */
     private boolean mIsPrepared = false;
 
-    public MusicPlayerEngine(final MusicPlayerService service) {
+    public MusicPlayerEngine(final MusicPlayerService service, MusicPlayerHandler mHandler) {
         mService = new WeakReference<>(service);
         // 设置屏幕长亮
         mCurrentMediaPlayer.setWakeMode(service, PowerManager.PARTIAL_WAKE_LOCK);
+        this.mHandler = mHandler;
     }
 
     public void setDataSource(final String path) {
         // 返回是否初始化成功
         mIsInitialized = setDataSourceImpl(mCurrentMediaPlayer, path);
-    }
-
-    public void setHandler(final Handler handler) {
-        mHandler = handler;
     }
 
     public boolean isInitialized() {
@@ -201,29 +203,21 @@ public class MusicPlayerEngine implements
         mHandler.obtainMessage(Constants.PLAYER_PREPARED).sendToTarget();
     }
 
-    private class TrackErrorInfo {
-        private String audioId;
+    public static class TrackErrorInfo {
+        private int audioId;
         private String trackName;
 
-        public TrackErrorInfo(String audioId, String trackName) {
+        public TrackErrorInfo(int audioId, String trackName) {
             this.audioId = audioId;
             this.trackName = trackName;
         }
 
-        public String getAudioId() {
+        public int getAudioId() {
             return audioId;
-        }
-
-        public void setAudioId(String audioId) {
-            this.audioId = audioId;
         }
 
         public String getTrackName() {
             return trackName;
-        }
-
-        public void setTrackName(String trackName) {
-            this.trackName = trackName;
         }
     }
 }
