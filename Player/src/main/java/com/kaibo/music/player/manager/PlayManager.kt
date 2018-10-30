@@ -164,7 +164,7 @@ object PlayManager {
             return ArrayList()
         }
 
-    fun playOnline(music: SongBean) {
+    fun playSong(music: SongBean) {
         try {
             if (mService != null) {
                 mService!!.playSong(music)

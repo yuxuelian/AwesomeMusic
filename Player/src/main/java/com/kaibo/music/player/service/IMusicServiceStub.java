@@ -59,7 +59,7 @@ public class IMusicServiceStub extends ISongService.Stub {
 
     @Override
     public void next() throws RemoteException {
-        mService.get().next(false);
+        mService.get().next();
     }
 
     @Override

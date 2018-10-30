@@ -3,8 +3,6 @@ package com.kaibo.core
 import android.app.Application
 import android.content.Context
 import androidx.multidex.MultiDex
-import androidx.room.Room
-import com.kaibo.core.http.HttpRequestManager
 import com.kaibo.core.toast.ToastUtils
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
@@ -32,11 +30,10 @@ abstract class BaseApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
 //        //初始化配置BaseURL
 //        HttpRequestManager.BASE_URL = getBaseUrl()
         INSTANCE = this
-//        ToastUtils.init(this)
+        ToastUtils.init(this)
         Logger.addLogAdapter(AndroidLogAdapter())
     }
 

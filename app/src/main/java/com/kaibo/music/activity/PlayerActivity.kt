@@ -11,6 +11,7 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.jakewharton.rxbinding2.view.clicks
 import com.kaibo.core.glide.GlideApp
+import com.kaibo.core.toast.ToastUtils
 import com.kaibo.core.util.*
 import com.kaibo.music.R
 import com.kaibo.music.activity.base.BasePlayerActivity
@@ -126,8 +127,8 @@ class PlayerActivity : BasePlayerActivity() {
         }
 
         // 更新播放模式
-        prePlay.clicks().`as`(bindLifecycle()).subscribe {
-            PlayModeManager.updatePlayMode()
+        changePlayMode.clicks().`as`(bindLifecycle()).subscribe {
+            ToastUtils.showSuccess(PlayModeManager.updatePlayMode())
         }
 
         // 点击收藏按钮

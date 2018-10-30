@@ -70,6 +70,4 @@ data class SongBean(
             return arrayOfNulls(size)
         }
     }
-
-
 }

@@ -165,7 +165,7 @@ class SongListActivity : BaseActivity() {
         songListView.withItems(songList.map { songBean: SongBean ->
             SongItem(songBean) {
                 setOnClickListener {
-                    PlayManager.playOnline(songBean)
+                    PlayManager.playSong(songBean)
                 }
             }
         })

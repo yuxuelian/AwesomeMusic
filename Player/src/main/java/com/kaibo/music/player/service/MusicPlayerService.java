@@ -65,7 +65,7 @@ public class MusicPlayerService extends Service {
     /**
      * 播放队列
      */
-    private List<SongBean> mPlayQueue = new ArrayList<>();
+    private final List<SongBean> mPlayQueue = new ArrayList<>();
 
     /**
      * 记录播放位置
@@ -77,7 +77,9 @@ public class MusicPlayerService extends Service {
      */
     private String mPlaylistId = PlayListBean.PLAYLIST_QUEUE_ID;
 
-    //广播接收者
+    /**
+     * 接收命令的广播接收器
+     */
     private ServiceReceiver mServiceReceiver;
 
     private HeadsetReceiver mHeadsetReceiver;
@@ -88,10 +90,12 @@ public class MusicPlayerService extends Service {
      * 桌面歌词管理
      */
     private FloatLyricViewManager mFloatLyricViewManager;
+
     /**
      * 线控和蓝牙远程控制播放
      */
     private MediaSessionManager mediaSessionManager;
+
     /**
      * 管理音频焦点
      */
@@ -117,8 +121,19 @@ public class MusicPlayerService extends Service {
     /**
      * 工作线程和Handler
      */
-    private MusicPlayerHandler mHandler;
-    private HandlerThread mWorkThread;
+    private HandlerThread mWorkThread = new HandlerThread("MusicPlayerThread");
+
+    {
+        //初始化工作线程
+        mWorkThread.start();
+    }
+
+    private MusicPlayerHandler mHandler = new MusicPlayerHandler(this, mWorkThread.getLooper());
+
+    /**
+     * 封装后的播放器
+     */
+    public MusicPlayerEngine mPlayer;
 
     /**
      * 是否显示桌面歌词
@@ -139,11 +154,6 @@ public class MusicPlayerService extends Service {
      * 主线程Handler
      */
     public Handler mMainHandler;
-
-    /**
-     * 封装后的播放器
-     */
-    public MusicPlayerEngine mPlayer = null;
 
     /**
      * 电源锁
@@ -198,11 +208,6 @@ public class MusicPlayerService extends Service {
     private void initConfig() {
         //初始化主线程Handler
         mMainHandler = new Handler(Looper.getMainLooper());
-        PlayModeManager.INSTANCE.getPlayModeId();
-        //初始化工作线程
-        mWorkThread = new HandlerThread("MusicPlayerThread");
-        mWorkThread.start();
-        mHandler = new MusicPlayerHandler(this, mWorkThread.getLooper());
         //电源键
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         if (powerManager != null) {
@@ -210,7 +215,7 @@ public class MusicPlayerService extends Service {
         }
         // 初始化歌词管理器
         mFloatLyricViewManager = new FloatLyricViewManager(this);
-        //初始化和设置MediaSessionCompat
+        // 初始化媒体会话管理器和音频焦点管理器
         mediaSessionManager = new MediaSessionManager(mBindStub, this, mMainHandler);
         audioAndFocusManager = new AudioAndFocusManager(this, mHandler);
     }
@@ -232,7 +237,23 @@ public class MusicPlayerService extends Service {
      */
     private void initMediaPlayer() {
         mPlayer = new MusicPlayerEngine(this, mHandler);
+        // 加载保存到磁盘上的播放队列
         reloadPlayQueue();
+        // 实时向外发送播放器状态
+        Disposable subscribe = Observable.interval(200, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aLong -> {
+                    // 正在播放就向系统多媒体发送播放器的播放状态
+                    if (isPlaying()) {
+                        final Intent intent = new Intent(AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION);
+                        intent.putExtra(AudioEffect.EXTRA_AUDIO_SESSION, getAudioSessionId());
+                        intent.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, getPackageName());
+                        //由系统接收,通知系统audio_session将关闭,不再使用音效
+                        sendBroadcast(intent);
+                        // TODO 发送播放进度
+                    }
+                }, Throwable::printStackTrace);
+        compositeDisposable.add(subscribe);
     }
 
     /**
@@ -317,8 +338,10 @@ public class MusicPlayerService extends Service {
         if (intent != null) {
             final String action = intent.getAction();
             if (Constants.SHUTDOWN.equals(action)) {
+                // 关闭命令
                 releaseServiceUiAndStop();
             } else {
+                // 其他命令
                 handleCommandIntent(intent);
             }
         }
@@ -339,9 +362,9 @@ public class MusicPlayerService extends Service {
     /**
      * 下一首
      */
-    public void next(Boolean isAuto) {
+    public void next() {
         // 获取下一首歌的播放位置
-        mPlayingPos = getNextPosition(isAuto);
+        mPlayingPos = getNextPosition();
         // 停止当前正在播放的歌曲
         stop(false);
         // 切换歌曲
@@ -370,6 +393,7 @@ public class MusicPlayerService extends Service {
         }
         // 从播放队列中获取需要播放的音乐
         mPlayingMusic = mPlayQueue.get(mPlayingPos);
+        // 发送播放状态改变的通知
         notifyChange(Constants.META_CHANGED);
         // 保存播放历史
         saveHistory();
@@ -390,11 +414,9 @@ public class MusicPlayerService extends Service {
         intent.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, getPackageName());
         sendBroadcast(intent);
 
-        // 判断是否初始化
+        // 组件调到正常音量
         mHandler.removeMessages(Constants.VOLUME_FADE_DOWN);
-        //组件调到正常音量
         mHandler.sendEmptyMessage(Constants.VOLUME_FADE_UP);
-        isMusicPlaying = true;
     }
 
     /**
@@ -403,7 +425,7 @@ public class MusicPlayerService extends Service {
      * @param removeStatusIcon
      */
     public void stop(boolean removeStatusIcon) {
-        if (mPlayer != null && mPlayer.isInitialized()) {
+        if (mPlayer.isInitialized()) {
             // 停止播放引擎中正在播放的歌曲
             mPlayer.stop();
         }
@@ -424,26 +446,39 @@ public class MusicPlayerService extends Service {
      *
      * @return
      */
-    private int getNextPosition(Boolean isAuto) {
-        int playModeId = PlayModeManager.INSTANCE.getPlayModeId();
-        if (mPlayQueue == null || mPlayQueue.isEmpty()) {
+    private int getNextPosition() {
+        if (mPlayQueue.isEmpty()) {
             return -1;
         }
+
         if (mPlayQueue.size() == 1) {
             return 0;
         }
-        if (playModeId == PlayModeManager.PLAY_MODE_REPEAT && isAuto) {
+
+        int playModeId = PlayModeManager.getPlayModeId();
+        if (playModeId == PlayModeManager.PLAY_MODE_REPEAT) {
+            // 单曲循环
             if (mPlayingPos < 0) {
                 return 0;
             } else {
                 return mPlayingPos;
             }
         } else if (playModeId == PlayModeManager.PLAY_MODE_RANDOM) {
-            return new Random().nextInt(mPlayQueue.size());
+            // 随机播放
+            Random random = new Random();
+            int randomPosition = mPlayingPos;
+            // 获取一个跟当前播放位置不一样的播放位置
+            while (randomPosition == mPlayingPos) {
+                randomPosition = random.nextInt(mPlayQueue.size());
+            }
+            return randomPosition;
         } else {
+            // 顺序播放
             if (mPlayingPos == mPlayQueue.size() - 1) {
+                // 当前正在播放最后一首歌曲的时候 返回索引0位置
                 return 0;
             } else if (mPlayingPos < mPlayQueue.size() - 1) {
+                // 否则直接 +1
                 return mPlayingPos + 1;
             }
         }
@@ -456,27 +491,44 @@ public class MusicPlayerService extends Service {
      * @return
      */
     private int getPreviousPosition() {
-        int playModeId = PlayModeManager.INSTANCE.getPlayModeId();
-        if (mPlayQueue == null || mPlayQueue.isEmpty()) {
+        // 播放队列为空的时候  不能播放歌曲
+        if (mPlayQueue.isEmpty()) {
             return -1;
         }
+
+        // 播放队列中只有一首歌曲的时候 直接返回 0 位置的歌曲
         if (mPlayQueue.size() == 1) {
             return 0;
         }
+
+        int playModeId = PlayModeManager.getPlayModeId();
         if (playModeId == PlayModeManager.PLAY_MODE_REPEAT) {
+            // 单曲循环的情况  不用修改 mPlayingPos
             if (mPlayingPos < 0) {
                 return 0;
             }
         } else if (playModeId == PlayModeManager.PLAY_MODE_RANDOM) {
-            mPlayingPos = new Random().nextInt(mPlayQueue.size());
-            return new Random().nextInt(mPlayQueue.size());
+            // 随机播放
+            Random random = new Random();
+            int randomPosition = mPlayingPos;
+            // 获取一个跟当前播放位置不一样的播放位置
+            while (randomPosition == mPlayingPos) {
+                randomPosition = random.nextInt(mPlayQueue.size());
+            }
+            return randomPosition;
         } else {
             if (mPlayingPos == 0) {
+                // 获取播放队列中最后一首歌曲的索引
                 return mPlayQueue.size() - 1;
             } else if (mPlayingPos > 0) {
+                // 否则的话   直接当前索引减一即可
                 return mPlayingPos - 1;
+            } else {
+                // 这种情况说明 mPlayingPos == -1
+                return 0;
             }
         }
+        // 其他任何情况下  都直接返回当前索引
         return mPlayingPos;
     }
 
@@ -487,37 +539,15 @@ public class MusicPlayerService extends Service {
      */
     public void playMusic(int position) {
         if (position >= mPlayQueue.size() || position == -1) {
-            mPlayingPos = getNextPosition(true);
+            mPlayingPos = getNextPosition();
         } else {
             mPlayingPos = position;
         }
         if (mPlayingPos == -1) {
             return;
         }
+        // 切歌
         playCurrentAndNext();
-    }
-
-    /**
-     * 音乐播放
-     */
-    public void play() {
-        if (mPlayer.isInitialized()) {
-            // 启动播放
-            mPlayer.start();
-            // 修改播放状态
-            isMusicPlaying = true;
-            // 全局发送播放状态改变的广播
-            notifyChange(Constants.PLAY_STATE_CHANGED);
-            // 请求音频焦点
-            audioAndFocusManager.requestAudioFocus();
-            // 调高音量
-            mHandler.removeMessages(Constants.VOLUME_FADE_DOWN);
-            mHandler.sendEmptyMessage(Constants.VOLUME_FADE_UP);
-            // 更新通知栏
-            updateNotification(true);
-        } else {
-            playCurrentAndNext();
-        }
     }
 
     /**
@@ -562,7 +592,7 @@ public class MusicPlayerService extends Service {
     }
 
     /**
-     * 下一首播放
+     * 提前设置下一首应该播放的歌曲
      *
      * @param music 设置的歌曲
      */
@@ -576,17 +606,20 @@ public class MusicPlayerService extends Service {
 
     /**
      * 切换歌单播放
-     * 1、歌单不一样切换
+     *
+     * @param musicList  新歌单列表
+     * @param position   指定从歌单的哪个位置开始播放
+     * @param playListId 歌单的id
      */
-    public void play(List<SongBean> musicList, int id, String playListId) {
-        if (musicList.size() <= id) {
+    public void play(List<SongBean> musicList, int position, String playListId) {
+        if (musicList.size() <= position) {
             return;
         }
         if (!mPlaylistId.equals(playListId) || mPlayQueue.size() == 0 || mPlayQueue.size() != musicList.size()) {
             setPlayQueue(musicList);
             mPlaylistId = playListId;
         }
-        mPlayingPos = id;
+        mPlayingPos = position;
         playCurrentAndNext();
     }
 
@@ -597,12 +630,32 @@ public class MusicPlayerService extends Service {
         if (isPlaying()) {
             pause();
         } else {
-            if (mPlayer.isInitialized()) {
-                play();
-            } else {
-                isMusicPlaying = true;
-                playCurrentAndNext();
-            }
+            play();
+        }
+    }
+
+    /**
+     * 音乐播放
+     */
+    public void play() {
+        if (mPlayer.isInitialized()) {
+            // 启动播放
+            mPlayer.start();
+            // 修改播放状态
+            isMusicPlaying = true;
+            // 全局发送播放状态改变的广播
+            notifyChange(Constants.PLAY_STATE_CHANGED);
+            // 请求音频焦点
+            audioAndFocusManager.requestAudioFocus();
+            // 调高音量
+            mHandler.removeMessages(Constants.VOLUME_FADE_DOWN);
+            mHandler.sendEmptyMessage(Constants.VOLUME_FADE_UP);
+            // 更新通知栏
+            updateNotification(true);
+        } else {
+            // 获取下一首歌曲应该播放的位置
+            mPlayingPos = getNextPosition();
+            playCurrentAndNext();
         }
     }
 
@@ -610,29 +663,18 @@ public class MusicPlayerService extends Service {
      * 暂停播放
      */
     public void pause() {
-        // 将音量调低
-        mHandler.removeMessages(Constants.VOLUME_FADE_UP);
-        mHandler.sendEmptyMessage(Constants.VOLUME_FADE_DOWN);
-
-        if (isPlaying()) {
+        // mPlayer 已经初始化了  并且当前正在播放  才进行暂停操作
+        if (mPlayer.isInitialized() && isPlaying()) {
+            // 将音量调低
+            mHandler.removeMessages(Constants.VOLUME_FADE_UP);
+            mHandler.sendEmptyMessage(Constants.VOLUME_FADE_DOWN);
             isMusicPlaying = false;
             // 通知播放状态
             notifyChange(Constants.PLAY_STATE_CHANGED);
             // 更新状态栏
             updateNotification(true);
-            // 实时向外发送播放器状态
-            Disposable subscribe = Observable.interval(200, TimeUnit.MILLISECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(aLong -> {
-                        final Intent intent = new Intent(AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION);
-                        intent.putExtra(AudioEffect.EXTRA_AUDIO_SESSION, getAudioSessionId());
-                        intent.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, getPackageName());
-                        //由系统接收,通知系统audio_session将关闭,不再使用音效
-                        sendBroadcast(intent);
-                        mPlayer.pause();
-                    }, Throwable::printStackTrace);
-
-            compositeDisposable.add(subscribe);
+            // 调用播放引擎的暂停播放方法
+            mPlayer.pause();
         }
     }
 
@@ -640,9 +682,11 @@ public class MusicPlayerService extends Service {
      * 跳到输入的进度
      */
     public void seekTo(int pos) {
-        // mPlayingMusic!=null  已经指定了播放歌曲
-        if (mPlayer != null && mPlayer.isInitialized() && mPlayingMusic != null) {
+        if (mPlayer.isInitialized() && mPlayingMusic != null) {
             mPlayer.seek(pos);
+            if (!isPlaying()) {
+                play();
+            }
         }
     }
 
@@ -872,7 +916,7 @@ public class MusicPlayerService extends Service {
         final String command = Constants.SERVICE_CMD.equals(action) ? intent.getStringExtra(Constants.CMD_NAME) : null;
         if (Constants.CMD_NEXT.equals(command) || Constants.ACTION_NEXT.equals(action)) {
             // 下一曲
-            next(false);
+            next();
         } else if (Constants.CMD_PREVIOUS.equals(command) || Constants.ACTION_PREV.equals(action)) {
             // 上一曲
             prev();
@@ -905,9 +949,8 @@ public class MusicPlayerService extends Service {
             stopSelf();
         } else if (Constants.ACTION_REPEAT.equals(action)) {
             // 点击了通知栏的播放模式切换按钮
-            PlayModeManager.INSTANCE.updatePlayMode();
+            PlayModeManager.updatePlayMode();
             // 更新通知栏的显示图标
-
         }
     }
 
@@ -1021,7 +1064,6 @@ public class MusicPlayerService extends Service {
             isMusicPlaying = false;
             mPlayer.stop();
             mPlayer.release();
-            mPlayer = null;
         }
         // 释放Handler资源
         if (mHandler != null) {

@@ -138,7 +138,7 @@ public class SPUtils {
     }
 
     public static void putAnyCommit(String key, int value) {
-        getPreferences().edit().putInt(key, value).apply();
+        getPreferences().edit().putInt(key, value).commit();
     }
 
     public static long getAnyByKey(String key, long defValue) {

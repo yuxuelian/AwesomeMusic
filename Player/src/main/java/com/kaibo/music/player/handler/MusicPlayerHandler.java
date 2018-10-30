@@ -41,7 +41,7 @@ public class MusicPlayerHandler extends Handler {
     @Override
     public void handleMessage(Message msg) {
         MusicPlayerService service = mService.get();
-        if (service != null && service.mPlayer != null) {
+        if (service != null) {
             switch (msg.what) {
                 case Constants.VOLUME_FADE_DOWN:
                     // 音量逐渐降低
@@ -73,7 +73,7 @@ public class MusicPlayerHandler extends Handler {
                     break;
                 case Constants.TRACK_WENT_TO_NEXT:
                     // 播放完毕切换到下一首 service.next(true) 在主线程被执行
-                    service.mMainHandler.post(() -> service.next(true));
+                    service.mMainHandler.post(service::next);
                     break;
                 case Constants.TRACK_PLAY_ENDED:
                     // mPlayer播放完毕且暂时没有下一首
@@ -82,12 +82,12 @@ public class MusicPlayerHandler extends Handler {
                         service.seekTo(0);
                         service.mMainHandler.post(service::play);
                     } else {
-                        service.mMainHandler.post(() -> service.next(true));
+                        service.mMainHandler.post(service::next);
                     }
                     break;
                 case Constants.TRACK_PLAY_ERROR:
                     // 播放出错的时候 去获取下一首歌开始播放
-                    service.mMainHandler.post(() -> service.next(true));
+                    service.mMainHandler.post(service::next);
                     break;
                 case Constants.RELEASE_WAKELOCK:
                     //释放电源锁
