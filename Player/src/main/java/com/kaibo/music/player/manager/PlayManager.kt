@@ -209,6 +209,18 @@ object PlayManager {
     }
 
     /**
+     * 切换播放模式
+     */
+    fun updatePlayMode(): String {
+        return try {
+            mService?.updatePlayMode() ?: "切换失败"
+        } catch (e: Exception) {
+            e.printStackTrace()
+            "切换失败"
+        }
+    }
+
+    /**
      * 绑定播放Service到指定的Activity
      */
     fun bindToService(context: Context, callback: ServiceConnection): ServiceToken? {

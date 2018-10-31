@@ -7,7 +7,7 @@ import com.kaibo.music.utils.SPUtils
  * Created by master on 2018/5/14.
  */
 
-object PlayModeManager {
+internal object PlayModeManager {
 
     /**
      * 播放模式 0：顺序播放，1：单曲循环，2：随机播放

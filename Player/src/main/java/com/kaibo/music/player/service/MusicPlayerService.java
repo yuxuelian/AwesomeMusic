@@ -139,7 +139,7 @@ public class MusicPlayerService extends Service {
     /**
      * 是否显示桌面歌词
      */
-    private boolean showLyric;
+    private boolean isShowLyric = false;
 
     /**
      * 用于收集RxJava的订阅返回   onDestroy 的时候统一取消订阅
@@ -885,9 +885,20 @@ public class MusicPlayerService extends Service {
                 int playButtonResId = songPlayFlag ? R.drawable.ic_pause : R.drawable.ic_play;
                 notRemoteView.setImageViewResource(R.id.notificationPlayPause, playButtonResId);
 
-                // TODO 更新歌词状态
+                // 更新歌词状态
+                int lyricResId = isShowLyric ? R.drawable.ic_lyric_show : R.drawable.ic_lyric_hide;
+                notRemoteView.setImageViewResource(R.id.notificationLyric, lyricResId);
 
-                // TODO 播放模式
+                // 播放模式
+                final int playModeId = PlayModeManager.getPlayModeId();
+                if (playModeId == PlayModeManager.PLAY_MODE_REPEAT) {
+                    // 单曲循环
+                    notRemoteView.setImageViewResource(R.id.notificationRepeat, R.drawable.ic_repeat_one);
+                } else if (playModeId == PlayModeManager.PLAY_MODE_RANDOM) {
+                    notRemoteView.setImageViewResource(R.id.notificationRepeat, R.drawable.ic_repeat_random);
+                } else {
+                    notRemoteView.setImageViewResource(R.id.notificationRepeat, R.drawable.ic_repeat);
+                }
 
                 // 重新设置自定义View
                 mNotificationBuilder.setCustomContentView(notRemoteView);
@@ -905,9 +916,20 @@ public class MusicPlayerService extends Service {
             int playButtonResId = songPlayFlag ? R.drawable.ic_pause : R.drawable.ic_play;
             notRemoteView.setImageViewResource(R.id.notificationPlayPause, playButtonResId);
 
-            // TODO 更新歌词状态
+            // 更新歌词状态
+            int lyricResId = isShowLyric ? R.drawable.ic_lyric_show : R.drawable.ic_lyric_hide;
+            notRemoteView.setImageViewResource(R.id.notificationLyric, lyricResId);
 
-            // TODO 播放模式
+            // 播放模式
+            final int playModeId = PlayModeManager.getPlayModeId();
+            if (playModeId == PlayModeManager.PLAY_MODE_REPEAT) {
+                // 单曲循环
+                notRemoteView.setImageViewResource(R.id.notificationRepeat, R.drawable.ic_repeat_one);
+            } else if (playModeId == PlayModeManager.PLAY_MODE_RANDOM) {
+                notRemoteView.setImageViewResource(R.id.notificationRepeat, R.drawable.ic_repeat_random);
+            } else {
+                notRemoteView.setImageViewResource(R.id.notificationRepeat, R.drawable.ic_repeat);
+            }
 
             // 重新设置自定义View
             mNotificationBuilder.setCustomContentView(notRemoteView);
@@ -981,13 +1003,27 @@ public class MusicPlayerService extends Service {
      */
     private void startFloatLyric() {
         if (SystemUtils.isOpenFloatWindow()) {
-            showLyric = !showLyric;
+            isShowLyric = !isShowLyric;
+            // 更新通知栏的歌词显示状态
+            updateNotification(false);
             // 显示桌面歌词
-            showDesktopLyric(showLyric);
+            showDesktopLyric(isShowLyric);
         } else {
             // 跳转到悬浮窗权限获取界面
             SystemUtils.applySystemWindow();
         }
+    }
+
+    /**
+     * 切换播放博士
+     *
+     * @return
+     */
+    public String updatePlayMode() {
+        String playingMode = PlayModeManager.updatePlayMode();
+        // 修改通知栏的显示情况
+        updateNotification(false);
+        return playingMode;
     }
 
     /**

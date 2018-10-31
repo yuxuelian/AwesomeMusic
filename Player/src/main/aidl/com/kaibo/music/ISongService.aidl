@@ -25,4 +25,5 @@ interface ISongService {
     void removeFromQueue(int position);
     void showDesktopLyric(boolean show);
     void clearQueue();
+    String updatePlayMode();
 }

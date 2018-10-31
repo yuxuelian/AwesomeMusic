@@ -17,7 +17,6 @@ import com.kaibo.music.R
 import com.kaibo.music.activity.base.BasePlayerActivity
 import com.kaibo.music.bean.SongBean
 import com.kaibo.music.player.manager.PlayManager
-import com.kaibo.music.player.manager.PlayModeManager
 import com.kaibo.music.utils.AnimatorUtils
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -199,7 +198,7 @@ class PlayerActivity : BasePlayerActivity() {
 
         // 更新播放模式
         changePlayMode.clicks().`as`(bindLifecycle()).subscribe {
-            ToastUtils.showSuccess(PlayModeManager.updatePlayMode())
+            ToastUtils.showSuccess(PlayManager.updatePlayMode())
         }
 
         // 点击收藏按钮

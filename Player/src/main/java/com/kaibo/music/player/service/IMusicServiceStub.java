@@ -17,6 +17,11 @@ public class IMusicServiceStub extends ISongService.Stub {
     }
 
     @Override
+    public String updatePlayMode() throws RemoteException {
+        return mService.get().updatePlayMode();
+    }
+
+    @Override
     public int getCurrentPosition() throws RemoteException {
         return mService.get().getCurrentPosition();
     }
