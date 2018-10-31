@@ -11,7 +11,7 @@ import com.kaibo.core.util.checkResult
 import com.kaibo.core.util.statusBarHeight
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
-import com.kaibo.music.activity.base.BaseActivity
+import com.kaibo.music.activity.base.BaseMiniPlayerActivity
 import com.kaibo.music.bean.HotSearchBean
 import com.kaibo.music.item.search.HotSearchItem
 import com.kaibo.music.net.Api
@@ -26,7 +26,9 @@ import java.util.concurrent.TimeUnit
  * @description：
  */
 
-class SearchActivity : BaseActivity() {
+class SearchActivity : BaseMiniPlayerActivity() {
+
+    override val mineContainer = R.id.bottomControllerContainer
 
     override fun getLayoutRes() = R.layout.activity_search
 

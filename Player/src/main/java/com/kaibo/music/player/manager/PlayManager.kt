@@ -1,21 +1,13 @@
 package com.kaibo.music.player.manager
 
 import android.app.Activity
-import android.content.ComponentName
-import android.content.Context
-import android.content.ContextWrapper
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.os.IBinder
-import android.os.RemoteException
-
 import com.kaibo.music.ISongService
 import com.kaibo.music.bean.SongBean
 import com.kaibo.music.player.service.MusicPlayerService
 import com.orhanobut.logger.Logger
-
-import java.util.ArrayList
-import java.util.WeakHashMap
+import java.util.*
 
 /**
  * 对外提供的播放控制
@@ -26,166 +18,199 @@ object PlayManager {
 
     private val mConnectionMap = WeakHashMap<Context, ServiceBinder>()
 
-    val audioSessionId: Int
-        get() {
-            try {
-                if (mService != null) {
-                    return mService!!.audioSessionId
-                }
-            } catch (e: RemoteException) {
-                e.printStackTrace()
-            }
-            return 0
-        }
-
+    /**
+     * 获取当前的所播放歌曲的播放进度
+     */
     val currentPosition: Int
         get() {
-            try {
-                if (mService != null) {
-                    return mService!!.currentPosition
-                }
-            } catch (e: RemoteException) {
+            return try {
+                mService?.currentPosition ?: 0
+            } catch (e: Exception) {
                 e.printStackTrace()
+                0
             }
-            return 0
         }
 
+    /**
+     * 获取当前所播放的歌曲的总时长
+     */
     val duration: Int
         get() {
-            try {
-                if (mService != null) {
-                    return mService!!.duration
-                }
-            } catch (e: RemoteException) {
+            return try {
+                mService?.duration ?: 0
+            } catch (e: Exception) {
                 e.printStackTrace()
+                0
             }
-
-            return 0
         }
 
-    val songName: String
-        get() {
-            try {
-                if (mService != null) {
-                    return mService!!.songName
-                }
-            } catch (e: RemoteException) {
-                e.printStackTrace()
-            }
-
-            return " DelicateMusic"
-        }
-
-    val songArtist: String
-        get() {
-            try {
-                if (mService != null) {
-                    return mService!!.songArtist
-                }
-            } catch (e: RemoteException) {
-                e.printStackTrace()
-            }
-
-            return " DelicateMusic"
-        }
-
+    /**
+     * 是否正在播放
+     */
     val isPlaying: Boolean
         get() {
-            try {
-                if (mService != null) {
-                    return mService!!.isPlaying
-                }
-            } catch (e: RemoteException) {
+            return try {
+                mService?.isPlaying ?: false
+            } catch (e: Exception) {
                 e.printStackTrace()
+                false
             }
-
-            return false
-        }
-
-    val isPause: Boolean
-        get() {
-            try {
-                if (mService != null) {
-                    return mService!!.isPause
-                }
-            } catch (e: RemoteException) {
-                e.printStackTrace()
-            }
-
-            return false
         }
 
     /**
-     * 获取正在播放的歌曲
+     * 获取正在播放的歌曲  没有播放返回null
      *
      * @return
      */
-    val playingMusic: SongBean?
+    val playSong: SongBean?
         get() {
-            try {
-                if (mService != null) {
-                    return mService!!.playingSongBean
-                }
-            } catch (e: RemoteException) {
+            return try {
+                mService?.playSong
+            } catch (e: Exception) {
                 e.printStackTrace()
+                null
             }
-
-            return null
         }
 
     /**
-     * 获取正在播放音乐的mid
-     *
-     * @return
+     * 获取当前正在播放的播放队列
      */
-    val playingId: String
+    val playSongQueue: List<SongBean>
         get() {
-            try {
-                if (mService != null && mService!!.playingSongBean != null) {
-                    return mService!!.playingSongBean.mid
-                }
-            } catch (e: RemoteException) {
+            return try {
+                mService?.playSongQueue ?: emptyList()
+            } catch (e: Exception) {
                 e.printStackTrace()
+                emptyList()
             }
-
-            return ""
         }
 
-    val playList: List<SongBean>
-        get() {
-            try {
-                if (mService != null) {
-                    return mService!!.playList
-                }
-            } catch (e: RemoteException) {
-                e.printStackTrace()
-            }
-
-            return ArrayList()
-        }
-
-    fun playSong(music: SongBean) {
+    /**
+     * 设置一首歌曲到播放队列  并执行播放
+     */
+    fun setPlaySong(songBean: SongBean) {
         try {
-            if (mService != null) {
-                mService!!.playSong(music)
+            mService?.playSong = songBean
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * 设置一首歌曲到播放队列  但在下一次切歌的时候才执行播放
+     */
+    fun nextPlay(songBean: SongBean) {
+        try {
+            mService?.setNextSong(songBean)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * 播放位置
+     */
+    var playPosition: Int
+        set(value) {
+            try {
+                mService?.playPosition = value
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: RemoteException) {
+        }
+        get() {
+            return try {
+                mService?.playPosition ?: -1
+            } catch (e: Exception) {
+                e.printStackTrace()
+                -1
+            }
+        }
+
+    /**
+     * 指定一个播放列表开始播放
+     */
+    fun setPlaySongList(playlist: List<SongBean>, position: Int, playListId: String) {
+        try {
+            mService?.setPlaySongList(playlist, position, playListId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * 切换播放暂停
+     */
+    fun togglePlayer() {
+        try {
+            mService?.togglePlayer()
+        } catch (e: Exception) {
             e.printStackTrace()
         }
 
     }
 
-    fun nextPlay(music: SongBean) {
+    /**
+     * 上一曲
+     */
+    fun prev() {
         try {
-            if (mService != null) {
-                mService!!.nextPlay(music)
-            }
-        } catch (e: RemoteException) {
+            mService?.prev()
+        } catch (e: Exception) {
             e.printStackTrace()
         }
 
     }
 
+    /**
+     * 下一曲
+     */
+    fun next() {
+        try {
+            mService?.next()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun seekTo(pos: Int) {
+        try {
+            mService?.seekTo(pos)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
+    fun clearQueue() {
+        try {
+            mService?.clearQueue()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
+    fun removeFromQueue(adapterPosition: Int) {
+        try {
+            mService?.removeFromQueue(adapterPosition)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
+    fun showDesktopLyric(isShow: Boolean) {
+        try {
+            mService?.showDesktopLyric(isShow)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * 绑定播放Service到指定的Activity
+     */
     fun bindToService(context: Context, callback: ServiceConnection): ServiceToken? {
         var realActivity: Activity? = (context as Activity).parent
         if (realActivity == null) {
@@ -204,6 +229,9 @@ object PlayManager {
         }
     }
 
+    /**
+     * 解除绑定
+     */
     fun unbindFromService(token: ServiceToken?) {
         if (token == null) {
             return
@@ -216,119 +244,7 @@ object PlayManager {
         }
     }
 
-    fun play(id: Int) {
-        try {
-            if (mService != null) {
-                mService!!.play(id)
-            }
-        } catch (e: RemoteException) {
-            e.printStackTrace()
-        }
-
-    }
-
-    fun play(id: Int, musicList: List<SongBean>, pid: String) {
-        try {
-            if (mService != null) {
-                mService!!.playPlaylist(musicList, id, pid)
-            }
-        } catch (e: RemoteException) {
-            e.printStackTrace()
-        }
-
-    }
-
-    fun playPause() {
-        try {
-            if (mService != null) {
-                mService!!.playPause()
-            }
-        } catch (e: RemoteException) {
-            e.printStackTrace()
-        }
-
-    }
-
-    fun prev() {
-        try {
-            if (mService != null) {
-                mService!!.prev()
-            }
-        } catch (e: RemoteException) {
-            e.printStackTrace()
-        }
-
-    }
-
-    operator fun next() {
-        try {
-            if (mService != null) {
-                mService!!.next()
-            }
-        } catch (e: RemoteException) {
-            e.printStackTrace()
-        }
-
-    }
-
-    fun seekTo(ms: Int) {
-        try {
-            if (mService != null) {
-                mService!!.seekTo(ms)
-            }
-        } catch (e: RemoteException) {
-            e.printStackTrace()
-        }
-
-    }
-
-    fun position(): Int {
-        try {
-            if (mService != null) {
-                return mService!!.position()
-            }
-        } catch (e: RemoteException) {
-            e.printStackTrace()
-        }
-
-        return 0
-    }
-
-    fun clearQueue() {
-        try {
-            if (mService != null) {
-                mService!!.clearQueue()
-            }
-        } catch (e: RemoteException) {
-            e.printStackTrace()
-        }
-
-    }
-
-    fun removeFromQueue(adapterPosition: Int) {
-        try {
-            if (mService != null) {
-                mService!!.removeFromQueue(adapterPosition)
-            }
-        } catch (e: RemoteException) {
-            e.printStackTrace()
-        }
-
-    }
-
-    fun showDesktopLyric(isShow: Boolean) {
-        try {
-            if (mService != null) {
-                mService!!.showDesktopLyric(isShow)
-            }
-        } catch (e: RemoteException) {
-            e.printStackTrace()
-        }
-
-    }
-
     class ServiceBinder(private val mCallback: ServiceConnection?) : ServiceConnection {
-
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             // 获取到远端的Binder
             mService = ISongService.Stub.asInterface(service)

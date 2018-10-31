@@ -20,9 +20,15 @@ import androidx.core.view.*
 import androidx.core.widget.ListViewCompat
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
+import com.kaibo.core.util.deviceHeight
+import org.jetbrains.anko.dip
 
 /**
- * Created by yan on 2017/4/11
+ * @author 56896
+ * @date 2018/10/18 23:54
+ * @GitHub：https://github.com/yuxuelian
+ * @email：kaibo1hao@gmail.com
+ * @description：
  */
 class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
         ViewGroup(context, attrs, defStyleAttr),
@@ -424,8 +430,8 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
         dragDampingRatio = ta.getFloat(R.styleable.PullRefreshLayout_prl_dragDampingRatio, dragDampingRatio)
         overScrollAdjustValue = ta.getFloat(R.styleable.PullRefreshLayout_prl_overScrollAdjustValue, overScrollAdjustValue)
         overScrollDampingRatio = ta.getFloat(R.styleable.PullRefreshLayout_prl_overScrollDampingRatio, overScrollDampingRatio)
-        topOverScrollMaxTriggerOffset = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_topOverScrollMaxTriggerOffset, PRLCommonUtils.dipToPx(context, topOverScrollMaxTriggerOffset.toFloat()))
-        bottomOverScrollMaxTriggerOffset = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_downOverScrollMaxTriggerOffset, PRLCommonUtils.dipToPx(context, bottomOverScrollMaxTriggerOffset.toFloat()))
+        topOverScrollMaxTriggerOffset = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_topOverScrollMaxTriggerOffset, dip(topOverScrollMaxTriggerOffset))
+        bottomOverScrollMaxTriggerOffset = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_downOverScrollMaxTriggerOffset, dip(bottomOverScrollMaxTriggerOffset))
         showGravity.headerShowGravity = ta.getInteger(R.styleable.PullRefreshLayout_prl_headerShowGravity, ShowGravity.FOLLOW)
         showGravity.footerShowGravity = ta.getInteger(R.styleable.PullRefreshLayout_prl_footerShowGravity, ShowGravity.FOLLOW)
         targetViewId = ta.getResourceId(R.styleable.PullRefreshLayout_prl_targetId, targetViewId)
@@ -950,7 +956,7 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     private fun getOverScrollTime(distance: Int): Long {
-        val ratio = Math.abs(distance.toFloat() / PRLCommonUtils.getWindowHeight(context))
+        val ratio = Math.abs(distance.toFloat() / context.deviceHeight)
         return Math.max(overScrollMinDuring.toLong(),
                 (Math.pow((2000 * ratio).toDouble(), 0.44) * overScrollAdjustValue).toLong())
     }
@@ -1315,9 +1321,9 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     interface OnRefreshListener {
-        fun onRefresh()
+        fun onRefresh() {}
 
-        fun onLoading()
+        fun onLoading() {}
     }
 
     /**
@@ -1325,12 +1331,6 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
      */
     interface OnMoveTargetViewListener {
         fun onMoveDistance(distance: Int)
-    }
-
-    class OnRefreshListenerAdapter : OnRefreshListener {
-        override fun onRefresh() {}
-
-        override fun onLoading() {}
     }
 
     private open inner class PullAnimatorListenerAdapter : AnimatorListenerAdapter() {

@@ -1,4 +1,4 @@
-package com.kaibo.music.fragment.rank
+package com.kaibo.music.fragment
 
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager

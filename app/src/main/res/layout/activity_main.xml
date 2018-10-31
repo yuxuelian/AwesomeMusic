@@ -43,6 +43,9 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <include layout="@layout/include_mini_play" />
+    <FrameLayout
+        android:id="@+id/bottomControllerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/miniPlayerHeight" />
 </LinearLayout>
 

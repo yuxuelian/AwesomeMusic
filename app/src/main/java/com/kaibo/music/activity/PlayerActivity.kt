@@ -54,7 +54,78 @@ class PlayerActivity : BasePlayerActivity() {
     }
 
     private var currentSongBean: SongBean? = null
+        set(value) {
+            if (value != null && value != field) {
+                // 赋值
+                field = value
+                // 修改歌曲名
+                songName.text = value.songname
+                singerName.text = value.singername
+
+                // 切换歌曲时 旋转动画复位
+                playRotaImg.rotation = 0f
+                rotateAnimator.cancel()
+
+                val blurTempFile = File(filesDir, "blur-temp-file.png")
+                // 修改背景
+                Observable
+                        .create<Bitmap> {
+                            try {
+                                val bitmap = GlideApp.with(this).asBitmap().load(value.image).submit().get()
+                                // 先把图片保存到本地  然后再从本地读取图片进行模糊  否则不能模糊成功
+                                bitmap.saveToFile(blurTempFile)
+                                it.onNext(bitmap)
+                                it.onComplete()
+                            } catch (e: Throwable) {
+                                it.onError(e)
+                            }
+                        }
+                        .subscribeOn(Schedulers.io())
+                        .toMainThread()
+                        .doOnNext {
+                            // 设置到旋转的ImageView
+                            playRotaImg.setImageBitmap(it)
+                        }
+                        .observeOn(Schedulers.io())
+                        .map {
+                            // 从本地获取图片然后进行模糊
+                            BitmapFactory.decodeStream(FileInputStream(blurTempFile)).blur(this)
+                        }
+                        .toMainThread()
+                        .`as`(bindLifecycle())
+                        .subscribe({
+                            // 设置背景
+                            blurBackGround.startTransition(it)
+                        }) {
+                            it.printStackTrace()
+                        }
+            }
+        }
+
     private var isPlaying = false
+        set(value) {
+            if (field != value) {
+                field = value
+                if (value) {
+                    // 启动旋转动画
+                    if (rotateAnimator.isPaused) {
+                        rotateAnimator.resume()
+                    } else {
+                        rotateAnimator.start()
+                    }
+                } else {
+                    // 取消旋转动画
+                    rotateAnimator.pause()
+                }
+            }
+
+            // 播放状态发生改变
+            playOrPauseBtn.setImageResource(if (value) {
+                R.drawable.big_pause
+            } else {
+                R.drawable.big_play
+            })
+        }
 
     override fun getLayoutRes() = R.layout.activity_player
 
@@ -71,16 +142,16 @@ class PlayerActivity : BasePlayerActivity() {
         }
 
         // 模糊背景图(初始化模糊一张)
-        Observable
-                .create<Bitmap> {
-                    it.onNext(BitmapFactory.decodeResource(resources, R.drawable.test_play_img).blur(this))
-                }
-                .subscribeOn(Schedulers.io())
-                .toMainThread()
-                .`as`(bindLifecycle())
-                .subscribe {
-                    blurBackGround.setImageBitmap(it)
-                }
+//        Observable
+//                .create<Bitmap> {
+//                    it.onNext(BitmapFactory.decodeResource(resources, R.drawable.test_play_img).blur(this))
+//                }
+//                .subscribeOn(Schedulers.io())
+//                .toMainThread()
+//                .`as`(bindLifecycle())
+//                .subscribe {
+//                    blurBackGround.setImageBitmap(it)
+//                }
 
         // 初始化歌词显示页
         initLrcLayout()
@@ -107,7 +178,7 @@ class PlayerActivity : BasePlayerActivity() {
 
         // 点击播放暂停按钮
         playOrPauseBtn.clicks().`as`(bindLifecycle()).subscribe {
-            PlayManager.playPause()
+            PlayManager.togglePlayer()
             playOrPauseBtn.setImageResource(if (PlayManager.isPlaying) {
                 R.drawable.big_pause
             } else {
@@ -141,54 +212,12 @@ class PlayerActivity : BasePlayerActivity() {
      * 这个方法会被定时执行
      */
     override fun tickTask() {
-        val playingMusic: SongBean? = PlayManager.playingMusic
-        if (playingMusic != null && playingMusic != currentSongBean) {
-            // 赋值
-            currentSongBean = playingMusic
-            // 修改歌曲名
-            songName.text = playingMusic.songname
-            singerName.text = playingMusic.singername
+        // 获取播放的歌曲
+        currentSongBean = PlayManager.playSong
+        // 获取播放状态
+        isPlaying = PlayManager.isPlaying
 
-            // 切换歌曲时 旋转动画复位
-            playRotaImg.rotation = 0f
-            rotateAnimator.cancel()
-
-            val blurTempFile = File(filesDir, "blur-temp-file.png")
-            // 修改背景
-            Observable
-                    .create<Bitmap> {
-                        try {
-                            val bitmap = GlideApp.with(this).asBitmap().load(playingMusic.image).submit().get()
-                            // 先把图片保存到本地  然后再从本地读取图片进行模糊  否则不能模糊成功
-                            bitmap.saveToFile(blurTempFile)
-                            it.onNext(bitmap)
-                            it.onComplete()
-                        } catch (e: Throwable) {
-                            it.onError(e)
-                        }
-                    }
-                    .subscribeOn(Schedulers.io())
-                    .toMainThread()
-                    .doOnNext {
-                        // 设置到旋转的ImageView
-                        playRotaImg.setImageBitmap(it)
-                    }
-                    .observeOn(Schedulers.io())
-                    .map {
-                        // 从本地获取图片然后进行模糊
-                        BitmapFactory.decodeStream(FileInputStream(blurTempFile)).blur(this)
-                    }
-                    .toMainThread()
-                    .`as`(bindLifecycle())
-                    .subscribe({
-                        // 设置背景
-                        blurBackGround.startTransition(it)
-                    }) {
-                        it.printStackTrace()
-                    }
-        }
-
-        // 更新进度(这个需要时刻更新)
+        // 歌曲进度修改
         if (!isSeeking) {
             val duration = PlayManager.duration
             val currentPosition = PlayManager.currentPosition
@@ -198,31 +227,6 @@ class PlayerActivity : BasePlayerActivity() {
             // 修改进度条
             playerSeek.max = duration
             playerSeek.progress = currentPosition
-        }
-
-        // 播放状态发生改变
-        if (isPlaying != PlayManager.isPlaying) {
-            // 获取播放状态并记录状态
-            isPlaying = PlayManager.isPlaying
-
-            // 播放状态发生改变
-            playOrPauseBtn.setImageResource(if (isPlaying) {
-                R.drawable.big_pause
-            } else {
-                R.drawable.big_play
-            })
-
-            if (isPlaying) {
-                // 启动旋转动画
-                if (rotateAnimator.isPaused) {
-                    rotateAnimator.resume()
-                } else {
-                    rotateAnimator.start()
-                }
-            } else {
-                // 取消旋转动画
-                rotateAnimator.pause()
-            }
         }
     }
 
@@ -274,6 +278,7 @@ class PlayerActivity : BasePlayerActivity() {
 
             override fun getCount() = 2
         }
+
         // 滑动歌词页
         lrcPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {

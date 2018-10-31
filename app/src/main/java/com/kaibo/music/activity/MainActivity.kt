@@ -1,24 +1,21 @@
 package com.kaibo.music.activity
 
-import android.app.ActivityOptions
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import com.jakewharton.rxbinding2.view.clicks
+import com.kaibo.core.toast.ToastUtils
 import com.kaibo.core.util.animInStartActivity
+import com.kaibo.core.util.isDoubleClick
 import com.kaibo.core.util.statusBarHeight
 import com.kaibo.music.R
-import com.kaibo.music.activity.base.BaseActivity
-import com.kaibo.music.database.PlayListDatabase
-import com.kaibo.music.fragment.mine.MineFragment
-import com.kaibo.music.fragment.rank.RankFragment
-import com.kaibo.music.fragment.recommend.RecommendFragment
-import com.kaibo.music.fragment.singer.SingerFragment
+import com.kaibo.music.activity.base.BaseMiniPlayerActivity
+import com.kaibo.music.fragment.MineFragment
+import com.kaibo.music.fragment.RankFragment
+import com.kaibo.music.fragment.RecommendFragment
+import com.kaibo.music.fragment.SingerFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.include_home_title.*
-import kotlinx.android.synthetic.main.include_mini_play.*
 
 /**
  * @author kaibo
@@ -28,7 +25,9 @@ import kotlinx.android.synthetic.main.include_mini_play.*
  * @description：
  */
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseMiniPlayerActivity() {
+
+    override val mineContainer = R.id.bottomControllerContainer
 
     override fun getLayoutRes(): Int {
         return R.layout.activity_main
@@ -43,18 +42,6 @@ class MainActivity : BaseActivity() {
         search.clicks().`as`(bindLifecycle()).subscribe {
             animInStartActivity<SearchActivity>()
         }
-        // 点击底部的播放条
-        mine_play_layout.clicks().`as`(bindLifecycle()).subscribe {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val intent = Intent(this, PlayerActivity::class.java)
-                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this, songImg, getString(R.string.transition_share_song_img)).toBundle())
-            } else {
-                animInStartActivity<PlayerActivity>()
-            }
-        }
-
-        circleProgressBar.progress = 50
-        circleProgressBar.max = 100
     }
 
     private fun initViewPager() {
@@ -73,9 +60,14 @@ class MainActivity : BaseActivity() {
 
     override fun onBackPressed() {
         // 返回桌面
-        val intent = Intent(Intent.ACTION_MAIN)
-        intent.addCategory(Intent.CATEGORY_HOME)
-        startActivity(intent)
+//        val intent = Intent(Intent.ACTION_MAIN)
+//        intent.addCategory(Intent.CATEGORY_HOME)
+//        startActivity(intent)
+        if (isDoubleClick()) {
+            super.onBackPressed()
+        } else {
+            ToastUtils.showInfo("再按一次返回键退出")
+        }
     }
 
 }

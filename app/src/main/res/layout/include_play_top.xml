@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -27,9 +28,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:maxWidth="200dp"
-            android:text="演员"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:text="演员" />
 
         <com.kaibo.music.weight.MarqueeTextView
             android:id="@+id/singerName"
@@ -38,8 +39,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp"
             android:maxWidth="200dp"
-            android:text="薛之谦"
             android:textColor="@color/white"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:text="薛之谦" />
     </LinearLayout>
 </FrameLayout>

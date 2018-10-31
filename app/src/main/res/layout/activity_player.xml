@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -37,14 +38,14 @@
                     android:id="@+id/playRotaImg"
                     android:layout_width="240dp"
                     android:layout_height="240dp"
-                    android:src="@drawable/test_play_img"
                     android:transitionName="@string/transition_share_song_img"
                     app:civ_border_color="@color/color_3999"
                     app:civ_border_width="10dp"
                     app:layout_constraintBottom_toTopOf="@+id/minLrcLayout"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/test_play_img" />
 
                 <LinearLayout
                     android:id="@+id/minLrcLayout"
@@ -59,27 +60,27 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="原来当爱放下防备后的这些那些"
                         android:textColor="@color/colorThemeText"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        tools:text="原来当爱放下防备后的这些那些" />
 
                     <TextView
                         android:id="@+id/centerLrc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="都有个期限"
                         android:textColor="@color/white"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        tools:text="都有个期限" />
 
                     <TextView
                         android:id="@+id/bottomLrc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="其实台下的观众就我一个"
                         android:textColor="@color/colorThemeText"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        tools:text="其实台下的观众就我一个" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 

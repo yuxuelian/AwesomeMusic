@@ -4,7 +4,6 @@ import android.os.RemoteException;
 
 import com.kaibo.music.ISongService;
 import com.kaibo.music.bean.SongBean;
-import com.kaibo.music.player.manager.PlayModeManager;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -18,28 +17,48 @@ public class IMusicServiceStub extends ISongService.Stub {
     }
 
     @Override
-    public void nextPlay(SongBean music) throws RemoteException {
-        mService.get().nextPlay(music);
+    public int getCurrentPosition() throws RemoteException {
+        return mService.get().getCurrentPosition();
     }
 
     @Override
-    public void playSong(SongBean music) throws RemoteException {
-        mService.get().play(music);
+    public void setPlayPosition(int id) throws RemoteException {
+        mService.get().setPlayPosition(id);
     }
 
     @Override
-    public void playPlaylist(List<SongBean> songs, int id, String playListId) throws RemoteException {
-        mService.get().play(songs, id, playListId);
+    public void setNextSong(SongBean songBean) throws RemoteException {
+        mService.get().setNextSong(songBean);
     }
 
     @Override
-    public void play(int id) throws RemoteException {
-        mService.get().playMusic(id);
+    public void setPlaySong(SongBean songBean) throws RemoteException {
+        mService.get().setPlaySong(songBean);
     }
 
     @Override
-    public void playPause() throws RemoteException {
-        mService.get().playPause();
+    public int getPlayPosition() throws RemoteException {
+        return mService.get().getPlayPosition();
+    }
+
+    @Override
+    public SongBean getPlaySong() throws RemoteException {
+        return mService.get().getPlayingMusic();
+    }
+
+    @Override
+    public List<SongBean> getPlaySongQueue() throws RemoteException {
+        return mService.get().getPlayQueue();
+    }
+
+    @Override
+    public void setPlaySongList(List<SongBean> playlist, int position, String playListId) throws RemoteException {
+        mService.get().setPlaySongList(playlist, position, playListId);
+    }
+
+    @Override
+    public void togglePlayer() throws RemoteException {
+        mService.get().togglePlayer();
     }
 
     @Override
@@ -63,28 +82,8 @@ public class IMusicServiceStub extends ISongService.Stub {
     }
 
     @Override
-    public void seekTo(int ms) throws RemoteException {
-        mService.get().seekTo(ms);
-    }
-
-    @Override
-    public String getSongName() throws RemoteException {
-        return mService.get().getSongName();
-    }
-
-    @Override
-    public String getSongArtist() throws RemoteException {
-        return mService.get().getSingerName();
-    }
-
-    @Override
-    public SongBean getPlayingSongBean() throws RemoteException {
-        return mService.get().getPlayingMusic();
-    }
-
-    @Override
-    public List<SongBean> getPlayList() throws RemoteException {
-        return mService.get().getPlayQueue();
+    public void seekTo(int pos) throws RemoteException {
+        mService.get().seekTo(pos);
     }
 
     @Override
@@ -103,23 +102,8 @@ public class IMusicServiceStub extends ISongService.Stub {
     }
 
     @Override
-    public int getAudioSessionId() throws RemoteException {
-        return mService.get().getAudioSessionId();
-    }
-
-    @Override
-    public int position() throws RemoteException {
-        return mService.get().getPlayPosition();
-    }
-
-    @Override
     public int getDuration() throws RemoteException {
         return mService.get().getDuration();
-    }
-
-    @Override
-    public int getCurrentPosition() throws RemoteException {
-        return mService.get().getCurrentPosition();
     }
 
     @Override
@@ -128,7 +112,7 @@ public class IMusicServiceStub extends ISongService.Stub {
     }
 
     @Override
-    public boolean isPause() throws RemoteException {
-        return !mService.get().isPlaying();
+    public boolean isPrepared() throws RemoteException {
+        return mService.get().isPrepared();
     }
 }

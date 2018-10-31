@@ -16,7 +16,7 @@ import org.jetbrains.anko.startActivityForResult
  */
 
 fun FragmentActivity.addFragmentToActivity(frameId: Int, fragment: Fragment) {
-    supportFragmentManager.beginTransaction().add(frameId, fragment).commit()
+    supportFragmentManager.beginTransaction().replace(frameId, fragment).commit()
 }
 
 inline fun <reified T : Activity> Activity.animStartActivity(vararg params: Pair<String, Any?>) {

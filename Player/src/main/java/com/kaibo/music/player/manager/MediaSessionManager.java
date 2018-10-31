@@ -3,14 +3,13 @@ package com.kaibo.music.player.manager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
-import android.os.RemoteException;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
+import com.kaibo.music.bean.SongBean;
 import com.kaibo.music.player.service.IMusicServiceStub;
 import com.kaibo.music.utils.DownLoadManager;
-import com.kaibo.music.bean.SongBean;
 
 import io.reactivex.disposables.Disposable;
 
@@ -51,8 +50,8 @@ public class MediaSessionManager {
         @Override
         public void onPlay() {
             try {
-                control.playPause();
-            } catch (RemoteException e) {
+                control.togglePlayer();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -60,8 +59,8 @@ public class MediaSessionManager {
         @Override
         public void onPause() {
             try {
-                control.playPause();
-            } catch (RemoteException e) {
+                control.togglePlayer();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -70,7 +69,7 @@ public class MediaSessionManager {
         public void onSkipToNext() {
             try {
                 control.next();
-            } catch (RemoteException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -79,7 +78,7 @@ public class MediaSessionManager {
         public void onSkipToPrevious() {
             try {
                 control.prev();
-            } catch (RemoteException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -87,8 +86,8 @@ public class MediaSessionManager {
         @Override
         public void onStop() {
             try {
-                control.playPause();
-            } catch (RemoteException e) {
+                control.togglePlayer();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -97,7 +96,7 @@ public class MediaSessionManager {
         public void onSeekTo(long pos) {
             try {
                 control.seekTo((int) pos);
-            } catch (RemoteException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -133,7 +132,7 @@ public class MediaSessionManager {
     private long getCurrentPosition() {
         try {
             return control.getCurrentPosition();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -147,7 +146,7 @@ public class MediaSessionManager {
     protected boolean isPlaying() {
         try {
             return control.isPlaying();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -182,7 +181,7 @@ public class MediaSessionManager {
     private int getDuration() {
         try {
             return control.getDuration();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -190,15 +189,11 @@ public class MediaSessionManager {
 
     private int getCount() {
         try {
-            return control.getPlayList().size();
-        } catch (RemoteException e) {
+            return control.getPlaySongQueue().size();
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
-    }
-
-    public MediaSessionCompat.Token getMediaSession() {
-        return mMediaSession.getSessionToken();
     }
 
     /**

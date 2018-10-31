@@ -1,4 +1,4 @@
-package com.kaibo.music.fragment.singer
+package com.kaibo.music.fragment
 
 import android.os.Bundle
 import androidx.core.content.ContextCompat

@@ -70,7 +70,7 @@ public interface Constants {
     String CMD_PREVIOUS = "previous";//按键上一首
     String CMD_NEXT = "next";//按键下一首
     String CMD_PAUSE = "pause";//按键暂停
-    String CMD_PLAY = "play";//按键播放
+    String CMD_PLAY = "playSongList";//按键播放
     String CMD_STOP = "stop";//按键停止
     String CMD_FORWARD = "forward";//快进
     String CMD_REWIND = "reward";//按键停止

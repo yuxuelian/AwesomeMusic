@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?><!--底部布局-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="0dp"
-    android:layout_weight="3"
     android:layout_marginBottom="20dp"
+    android:layout_weight="3"
     android:orientation="vertical">
 
     <LinearLayout
@@ -59,8 +60,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:max="100"
-            android:progress="50" />
+            tools:max="100"
+            tools:progress="50" />
 
         <TextView
             android:id="@+id/maxSeek"
@@ -107,7 +108,7 @@
             android:id="@+id/playOrPauseBtn"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/big_play"
+            android:src="@drawable/big_pause"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/nextPlay"
             app:layout_constraintStart_toEndOf="@+id/prePlay"

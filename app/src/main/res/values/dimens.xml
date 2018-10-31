@@ -2,5 +2,6 @@
 <resources>
 
     <dimen name="headerHeight">48dp</dimen>
+    <dimen name="miniPlayerHeight">50dp</dimen>
 
 </resources>

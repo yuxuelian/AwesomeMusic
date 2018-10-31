@@ -2,16 +2,23 @@ package com.yan.pullrefreshlayout
 
 import android.view.animation.Interpolator
 
-class ViscousInterpolator @JvmOverloads constructor(private val currentViscousScale: Float = VISCOUS_FLUID_SCALE) : Interpolator {
+/**
+ * @author 56896
+ * @date 2018/10/18 23:54
+ * @GitHub：https://github.com/yuxuelian
+ * @email：kaibo1hao@gmail.com
+ * @description：
+ */
+internal class ViscousInterpolator constructor(private val currentViscousScale: Float = VISCOUS_FLUID_SCALE) : Interpolator {
 
-    private val VISCOUS_FLUID_NORMALIZE: Float
-    private val VISCOUS_FLUID_OFFSET: Float
+    private val viscousFluidNormalize: Float
+    private val viscousFluidOffset: Float
 
     init {
         // must be set to 1.0 (used in viscousFluid())
-        VISCOUS_FLUID_NORMALIZE = 1.0f / viscousFluid(currentViscousScale, 1.0f)
+        viscousFluidNormalize = 1.0f / viscousFluid(currentViscousScale, 1.0f)
         // account for very small floating-point error
-        VISCOUS_FLUID_OFFSET = 1.0f - VISCOUS_FLUID_NORMALIZE * viscousFluid(currentViscousScale, 1.0f)
+        viscousFluidOffset = 1.0f - viscousFluidNormalize * viscousFluid(currentViscousScale, 1.0f)
     }
 
     private fun viscousFluid(viscousScale: Float, x: Float): Float {
@@ -28,9 +35,9 @@ class ViscousInterpolator @JvmOverloads constructor(private val currentViscousSc
     }
 
     override fun getInterpolation(input: Float): Float {
-        val interpolated = VISCOUS_FLUID_NORMALIZE * viscousFluid(currentViscousScale, input)
+        val interpolated = viscousFluidNormalize * viscousFluid(currentViscousScale, input)
         return if (interpolated > 0) {
-            interpolated + VISCOUS_FLUID_OFFSET
+            interpolated + viscousFluidOffset
         } else interpolated
     }
 
@@ -38,6 +45,6 @@ class ViscousInterpolator @JvmOverloads constructor(private val currentViscousSc
         /**
          * Controls the viscous fluid effect (how much of it).
          */
-        private val VISCOUS_FLUID_SCALE = 4.5f
+        private const val VISCOUS_FLUID_SCALE = 4.5f
     }
 }

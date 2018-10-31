@@ -27,6 +27,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.widget.RemoteViews;
 
+import com.kaibo.core.toast.ToastUtils;
 import com.kaibo.music.bean.PlayListBean;
 import com.kaibo.music.bean.SongBean;
 import com.kaibo.music.database.PlayListHelper;
@@ -116,7 +117,7 @@ public class MusicPlayerService extends Service {
     /**
      * 是否音乐正在播放
      */
-    private boolean isMusicPlaying = false;
+    private boolean songPlayFlag = false;
 
     /**
      * 工作线程和Handler
@@ -315,7 +316,7 @@ public class MusicPlayerService extends Service {
                     if (mPlayingPos >= 0 && mPlayingPos < mPlayQueue.size()) {
                         // 切换歌曲
                         mPlayingMusic = mPlayQueue.get(mPlayingPos);
-                        updateNotification(false);
+                        updateNotification(true);
                         notifyChange(Constants.META_CHANGED);
                     }
                     // 歌单变化
@@ -398,7 +399,7 @@ public class MusicPlayerService extends Service {
         // 保存播放历史
         saveHistory();
         // 设置为正在播放
-        isMusicPlaying = true;
+        songPlayFlag = true;
         // 设置播放源
         mPlayer.setDataSource(mPlayingMusic.getUrl());
         // 更新媒体状态
@@ -406,7 +407,7 @@ public class MusicPlayerService extends Service {
         // 请求音频焦点
         audioAndFocusManager.requestAudioFocus();
         // 更新通知栏
-        updateNotification(false);
+        updateNotification(true);
 
         // 发送广播  通知系统媒体
         final Intent intent = new Intent(AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION);
@@ -437,7 +438,7 @@ public class MusicPlayerService extends Service {
 
         if (removeStatusIcon) {
             // 修改播放的状态
-            isMusicPlaying = false;
+            songPlayFlag = false;
         }
     }
 
@@ -537,7 +538,7 @@ public class MusicPlayerService extends Service {
      *
      * @param position
      */
-    public void playMusic(int position) {
+    public void setPlayPosition(int position) {
         if (position >= mPlayQueue.size() || position == -1) {
             mPlayingPos = getNextPosition();
         } else {
@@ -564,7 +565,7 @@ public class MusicPlayerService extends Service {
      *
      * @param music
      */
-    public void play(SongBean music) {
+    public void setPlaySong(SongBean music) {
         boolean hasSong = false;
         // 去播放队列中寻找是否已经存在当前正在播放的歌曲了
         int hasPosition = 0;
@@ -596,9 +597,10 @@ public class MusicPlayerService extends Service {
      *
      * @param music 设置的歌曲
      */
-    public void nextPlay(SongBean music) {
+    public void setNextSong(SongBean music) {
         if (mPlayQueue.size() == 0) {
-            play(music);
+            // 队列为空的情况  直接进行播放
+            setPlaySong(music);
         } else if (mPlayingPos < mPlayQueue.size()) {
             mPlayQueue.add(mPlayingPos + 1, music);
         }
@@ -611,7 +613,7 @@ public class MusicPlayerService extends Service {
      * @param position   指定从歌单的哪个位置开始播放
      * @param playListId 歌单的id
      */
-    public void play(List<SongBean> musicList, int position, String playListId) {
+    public void setPlaySongList(List<SongBean> musicList, int position, String playListId) {
         if (musicList.size() <= position) {
             return;
         }
@@ -626,7 +628,7 @@ public class MusicPlayerService extends Service {
     /**
      * 播放暂停
      */
-    public void playPause() {
+    public void togglePlayer() {
         if (isPlaying()) {
             pause();
         } else {
@@ -642,7 +644,7 @@ public class MusicPlayerService extends Service {
             // 启动播放
             mPlayer.start();
             // 修改播放状态
-            isMusicPlaying = true;
+            songPlayFlag = true;
             // 全局发送播放状态改变的广播
             notifyChange(Constants.PLAY_STATE_CHANGED);
             // 请求音频焦点
@@ -651,7 +653,7 @@ public class MusicPlayerService extends Service {
             mHandler.removeMessages(Constants.VOLUME_FADE_DOWN);
             mHandler.sendEmptyMessage(Constants.VOLUME_FADE_UP);
             // 更新通知栏
-            updateNotification(true);
+            updateNotification(false);
         } else {
             // 获取下一首歌曲应该播放的位置
             mPlayingPos = getNextPosition();
@@ -668,11 +670,11 @@ public class MusicPlayerService extends Service {
             // 将音量调低
             mHandler.removeMessages(Constants.VOLUME_FADE_UP);
             mHandler.sendEmptyMessage(Constants.VOLUME_FADE_DOWN);
-            isMusicPlaying = false;
+            songPlayFlag = false;
             // 通知播放状态
             notifyChange(Constants.PLAY_STATE_CHANGED);
             // 更新状态栏
-            updateNotification(true);
+            updateNotification(false);
             // 调用播放引擎的暂停播放方法
             mPlayer.pause();
         }
@@ -729,7 +731,7 @@ public class MusicPlayerService extends Service {
                 if (mPlayQueue.size() == 0) {
                     clearQueue();
                 } else {
-                    playMusic(position);
+                    setPlayPosition(position);
                 }
             } else if (position > mPlayingPos) {
                 mPlayQueue.remove(position);
@@ -748,7 +750,7 @@ public class MusicPlayerService extends Service {
      */
     public void clearQueue() {
         mPlayingMusic = null;
-        isMusicPlaying = false;
+        songPlayFlag = false;
         mPlayingPos = -1;
         mPlayQueue.clear();
         savePlayQueue(true);
@@ -871,29 +873,52 @@ public class MusicPlayerService extends Service {
     /**
      * 更新通知栏
      */
-    private void updateNotification(boolean changePlayStatus) {
-        Disposable disposable = DownLoadManager.INSTANCE.downImage(mPlayingMusic.getImage()).subscribe(bitmap -> {
-            if (!changePlayStatus) {
-                // 更新UI
-                final String songName = getSongName();
-                final String singerName = getSingerName();
-                int playButtonResId = isMusicPlaying ? R.drawable.ic_pause : R.drawable.ic_play;
-                notRemoteView.setTextViewText(R.id.notificationSongName, songName);
-                notRemoteView.setTextViewText(R.id.notificationArtist, singerName);
-                notRemoteView.setImageViewResource(R.id.notificationPlayPause, playButtonResId);
+    private void updateNotification(boolean changePlaySong) {
+        if (changePlaySong) {
+            // 切歌时所有状态都要重新设置一次
+            Disposable disposable = DownLoadManager.INSTANCE.downImage(mPlayingMusic.getImage()).subscribe(bitmap -> {
                 notRemoteView.setImageViewBitmap(R.id.notificationCover, bitmap);
-            }
+                notRemoteView.setTextViewText(R.id.notificationSongName, getSongName());
+                notRemoteView.setTextViewText(R.id.notificationArtist, getSingerName());
+
+                // 更新播放按钮状态
+                int playButtonResId = songPlayFlag ? R.drawable.ic_pause : R.drawable.ic_play;
+                notRemoteView.setImageViewResource(R.id.notificationPlayPause, playButtonResId);
+
+                // TODO 更新歌词状态
+
+                // TODO 播放模式
+
+                // 重新设置自定义View
+                mNotificationBuilder.setCustomContentView(notRemoteView);
+                mNotification = mNotificationBuilder.build();
+                // 更新歌词
+                mFloatLyricViewManager.updatePlayStatus(songPlayFlag);
+                // 显示到通知栏
+                startForeground(Constants.NOTIFICATION_ID, mNotification);
+                // 必须要主动发送一次到通知栏,否则会有兼容问题
+                mNotificationManager.notify(Constants.NOTIFICATION_ID, mNotification);
+            }, Throwable::printStackTrace);
+            compositeDisposable.add(disposable);
+        } else {
+            // 更新播放按钮状态
+            int playButtonResId = songPlayFlag ? R.drawable.ic_pause : R.drawable.ic_play;
+            notRemoteView.setImageViewResource(R.id.notificationPlayPause, playButtonResId);
+
+            // TODO 更新歌词状态
+
+            // TODO 播放模式
+
             // 重新设置自定义View
             mNotificationBuilder.setCustomContentView(notRemoteView);
             mNotification = mNotificationBuilder.build();
             // 更新歌词
-            mFloatLyricViewManager.updatePlayStatus(isMusicPlaying);
+            mFloatLyricViewManager.updatePlayStatus(songPlayFlag);
             // 显示到通知栏
             startForeground(Constants.NOTIFICATION_ID, mNotification);
             // 必须要主动发送一次到通知栏,否则会有兼容问题
             mNotificationManager.notify(Constants.NOTIFICATION_ID, mNotification);
-        }, Throwable::printStackTrace);
-        compositeDisposable.add(disposable);
+        }
     }
 
     /**
@@ -922,11 +947,7 @@ public class MusicPlayerService extends Service {
             prev();
         } else if (Constants.CMD_TOGGLE_PAUSE.equals(command) || Constants.PLAY_STATE_CHANGED.equals(action) || Constants.ACTION_PLAY_PAUSE.equals(action)) {
             // toggle播放状态
-            if (isPlaying()) {
-                pause();
-            } else {
-                play();
-            }
+            togglePlayer();
         } else if (Constants.CMD_PAUSE.equals(command)) {
             // 点击暂停按钮
             pause();
@@ -949,8 +970,9 @@ public class MusicPlayerService extends Service {
             stopSelf();
         } else if (Constants.ACTION_REPEAT.equals(action)) {
             // 点击了通知栏的播放模式切换按钮
-            PlayModeManager.updatePlayMode();
-            // 更新通知栏的显示图标
+            ToastUtils.INSTANCE.showSuccess(PlayModeManager.updatePlayMode());
+            // 更新通知栏  修改播放模式
+            updateNotification(false);
         }
     }
 
@@ -1061,7 +1083,7 @@ public class MusicPlayerService extends Service {
         savePlayQueue(false);
         //释放mPlayer
         if (mPlayer != null) {
-            isMusicPlaying = false;
+            songPlayFlag = false;
             mPlayer.stop();
             mPlayer.release();
         }
@@ -1104,7 +1126,7 @@ public class MusicPlayerService extends Service {
      * @return 是否正在播放音乐
      */
     public boolean isPlaying() {
-        return isMusicPlaying;
+        return songPlayFlag;
     }
 
     /**
@@ -1221,7 +1243,7 @@ public class MusicPlayerService extends Service {
      *
      * @param playQueue 播放队列
      */
-    public void setPlayQueue(List<SongBean> playQueue) {
+    private void setPlayQueue(List<SongBean> playQueue) {
         mPlayQueue.clear();
         mPlayQueue.addAll(playQueue);
         // 保存一次播放队列

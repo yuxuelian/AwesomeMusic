@@ -147,4 +147,9 @@
             </LinearLayout>
         </ScrollView>
     </com.yan.pullrefreshlayout.PullRefreshLayout>
+
+    <FrameLayout
+        android:id="@+id/bottomControllerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/miniPlayerHeight" />
 </LinearLayout>

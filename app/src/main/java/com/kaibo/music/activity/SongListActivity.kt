@@ -10,7 +10,7 @@ import com.kaibo.core.adapter.withItems
 import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.util.*
 import com.kaibo.music.R
-import com.kaibo.music.activity.base.BaseActivity
+import com.kaibo.music.activity.base.BaseMiniPlayerActivity
 import com.kaibo.music.bean.RankSongListBean
 import com.kaibo.music.bean.RecommendSongListBean
 import com.kaibo.music.bean.SingerSongListBean
@@ -32,7 +32,9 @@ import org.jetbrains.anko.dip
  * @description：
  */
 
-class SongListActivity : BaseActivity() {
+class SongListActivity : BaseMiniPlayerActivity() {
+
+    override val mineContainer = R.id.bottomControllerContainer
 
     private var sourceBitmap: Bitmap? = null
 
@@ -165,7 +167,7 @@ class SongListActivity : BaseActivity() {
         songListView.withItems(songList.map { songBean: SongBean ->
             SongItem(songBean) {
                 setOnClickListener {
-                    PlayManager.playSong(songBean)
+                    PlayManager.setPlaySong(songBean)
                 }
             }
         })

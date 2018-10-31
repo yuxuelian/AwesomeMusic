@@ -104,7 +104,7 @@
     <color name="translucent_white_8p">#14FFFFFF</color>
     <color name="translucent_white_16p">#29FFFFFF</color>
     <color name="translucent_white_24p">#3DFFFFFF</color>
-    <!--play bar-->
+    <!--playSongList bar-->
     <color name="translucent_white_96p">#F5FFFFFF</color>
     <color name="translucent_grey_300_96p">#F5E0E0E0</color>
     <color name="translucent_grey_900_96p">#F5212121</color>

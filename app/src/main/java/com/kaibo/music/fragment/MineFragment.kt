@@ -1,4 +1,4 @@
-package com.kaibo.music.fragment.mine
+package com.kaibo.music.fragment
 
 import android.os.Bundle
 import com.kaibo.core.fragment.BaseFragment

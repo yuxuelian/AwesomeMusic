@@ -5,11 +5,13 @@ import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.view.ViewConfiguration
 import android.view.ViewGroup
-import android.view.ViewParent
 
 /**
- * support general view to pull refresh
- * Created by yan on 2017/6/29
+ * @author 56896
+ * @date 2018/10/18 23:54
+ * @GitHub：https://github.com/yuxuelian
+ * @email：kaibo1hao@gmail.com
+ * @description：
  */
 internal class GeneralPullHelper(private val prl: PullRefreshLayout, context: Context) {
 

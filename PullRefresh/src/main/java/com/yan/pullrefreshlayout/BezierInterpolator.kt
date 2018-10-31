@@ -1,13 +1,5 @@
 package com.yan.pullrefreshlayout
 
-/**
- * @author kaibo
- * @date 2018/10/19 14:34
- * @GitHub：https://github.com/yuxuelian
- * @email：kaibo1hao@gmail.com
- * @description：
- */
-
 import android.graphics.PointF
 import android.view.animation.Interpolator
 
@@ -53,7 +45,7 @@ class BezierInterpolator(x1: Float, y1: Float, x2: Float, y2: Float) : Interpola
 
     companion object {
 
-        private val STEP_SIZE = 1.0f / 4096
+        private const val STEP_SIZE = 1.0f / 4096
 
         fun cubicEquation(t: Double, p1: Double, p2: Double): Double {
             val u = 1 - t

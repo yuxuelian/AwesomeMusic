@@ -4,87 +4,74 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mini_play_layout"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="@dimen/miniPlayerHeight"
     android:background="@drawable/btn_50_selector"
     android:clickable="true"
     android:focusable="true">
 
+    <ProgressBar
+        android:id="@+id/miniProgressBar"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:max="0"
+        android:progress="0"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.kaibo.music.weight.CircleImageView
-        android:id="@+id/songImg"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:id="@+id/playRotaImg"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_marginStart="20dp"
-        android:src="@drawable/test_play_img"
         android:transitionName="@string/transition_share_song_img"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/test_play_img"
         tools:targetApi="lollipop" />
 
     <com.kaibo.music.weight.MarqueeTextView
         android:id="@+id/songName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="10dp"
         android:maxWidth="160dp"
-        android:text="演员"
         android:textColor="@color/white"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/songSinger"
-        app:layout_constraintStart_toEndOf="@id/songImg"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/singerName"
+        app:layout_constraintStart_toEndOf="@id/playRotaImg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="演员" />
 
     <com.kaibo.music.weight.MarqueeTextView
-        android:id="@+id/songSinger"
+        android:id="@+id/singerName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="10dp"
         android:maxWidth="160dp"
-        android:text="薛之谦"
         android:textColor="@color/colorThemeText"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/songImg"
-        app:layout_constraintTop_toBottomOf="@+id/songName" />
+        app:layout_constraintStart_toEndOf="@id/playRotaImg"
+        app:layout_constraintTop_toBottomOf="@+id/songName"
+        tools:text="薛之谦" />
 
-    <FrameLayout
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+    <ImageView
+        android:id="@+id/playOrPauseBtn"
+        android:layout_width="@dimen/miniPlayerHeight"
+        android:layout_height="@dimen/miniPlayerHeight"
         android:background="@drawable/btn_50_selector"
-        android:clickable="true"
-        android:focusable="true"
+        android:padding="10dp"
+        android:src="@drawable/big_play"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/playListBtn"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.kaibo.music.weight.CircleProgressBar
-            android:id="@+id/miniProgressBar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            app:drawBackgroundOutsideProgress="false"
-            app:progress_background_color="@color/colorTheme"
-            app:progress_diff_radius="1dp"
-            app:progress_end_color="@color/colorTheme"
-            app:progress_shader="linear"
-            app:progress_start_color="@color/colorTheme"
-            app:progress_stroke_cap="round"
-            app:progress_stroke_width="1dp"
-            app:progress_text_color="@color/translucent"
-            app:style="solid_line" />
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp"
-            android:src="@drawable/ic_pause"
-            android:tint="@color/colorTheme" />
-    </FrameLayout>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/playListBtn"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/miniPlayerHeight"
+        android:layout_height="@dimen/miniPlayerHeight"
         android:background="@drawable/btn_50_selector"
         android:clickable="true"
         android:focusable="true"

@@ -1,33 +1,39 @@
 package com.yan.pullrefreshlayout
 
 import android.view.ViewGroup
-
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-
 import androidx.annotation.IntDef
 
 /**
- * refresh show helper
- * Created by yan on 2017/7/7
+ * @author 56896
+ * @date 2018/10/18 23:54
+ * @GitHub：https://github.com/yuxuelian
+ * @email：kaibo1hao@gmail.com
+ * @description：
  */
-class ShowGravity constructor(private val prl: PullRefreshLayout) {
+internal class ShowGravity constructor(private val prl: PullRefreshLayout) {
 
     /**
      * show gravity
      * - use by pullRefreshLayout to set show gravity
      */
-    internal var headerShowGravity = FOLLOW
-    internal var footerShowGravity = FOLLOW
+    var headerShowGravity = FOLLOW
+    var footerShowGravity = FOLLOW
 
     /**
      * @ShowState
      */
-    @IntDef(FOLLOW, FOLLOW_PLACEHOLDER, FOLLOW_CENTER, PLACEHOLDER, PLACEHOLDER_FOLLOW, PLACEHOLDER_CENTER, CENTER, CENTER_FOLLOW)
-    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(FOLLOW,
+            FOLLOW_PLACEHOLDER,
+            FOLLOW_CENTER,
+            PLACEHOLDER,
+            PLACEHOLDER_FOLLOW,
+            PLACEHOLDER_CENTER,
+            CENTER,
+            CENTER_FOLLOW)
+    @Retention(AnnotationRetention.SOURCE)
     annotation class ShowState
 
-    internal fun dellHeaderMoving(moveDistance: Int) {
+    fun dellHeaderMoving(moveDistance: Int) {
         if (prl.headerView != null && moveDistance >= 0) {
             when (headerShowGravity) {
                 FOLLOW -> prl.headerView!!.translationY = moveDistance.toFloat()
@@ -56,7 +62,7 @@ class ShowGravity constructor(private val prl: PullRefreshLayout) {
         }
     }
 
-    internal fun dellFooterMoving(moveDistance: Int) {
+    fun dellFooterMoving(moveDistance: Int) {
         if (prl.footerView != null && moveDistance <= 0) {
             when (footerShowGravity) {
                 FOLLOW -> prl.footerView!!.translationY = moveDistance.toFloat()
@@ -85,7 +91,7 @@ class ShowGravity constructor(private val prl: PullRefreshLayout) {
         }
     }
 
-    internal fun layout(left: Int, top: Int, right: Int, bottom: Int) {
+    fun layout(left: Int, top: Int, right: Int, bottom: Int) {
         if (prl.headerView != null) {
             val paddingLeft = prl.paddingLeft
             val paddingTop = prl.paddingTop
@@ -109,7 +115,6 @@ class ShowGravity constructor(private val prl: PullRefreshLayout) {
     }
 
     companion object {
-
         const val FOLLOW = 0
         const val FOLLOW_PLACEHOLDER = 1
         const val FOLLOW_CENTER = 2
