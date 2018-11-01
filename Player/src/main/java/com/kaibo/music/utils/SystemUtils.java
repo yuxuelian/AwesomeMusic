@@ -51,7 +51,7 @@ public class SystemUtils {
      * @return
      */
     public static boolean isOpenFloatWindow() {
-        return FloatUtil.INSTANCE.checkPermission(BaseApplication.Companion.getBaseApplication());
+        return FloatUtil.INSTANCE.checkPermission(BaseApplication.Companion.getINSTANCE());
     }
 
     /**
@@ -60,7 +60,7 @@ public class SystemUtils {
      * @return
      */
     public static void applySystemWindow() {
-        FloatUtil.INSTANCE.applyOrShowFloatWindow(BaseApplication.Companion.getBaseApplication());
+        FloatUtil.INSTANCE.applyOrShowFloatWindow(BaseApplication.Companion.getINSTANCE());
     }
 
     /**
@@ -83,7 +83,7 @@ public class SystemUtils {
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private static boolean isNoOptions() {
-        PackageManager packageManager = BaseApplication.Companion.getBaseApplication().getPackageManager();
+        PackageManager packageManager = BaseApplication.Companion.getINSTANCE().getPackageManager();
         Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
         List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         return list.size() > 0;
@@ -97,7 +97,7 @@ public class SystemUtils {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
     private static boolean isNoSwitch() {
         long dujinyang = System.currentTimeMillis();
-        UsageStatsManager usageStatsManager = (UsageStatsManager) BaseApplication.Companion.getBaseApplication().getSystemService(Context.USAGE_STATS_SERVICE);
+        UsageStatsManager usageStatsManager = (UsageStatsManager) BaseApplication.Companion.getINSTANCE().getSystemService(Context.USAGE_STATS_SERVICE);
         List<UsageStats> queryUsageStats = null;
         if (usageStatsManager != null) {
             queryUsageStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, 0, dujinyang);

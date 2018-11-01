@@ -13,6 +13,10 @@ import org.jetbrains.anko.internals.AnkoInternals
  * @description：
  */
 
+fun Fragment.attachFragment(frameId: Int, fragment: Fragment) {
+    childFragmentManager.beginTransaction().replace(frameId, fragment).commit()
+}
+
 inline fun <reified T : Activity> Fragment.animStartActivity(vararg params: Pair<String, Any?>) {
     activity?.let {
         this.startActivity(AnkoInternals.createIntent(it, T::class.java, params))

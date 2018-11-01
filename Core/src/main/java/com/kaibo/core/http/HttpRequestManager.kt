@@ -1,6 +1,8 @@
 package com.kaibo.core.http
 
+import com.kaibo.core.BaseApplication
 import io.reactivex.schedulers.Schedulers
+import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
@@ -8,6 +10,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 /**
@@ -71,7 +74,7 @@ object HttpRequestManager {
                 .connectTimeout(CONNECT_TIMEOUT_TIME, TimeUnit.SECONDS)
                 .readTimeout(READ_TIMEOUT_TIME, TimeUnit.SECONDS)
                 .writeTimeout(WRITE_TIMEOUT_TIME, TimeUnit.SECONDS)
-//           .cache(Cache(File("${BaseApplication.INSTANCE.cacheDir.absolutePath}${File.separator}okHttpCaches"), CACHE_SIZE))
+                .cache(Cache(File("${BaseApplication.INSTANCE.cacheDir.absolutePath}${File.separator}okHttpCaches"), CACHE_SIZE))
 
         //添加别的拦截器
         interceptors.forEach {

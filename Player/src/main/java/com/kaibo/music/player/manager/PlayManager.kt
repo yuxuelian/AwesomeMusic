@@ -223,20 +223,22 @@ object PlayManager {
     /**
      * 绑定播放Service到指定的Activity
      */
-    fun bindToService(context: Context, callback: ServiceConnection): ServiceToken? {
+    fun bindToService(context: Context): ServiceToken? {
         var realActivity: Activity? = (context as Activity).parent
         if (realActivity == null) {
             realActivity = context
         }
         val contextWrapper = ContextWrapper(realActivity)
+        // 启动Service
         contextWrapper.startService(Intent(contextWrapper, MusicPlayerService::class.java))
-        val binder = ServiceBinder(callback)
+        val binder = ServiceBinder()
+        // 绑定Service
         return if (contextWrapper.bindService(Intent().setClass(contextWrapper, MusicPlayerService::class.java), binder, 0)) {
             mConnectionMap[contextWrapper] = binder
             Logger.d("绑定成功")
             ServiceToken(contextWrapper)
         } else {
-            Logger.d("绑定失败")
+            Logger.e("绑定失败")
             null
         }
     }
@@ -245,10 +247,7 @@ object PlayManager {
      * 解除绑定
      */
     fun unbindFromService(token: ServiceToken?) {
-        if (token == null) {
-            return
-        }
-        val mContextWrapper = token.mWrappedContext
+        val mContextWrapper = token?.mWrappedContext ?: return
         val mBinder = mConnectionMap[mContextWrapper] ?: return
         mContextWrapper.unbindService(mBinder)
         if (mConnectionMap.isEmpty()) {
@@ -256,15 +255,13 @@ object PlayManager {
         }
     }
 
-    class ServiceBinder(private val mCallback: ServiceConnection?) : ServiceConnection {
+    class ServiceBinder : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             // 获取到远端的Binder
             mService = ISongService.Stub.asInterface(service)
-            mCallback?.onServiceConnected(className, service)
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
-            mCallback?.onServiceDisconnected(className)
             mService = null
         }
     }

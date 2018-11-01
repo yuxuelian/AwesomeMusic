@@ -1,44 +1,52 @@
-package com.kaibo.music.activity
+package com.kaibo.music.fragment.songlist
 
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.annotation.FloatRange
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.jakewharton.rxbinding2.view.clicks
 import com.kaibo.core.adapter.withItems
+import com.kaibo.core.fragment.BaseFragment
 import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.util.*
 import com.kaibo.music.R
-import com.kaibo.music.activity.base.BaseMiniPlayerActivity
+import com.kaibo.music.activity.MainActivity
 import com.kaibo.music.bean.RankSongListBean
 import com.kaibo.music.bean.RecommendSongListBean
 import com.kaibo.music.bean.SingerSongListBean
 import com.kaibo.music.bean.SongBean
+import com.kaibo.music.fragment.player.PlayerFragment
 import com.kaibo.music.item.song.SongItem
 import com.kaibo.music.net.Api
 import com.kaibo.music.player.manager.PlayManager
 import com.yan.pullrefreshlayout.PullRefreshLayout
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_song_list.*
-import org.jetbrains.anko.dip
+import kotlinx.android.synthetic.main.fragment_song_list.*
 
 /**
  * @author kaibo
- * @createDate 2018/10/15 15:40
+ * @date 2018/11/1 9:52
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：
  */
 
-class SongListActivity : BaseMiniPlayerActivity() {
+class SongListFragment : BaseFragment() {
 
-    override val mineContainer = R.id.bottomControllerContainer
+    companion object {
+        fun newInstance(arguments: Bundle = Bundle()): SongListFragment {
+            return SongListFragment().apply {
+                this.arguments = arguments
+            }
+        }
+    }
+
+    override fun getLayoutRes() = R.layout.fragment_song_list
 
     private var sourceBitmap: Bitmap? = null
 
-    private val imgWidth by lazy { deviceWidth }
+    private val imgWidth by lazy { mActivity.deviceWidth }
     // 头部布局的原始高度
     private val imgHeight by lazy { headerView.layoutParams.height }
     // 布局的宽高比
@@ -55,49 +63,54 @@ class SongListActivity : BaseMiniPlayerActivity() {
         return first + ((second - first) * ratio).toInt()
     }
 
-    override fun getLayoutRes() = R.layout.activity_song_list
+    private fun Bundle.hasExtra(extra: String) = this.get(extra) != null
 
-    override fun initOnCreate(savedInstanceState: Bundle?) {
-        super.initOnCreate(savedInstanceState)
+    override fun initViewCreated(savedInstanceState: Bundle?) {
+        super.initViewCreated(savedInstanceState)
         toolbar.layoutParams = toolbar.layoutParams.apply {
-            (this as FrameLayout.LayoutParams).topMargin = statusBarHeight
+            (this as FrameLayout.LayoutParams).topMargin = mActivity.statusBarHeight
         }
-        backBtn.clicks().`as`(bindLifecycle()).subscribe {
-            onBackPressed()
+        backBtn.easyClick(bindLifecycle()).subscribe {
+            pop()
         }
-        when {
-            intent.hasExtra("disstid") -> {
-                val disstid = intent.getStringExtra("disstid")
-                Api.instance.getRecommendSongList(disstid).checkResult()
-                        .toMainThread().`as`(bindLifecycle()).subscribe({ recommendSongListBean: RecommendSongListBean ->
-                            loadHeaderImage(recommendSongListBean.logo)
-                            titleText.text = recommendSongListBean.dissname
-                            initSongList(recommendSongListBean.songList)
-                        }) {
-                            it.printStackTrace()
-                        }
-            }
-            intent.hasExtra("singermid") -> {
-                val singermid = intent.getStringExtra("singermid")
-                Api.instance.getSingerSongList(singermid).checkResult()
-                        .toMainThread().`as`(bindLifecycle()).subscribe({ singerSongListBean: SingerSongListBean ->
-                            loadHeaderImage(singerSongListBean.singerAvatar)
-                            titleText.text = singerSongListBean.singerName
-                            initSongList(singerSongListBean.songList)
-                        }) {
-                            it.printStackTrace()
-                        }
-            }
-            intent.hasExtra("topid") -> {
-                val topid = intent.getIntExtra("topid", 0)
-                Api.instance.getRankSongList(topid).checkResult()
-                        .toMainThread().`as`(bindLifecycle()).subscribe({ rankSongListBean: RankSongListBean ->
-                            loadHeaderImage(rankSongListBean.rankImage)
-                            titleText.text = rankSongListBean.rankName
-                            initSongList(rankSongListBean.songList)
-                        }) {
-                            it.printStackTrace()
-                        }
+        arguments?.let { intent: Bundle ->
+            when {
+                intent.hasExtra("disstid") -> {
+                    val disstid = intent.getString("disstid", "")
+                    Api.instance.getRecommendSongList(disstid).checkResult()
+                            .toMainThread().`as`(bindLifecycle()).subscribe({ recommendSongListBean: RecommendSongListBean ->
+                                loadHeaderImage(recommendSongListBean.logo)
+                                titleText.text = recommendSongListBean.dissname
+                                initSongList(recommendSongListBean.songList)
+                            }) {
+                                it.printStackTrace()
+                            }
+                }
+                intent.hasExtra("singermid") -> {
+                    val singermid = intent.getString("singermid", "")
+                    Api.instance.getSingerSongList(singermid).checkResult()
+                            .toMainThread().`as`(bindLifecycle()).subscribe({ singerSongListBean: SingerSongListBean ->
+                                loadHeaderImage(singerSongListBean.singerAvatar)
+                                titleText.text = singerSongListBean.singerName
+                                initSongList(singerSongListBean.songList)
+                            }) {
+                                it.printStackTrace()
+                            }
+                }
+                intent.hasExtra("topid") -> {
+                    val topid = intent.getInt("topid", -1)
+                    Api.instance.getRankSongList(topid).checkResult()
+                            .toMainThread().`as`(bindLifecycle()).subscribe({ rankSongListBean: RankSongListBean ->
+                                loadHeaderImage(rankSongListBean.rankImage)
+                                titleText.text = rankSongListBean.rankName
+                                initSongList(rankSongListBean.songList)
+                            }) {
+                                it.printStackTrace()
+                            }
+                }
+                else -> {
+
+                }
             }
         }
 
@@ -163,13 +176,24 @@ class SongListActivity : BaseMiniPlayerActivity() {
     }
 
     private fun initSongList(songList: List<SongBean>) {
-        songListView.layoutManager = LinearLayoutManager(this)
+        songListView.layoutManager = LinearLayoutManager(mActivity)
         songListView.withItems(songList.map { songBean: SongBean ->
             SongItem(songBean) {
                 setOnClickListener {
-                    PlayManager.setPlaySong(songBean)
+                    // 这个方法执行起来比较耗时  这里使用异步执行
+                    singleAsync(bindLifecycle(), onSuccess = {
+                        // 设置成功  启动PlayerFragment
+                        (mActivity as MainActivity).rootFragment.start(PlayerFragment.newInstance())
+                    }) {
+                        PlayManager.setPlaySong(songBean)
+                    }
                 }
             }
         })
+    }
+
+    override fun onBackPressedSupport(): Boolean {
+        pop()
+        return true
     }
 }

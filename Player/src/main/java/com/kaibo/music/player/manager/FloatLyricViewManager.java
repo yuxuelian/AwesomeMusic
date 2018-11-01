@@ -45,7 +45,7 @@ public class FloatLyricViewManager {
      * 加载歌词
      */
     public void loadLyric(SongBean mPlayingMusic) {
-        resetLyric(BaseApplication.Companion.getBaseApplication().getString(R.string.lyric_loading));
+        resetLyric(BaseApplication.Companion.getINSTANCE().getString(R.string.lyric_loading));
         if (mPlayingMusic != null) {
             mSongName = mPlayingMusic.getSongname();
             // TODO 获取歌词
@@ -201,7 +201,7 @@ public class FloatLyricViewManager {
      */
     private static WindowManager getWindowManager() {
         if (mWindowManager == null) {
-            mWindowManager = (WindowManager) BaseApplication.Companion.getBaseApplication().getSystemService(Context.WINDOW_SERVICE);
+            mWindowManager = (WindowManager) BaseApplication.Companion.getINSTANCE().getSystemService(Context.WINDOW_SERVICE);
         }
         return mWindowManager;
     }

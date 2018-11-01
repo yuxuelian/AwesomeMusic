@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.jakewharton.rxbinding2.view.clicks
 import com.kaibo.core.R
 import com.kaibo.core.util.dip
+import com.kaibo.core.util.easyClick
 import kotlinx.android.synthetic.main.dialog_msg.*
 
 /**
@@ -26,11 +27,11 @@ class MessageDialog : BaseDialog() {
     override fun initViewCreated(savedInstanceState: Bundle?) {
         super.initViewCreated(savedInstanceState)
         msg_text.text = msgText
-        cancel_btn.clicks().subscribe {
+        cancel_btn.easyClick(bindLifecycle()).subscribe {
             cancelListener?.invoke()
             dismiss()
         }
-        confirm_btn.clicks().subscribe {
+        confirm_btn.easyClick(bindLifecycle()).subscribe {
             confirmListener?.invoke()
             dismiss()
         }

@@ -15,7 +15,7 @@ import org.jetbrains.anko.startActivityForResult
  * @description：
  */
 
-fun FragmentActivity.addFragmentToActivity(frameId: Int, fragment: Fragment) {
+fun FragmentActivity.attachFragment(frameId: Int, fragment: Fragment) {
     supportFragmentManager.beginTransaction().replace(frameId, fragment).commit()
 }
 

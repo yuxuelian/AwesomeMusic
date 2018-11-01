@@ -6,6 +6,7 @@ import androidx.multidex.MultiDex
 import com.kaibo.core.toast.ToastUtils
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
+import me.yokeyword.fragmentation.Fragmentation
 
 /**
  * @author:Administrator
@@ -17,10 +18,11 @@ import com.orhanobut.logger.Logger
 abstract class BaseApplication : Application() {
 
     companion object {
-        val baseApplication by lazy {
-            INSTANCE
-        }
-        private lateinit var INSTANCE: BaseApplication
+
+        private lateinit var baseApplication: BaseApplication
+
+        val INSTANCE
+            get() = baseApplication
     }
 
     override fun attachBaseContext(base: Context?) {
@@ -32,9 +34,11 @@ abstract class BaseApplication : Application() {
         super.onCreate()
 //        //初始化配置BaseURL
 //        HttpRequestManager.BASE_URL = getBaseUrl()
-        INSTANCE = this
+        baseApplication = this
         ToastUtils.init(this)
         Logger.addLogAdapter(AndroidLogAdapter())
+
+        Fragmentation.builder().stackViewMode(Fragmentation.BUBBLE).debug(BuildConfig.DEBUG).install()
     }
 
 //    abstract fun getBaseUrl(): String

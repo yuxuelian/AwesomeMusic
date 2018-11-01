@@ -1,6 +1,7 @@
 package com.kaibo.core.dialog
 
 import android.app.Dialog
+import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentActivity
 import com.kaibo.core.R
 import com.kaibo.core.util.bindToAutoDispose
 import com.uber.autodispose.AutoDisposeConverter
@@ -22,6 +24,16 @@ import com.uber.autodispose.AutoDisposeConverter
  */
 
 abstract class BaseDialog : DialogFragment() {
+
+    private lateinit var fragmentActivity: FragmentActivity
+
+    protected val mActivity
+        get() = fragmentActivity
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        fragmentActivity = context as FragmentActivity
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(getLayoutRes(), container, false)

@@ -1,52 +1,61 @@
-package com.kaibo.music.activity
+package com.kaibo.music.fragment.search
 
 import android.os.Bundle
 import android.view.View
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
-import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
 import com.kaibo.core.adapter.withItems
+import com.kaibo.core.fragment.BaseFragment
 import com.kaibo.core.util.checkResult
+import com.kaibo.core.util.easyClick
 import com.kaibo.core.util.statusBarHeight
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
-import com.kaibo.music.activity.base.BaseMiniPlayerActivity
 import com.kaibo.music.bean.HotSearchBean
 import com.kaibo.music.item.search.HotSearchItem
 import com.kaibo.music.net.Api
-import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.android.synthetic.main.fragment_search.*
 import java.util.concurrent.TimeUnit
 
 /**
  * @author kaibo
- * @createDate 2018/10/15 14:08
+ * @date 2018/11/1 9:49
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：
  */
 
-class SearchActivity : BaseMiniPlayerActivity() {
 
-    override val mineContainer = R.id.bottomControllerContainer
+class SearchFragment : BaseFragment() {
 
-    override fun getLayoutRes() = R.layout.activity_search
+    companion object {
+        fun newInstance(arguments: Bundle = Bundle()): SearchFragment {
+            return SearchFragment().apply {
+                this.arguments = arguments
+            }
+        }
+    }
 
-    override fun initOnCreate(savedInstanceState: Bundle?) {
-        super.initOnCreate(savedInstanceState)
-        appBarLayout.setPadding(0, statusBarHeight, 0, 0)
-        setSupportActionBar(searchToolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        Api.instance.getHotSearch().checkResult()
-                .toMainThread().`as`(bindLifecycle()).subscribe({
-                    initHotSearchList(it)
-                }) {
-                    it.printStackTrace()
-                }
+    override fun onBackPressedSupport(): Boolean {
+        pop()
+        return true
+    }
+
+    override fun getLayoutRes() = R.layout.fragment_search
+
+    override fun initViewCreated(savedInstanceState: Bundle?) {
+        super.initViewCreated(savedInstanceState)
+        appBarLayout.setPadding(0, mActivity.statusBarHeight, 0, 0)
+        Api.instance.getHotSearch().checkResult().toMainThread().`as`(bindLifecycle()).subscribe({
+            initHotSearchList(it)
+        }) {
+            it.printStackTrace()
+        }
 
         // 获取搜索框中的内容
         searchContentInput.textChanges()
-                .debounce(200, TimeUnit.MILLISECONDS).toMainThread()
+                .debounce(200L, TimeUnit.MILLISECONDS).toMainThread()
                 .`as`(bindLifecycle()).subscribe {
                     if (it.isNotEmpty()) {
                         clearInput.visibility = View.VISIBLE
@@ -58,18 +67,18 @@ class SearchActivity : BaseMiniPlayerActivity() {
                 }
 
         // 点击清除按钮
-        clearInput.clicks().`as`(bindLifecycle()).subscribe {
+        clearInput.easyClick(bindLifecycle()).subscribe {
             searchContentInput.setText("")
         }
 
         // 点击返回键
-        backBtn.clicks().`as`(bindLifecycle()).subscribe {
-            animOutFinish()
+        backBtn.easyClick(bindLifecycle()).subscribe {
+            pop()
         }
     }
 
     private fun initHotSearchList(hotSearchBeanList: List<HotSearchBean>) {
-        val layoutManager = FlexboxLayoutManager(this)
+        val layoutManager = FlexboxLayoutManager(mActivity)
         layoutManager.justifyContent = JustifyContent.SPACE_BETWEEN
         hot_search_list.layoutManager = layoutManager
         hot_search_list.isNestedScrollingEnabled = false

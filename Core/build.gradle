@@ -251,6 +251,12 @@ configurations.all {
 //        api "com.liaoinstan.pullRefresh:WeixinHeader:$spring_view_version"
         //google地图
 //    api 'com.google.android.gms:play-services-maps:15.0.1'
+
+        // 如果不想继承SupportActivity/Fragment，自己定制Support，可仅依赖:
+        api 'me.yokeyword:fragmentation:1.3.6'
+//        api 'me.yokeyword:fragmentation-core:1.3.6'
+        // swipeback基于fragmentation, 如果是自定制SupportActivity/Fragment，则参照SwipeBackActivity/Fragment实现即可
+        api 'me.yokeyword:fragmentation-swipeback:1.3.6'
     }
 }
 

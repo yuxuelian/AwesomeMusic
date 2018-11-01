@@ -1,18 +1,24 @@
-package com.kaibo.music.fragment
+package com.kaibo.music.fragment.home
 
-import android.app.ActivityOptions
-import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
-import com.jakewharton.rxbinding2.view.clicks
+import android.transition.ChangeBounds
+import android.transition.ChangeImageTransform
+import android.transition.ChangeTransform
+import android.transition.TransitionSet
+import androidx.annotation.RequiresApi
+import androidx.transition.Fade
 import com.kaibo.core.fragment.BaseFragment
 import com.kaibo.core.glide.GlideApp
-import com.kaibo.core.util.animInStartActivity
+import com.kaibo.core.util.easyClick
+import com.kaibo.core.util.singleAsync
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
-import com.kaibo.music.activity.PlayerActivity
 import com.kaibo.music.bean.SongBean
+import com.kaibo.music.dialog.BeingPlayListDialog
+import com.kaibo.music.fragment.RootFragment
+import com.kaibo.music.fragment.player.PlayerFragment
 import com.kaibo.music.player.manager.PlayManager
 import com.kaibo.music.utils.AnimatorUtils
 import io.reactivex.Observable
@@ -20,6 +26,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_mini_player.*
 import java.util.concurrent.TimeUnit
+
 
 /**
  * @author kaibo
@@ -30,6 +37,16 @@ import java.util.concurrent.TimeUnit
  */
 
 class MiniPlayerFragment : BaseFragment() {
+
+    companion object {
+        fun newInstance(arguments: Bundle = Bundle()): MiniPlayerFragment {
+            return MiniPlayerFragment().apply {
+                this.arguments = arguments
+            }
+        }
+    }
+
+    private var disposable: Disposable? = null
 
     private var currentSongBean: SongBean? = null
         set(value) {
@@ -93,28 +110,71 @@ class MiniPlayerFragment : BaseFragment() {
         AnimatorUtils.getRotateAnimator(playRotaImg)
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private class DetailTransition : TransitionSet() {
+        init {
+            ordering = TransitionSet.ORDERING_TOGETHER
+            addTransition(ChangeBounds()).addTransition(ChangeTransform()).addTransition(ChangeImageTransform())
+        }
+    }
+
     override fun getLayoutRes() = R.layout.fragment_mini_player
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
         // 点击底部的播放条
-        mini_play_layout.clicks().`as`(bindLifecycle()).subscribe {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val intent = Intent(activity, PlayerActivity::class.java)
-                activity?.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(activity, playRotaImg, getString(R.string.transition_share_song_img)).toBundle())
-            } else {
-                activity?.animInStartActivity<PlayerActivity>()
-            }
+        mini_play_layout.easyClick(bindLifecycle()).subscribe {
+            // 使用父Fragment来启动
+            val rootFragment = (parentFragment as RootFragment)
+            val playerFragment = PlayerFragment.newInstance()
+            // TODO 5.0以上系统使用共享元素的方式启动
+//            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+//                // 退出Transition
+//                rootFragment.exitTransition = Fade()
+//                // 进入Transition
+//                playerFragment.enterTransition = Fade()
+//                // 共享返回共享元素
+//                playerFragment.sharedElementReturnTransition = DetailTransition()
+//                // 进入共享元素
+//                playerFragment.sharedElementEnterTransition = DetailTransition()
+//                // 25.1.0以下的support包,Material过渡动画只有在进栈时有,返回时没有;
+//                // 25.1.0+的support包，SharedElement正常
+//                rootFragment.extraTransaction().addSharedElement(playRotaImg, getString(R.string.transition_share_song_img)).start(playerFragment)
+//            } else {
+//                // 启动播放界面
+//
+//            }
+
+            rootFragment.start(playerFragment)
         }
 
         // 点击播放暂停按钮
-        playOrPauseBtn.clicks().`as`(bindLifecycle()).subscribe {
-            PlayManager.togglePlayer()
-            playOrPauseBtn.setImageResource(if (PlayManager.isPlaying) {
-                R.drawable.big_pause
-            } else {
-                R.drawable.big_play
-            })
+        playOrPauseBtn.easyClick(bindLifecycle()).subscribe {
+            singleAsync(bindLifecycle()) {
+                PlayManager.togglePlayer()
+            }
         }
+
+
+        val beingPlayListDialog = BeingPlayListDialog()
+        // 点击正在播放的歌曲列表
+        playListBtn.easyClick(bindLifecycle()).subscribe {
+            // 现实底部Dialog
+            beingPlayListDialog.show(childFragmentManager)
+        }
+
+        disposable = Observable
+                .interval(100L, 100L, TimeUnit.MILLISECONDS)
+                .toMainThread()
+                .subscribe({
+                    tickTask()
+                }) {
+                    it.printStackTrace()
+                }
+    }
+
+    override fun onDestroyView() {
+        disposable?.dispose()
+        super.onDestroyView()
     }
 
     /**
@@ -128,25 +188,6 @@ class MiniPlayerFragment : BaseFragment() {
         // 歌曲进度修改
         miniProgressBar.max = PlayManager.duration
         miniProgressBar.progress = PlayManager.currentPosition
-    }
-
-    private var disposable: Disposable? = null
-
-    override fun onResume() {
-        super.onResume()
-        disposable = Observable
-                .interval(100L, 100L, TimeUnit.MILLISECONDS)
-                .toMainThread()
-                .subscribe({
-                    tickTask()
-                }) {
-                    it.printStackTrace()
-                }
-    }
-
-    override fun onPause() {
-        disposable?.dispose()
-        super.onPause()
     }
 
 }

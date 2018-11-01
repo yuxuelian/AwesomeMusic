@@ -2,7 +2,7 @@ package com.kaibo.music.weight;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -13,9 +13,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.animation.LinearInterpolator;
 import android.widget.AbsListView;
 import android.widget.ListView;
+
+import com.yan.pullrefreshlayout.BezierInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,27 +48,27 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
     private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
     };
+
     /**
      * 回弹View
      */
     private View mTargetView;
 
     /**
-     * 是否正在执行回弹动画
-     */
-    private boolean isRunningAnim = false;
-
-    /**
      * 执行动画
      */
-    private ValueAnimator valueAnimator;
+    private Animator springBackAnimator;
 
     public BottomSheetLayout(@NonNull Context context) {
         this(context, null);
     }
 
     public BottomSheetLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
+    }
+
+    public BottomSheetLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         // 使onDraw得到执行
         setWillNotDraw(false);
@@ -93,19 +94,15 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
         if (mTargetView == null) {
             return;
         }
-        int measureChildWidth = MeasureSpec.makeMeasureSpec(
-                getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
-                MeasureSpec.EXACTLY);
-        int measureChildHeight = MeasureSpec.makeMeasureSpec(
-                getMeasuredHeight() - getPaddingTop() - getPaddingBottom(),
-                MeasureSpec.EXACTLY);
+        int measureChildWidth = MeasureSpec.makeMeasureSpec(getMeasuredWidth() - getPaddingLeft() - getPaddingRight(), MeasureSpec.EXACTLY);
+        int measureChildHeight = MeasureSpec.makeMeasureSpec(getMeasuredHeight() - getPaddingTop() - getPaddingBottom(), MeasureSpec.EXACTLY);
         // 测量子View
         mTargetView.measure(measureChildWidth, measureChildHeight);
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        if (!isRunningAnim) {
+        if (changed) {
             targetViewLayout();
         }
     }
@@ -133,52 +130,78 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
         return mTargetView.canScrollVertically(-1);
     }
 
-    public boolean canChildScrollDown() {
-        if (mTargetView instanceof ListView) {
-            return ListViewCompat.canScrollList((ListView) mTargetView, 1);
+    private void moveSpinner(float overScrollTop) {
+        if (springBackAnimator != null && springBackAnimator.isRunning()) {
+            springBackAnimator.cancel();
         }
-        return mTargetView.canScrollVertically(1);
+        // 记录一下Top值
+        layoutTop = (int) overScrollTop;
+        mTargetView.layout(0, (int) overScrollTop, mTargetView.getMeasuredWidth(), (int) (mTargetView.getMeasuredHeight() + overScrollTop));
     }
 
-    private void moveSpinner(float overScrollTop) {
-        Log.d(TAG, "moveSpinner(overScrollTop)  overScrollTop=" + overScrollTop);
-        if (!isRunningAnim) {
-            mTargetView.layout(0, (int) overScrollTop, mTargetView.getMeasuredWidth(), (int) (mTargetView.getMeasuredHeight() + overScrollTop));
-        }
+    /**
+     * 向上或者向下回弹动画
+     *
+     * @param isExpand true 动画将向上回弹   false  动画往下回弹
+     * @return
+     */
+    private Animator createSpringBackAnimator(final boolean isExpand) {
+        // 全部展开还是全部关闭
+        final int endPosition = isExpand ? 0 : mTargetView.getMeasuredHeight();
+        Animator animator = ObjectAnimator.ofInt(this, "layoutTop", layoutTop, endPosition);
+        animator.setInterpolator(new BezierInterpolator(.25f, .46f, .45f, .94f));
+        animator.setDuration(100 + Math.abs(endPosition - layoutTop) * 2);
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // 结束的时候修改展开或者关闭状态
+                BottomSheetLayout.this.isExpand = isExpand;
+                // 回调关闭事件
+                if (!isExpand && onCollapseListener != null) {
+                    onCollapseListener.onCollapse();
+                }
+            }
+        });
+        return animator;
+    }
+
+    /**
+     * 是否展开
+     */
+    private boolean isExpand = true;
+
+    private OnCollapseListener onCollapseListener;
+
+    public void setOnCollapseListener(OnCollapseListener onCollapseListener) {
+        this.onCollapseListener = onCollapseListener;
+    }
+
+    public interface OnCollapseListener {
+        /**
+         * 完全关闭了
+         */
+        void onCollapse();
+    }
+
+    private int layoutTop = 0;
+
+    public void setLayoutTop(int value) {
+        // 获取到值
+        layoutTop = value;
+        // 改变布局位置
+        mTargetView.layout(0, layoutTop, mTargetView.getMeasuredWidth(), mTargetView.getMeasuredHeight() + layoutTop);
     }
 
     private void finishSpinner(float overScrollTop) {
-        isRunningAnim = true;
-        valueAnimator = ValueAnimator.ofInt((int) (overScrollTop + 0.5f), 0);
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                int animatedValue = (int) animation.getAnimatedValue();
-                mTargetView.layout(
-                        0,
-                        animatedValue,
-                        mTargetView.getMeasuredWidth(),
-                        mTargetView.getMeasuredHeight() + animatedValue);
-            }
-        });
-        valueAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                isRunningAnim = false;
-                targetViewLayout();
-            }
-        });
-        valueAnimator.setDuration(400);
-//        valueAnimator.setInterpolator(new BezierInterpolator(.6f, .4f, .4f, .6f));
-        valueAnimator.setInterpolator(new LinearInterpolator());
-        valueAnimator.start();
+        springBackAnimator = createSpringBackAnimator(overScrollTop < mTargetView.getMeasuredHeight() / 2.0);
+        springBackAnimator.start();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (valueAnimator != null && valueAnimator.isRunning()) {
-            valueAnimator.cancel();
+        if (springBackAnimator != null && springBackAnimator.isRunning()) {
+            springBackAnimator.cancel();
         }
     }
 
@@ -190,10 +213,11 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
         if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
             mReturningToStart = false;
         }
-        boolean canChildScroll = (canChildScrollUp() && !canChildScrollDown()) || (!canChildScrollUp() && canChildScrollDown());
-        if (!isEnabled() || mReturningToStart || canChildScroll || mNestedScrollInProgress) {
+
+        if (!isEnabled() || mReturningToStart || canChildScrollUp() || mNestedScrollInProgress) {
             return false;
         }
+
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 mActivePointerId = ev.getPointerId(0);
@@ -238,10 +262,11 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
         if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
             mReturningToStart = false;
         }
-        boolean canChildScroll = (canChildScrollUp() && !canChildScrollDown()) || (!canChildScrollUp() && canChildScrollDown());
-        if (!isEnabled() || mReturningToStart || canChildScroll || mNestedScrollInProgress) {
+
+        if (!isEnabled() || mReturningToStart || canChildScrollUp() || mNestedScrollInProgress) {
             return false;
         }
+
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 mActivePointerId = ev.getPointerId(0);
@@ -338,10 +363,8 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
     public void onNestedScroll(@NonNull final View target, final int dxConsumed, final int dyConsumed, final int dxUnconsumed, final int dyUnconsumed) {
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow);
         final int dy = dyUnconsumed + mParentOffsetInWindow[1];
-        Log.d(TAG, "onNestedScroll");
-        mTotalUnconsumed += Math.abs(dy);
-        boolean notCanChildScroll = (!canChildScrollUp() && canChildScrollDown()) || (canChildScrollUp() && !canChildScrollDown());
-        if (dy < 0 && notCanChildScroll) {
+        if (dy < 0 && !canChildScrollUp()) {
+            mTotalUnconsumed += Math.abs(dy);
             moveSpinner(mTotalUnconsumed);
         }
     }
@@ -349,21 +372,15 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed) {
         if (dy > 0 && mTotalUnconsumed > 0) {
-
-            Log.d(TAG, "onNestedPreScroll");
-
             if (dy > mTotalUnconsumed) {
                 consumed[1] = dy - (int) mTotalUnconsumed;
                 mTotalUnconsumed = 0;
-                Log.d(TAG, "onNestedPreScroll if dy > mTotalUnconsumed");
             } else {
-                Log.d(TAG, "onNestedPreScroll else dy > mTotalUnconsumed");
-                consumed[1] = dy;
                 mTotalUnconsumed -= dy;
+                consumed[1] = dy;
             }
             moveSpinner(mTotalUnconsumed);
         }
-
         final int[] parentConsumed = mParentScrollConsumed;
         if (dispatchNestedPreScroll(dx - consumed[0], dy - consumed[1], parentConsumed, null)) {
             consumed[0] += parentConsumed[0];

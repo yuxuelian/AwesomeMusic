@@ -2,16 +2,16 @@ package com.kaibo.core.fragment
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
+import com.kaibo.core.toast.ToastUtils
+import com.kaibo.core.util.bindToAutoDispose
 import com.tbruyelle.rxpermissions2.Permission
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.uber.autodispose.AutoDisposeConverter
-import com.kaibo.core.toast.ToastUtils
-import com.kaibo.core.util.bindToAutoDispose
+import me.yokeyword.fragmentation_swipeback.SwipeBackFragment
 
 /**
  * @author:Administrator
@@ -21,11 +21,22 @@ import com.kaibo.core.util.bindToAutoDispose
  * description:
  */
 
-abstract class BaseFragment : Fragment() {
+abstract class BaseFragment : SwipeBackFragment() {
+
+    private lateinit var fragmentActivity: FragmentActivity
+
+    protected val mActivity
+        get() = fragmentActivity
 
     private val rxPermissions by lazy {
         RxPermissions(activity!!)
     }
+
+    /**
+     * 需要滑动返回的Fragment  重新这个方法即可
+     * 只有全屏的Fragment才能使用滑动返回   否则会有个bug
+     */
+    open val isCanSwipeBack = false
 
     /**
      * 封装一下权限申请后的处理逻辑
@@ -51,17 +62,18 @@ abstract class BaseFragment : Fragment() {
         }
     }
 
-
-    protected lateinit var mAttachActivity: FragmentActivity
-
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        mAttachActivity = context as FragmentActivity
+        fragmentActivity = context as FragmentActivity
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(getLayoutRes(), container, false)
-//        return container?.inflate(getLayoutRes())
+        val rootView = inflater.inflate(getLayoutRes(), container, false)
+        return if (isCanSwipeBack) {
+            attachToSwipeBack(rootView)
+        } else {
+            rootView
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

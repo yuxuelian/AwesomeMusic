@@ -5,9 +5,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.kaibo.core.R
 import com.kaibo.core.dialog.LoadingDialog
 import com.kaibo.core.toast.ToastUtils
 import com.kaibo.core.util.bindToAutoDispose
@@ -15,6 +13,7 @@ import com.kaibo.core.util.immersive
 import com.tbruyelle.rxpermissions2.Permission
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.uber.autodispose.AutoDisposeConverter
+import me.yokeyword.fragmentation.SupportActivity
 
 /**
  * @author:Administrator
@@ -24,7 +23,7 @@ import com.uber.autodispose.AutoDisposeConverter
  * description:
  */
 
-abstract class SuperActivity : AppCompatActivity() {
+abstract class SuperActivity : SupportActivity() {
 
     protected val rxPermissions by lazy {
         RxPermissions(this)
@@ -104,27 +103,26 @@ abstract class SuperActivity : AppCompatActivity() {
     /**
      * 带动画返回
      */
-    override fun onBackPressed() {
-        super.onBackPressed()
-        overridePendingTransition(R.anim.translation_left_in, R.anim.translation_left_out)
-    }
+//    override fun onBackPressed() {
+//        super.onBackPressed()
+//        overridePendingTransition(R.anim.translation_left_in, R.anim.translation_left_out)
+//    }
 
     /**
      * 带动画结束
      */
-    protected fun animFinish() {
-        finish()
-        overridePendingTransition(R.anim.translation_left_in, R.anim.translation_left_out)
-    }
+//    protected fun animFinish() {
+//        finish()
+//        overridePendingTransition(R.anim.translation_left_in, R.anim.translation_left_out)
+//    }
 
     /**
      * 带动画结束
      */
-    protected fun animOutFinish() {
-        finish()
-        overridePendingTransition(0, R.anim.translation_left_out)
-    }
-
+//    protected fun animOutFinish() {
+//        finish()
+//        overridePendingTransition(0, R.anim.translation_left_out)
+//    }
 
     @LayoutRes
     abstract fun getLayoutRes(): Int

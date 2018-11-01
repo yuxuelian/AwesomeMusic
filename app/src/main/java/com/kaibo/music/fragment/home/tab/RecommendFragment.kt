@@ -1,16 +1,16 @@
-package com.kaibo.music.fragment
+package com.kaibo.music.fragment.home.tab
 
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaibo.core.adapter.withItems
 import com.kaibo.core.fragment.BaseFragment
-import com.kaibo.core.util.animInStartActivity
 import com.kaibo.core.util.checkResult
 import com.kaibo.core.util.toMainThread
-import com.kaibo.music.activity.SongListActivity
-import com.kaibo.music.bean.BannerDataBean
 import com.kaibo.music.R
+import com.kaibo.music.bean.BannerDataBean
 import com.kaibo.music.bean.RecommendBean
+import com.kaibo.music.fragment.home.HomeFragment
+import com.kaibo.music.fragment.songlist.SongListFragment
 import com.kaibo.music.item.recommend.BannerItem
 import com.kaibo.music.item.recommend.RecommendItem
 import com.kaibo.music.item.recommend.SongTitleItem
@@ -27,6 +27,14 @@ import kotlinx.android.synthetic.main.fragment_recommend.*
  * @description：
  */
 class RecommendFragment : BaseFragment() {
+
+    companion object {
+        fun newInstance(arguments: Bundle = Bundle()): RecommendFragment {
+            return RecommendFragment().apply {
+                this.arguments = arguments
+            }
+        }
+    }
 
     private val bannerItem by lazy {
         BannerItem()
@@ -65,17 +73,9 @@ class RecommendFragment : BaseFragment() {
             addAll(netRes.second.map { recommendBean: RecommendBean ->
                 RecommendItem(recommendBean) {
                     setOnClickListener {
-                        //                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                            val intent = Intent(activity, SongListActivity::class.java)
-//                            intent.putExtra("disstid", recommendBean.disstid)
-//                            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(
-//                                    activity,
-//                                    it.recommendImg,
-//                                    getString(R.string.transition_recommend_logo)).toBundle())
-//                        } else {
-//                            activity?.animInStartActivity<SongListActivity>("disstid" to recommendBean.disstid)
-//                        }
-                        activity?.animInStartActivity<SongListActivity>("disstid" to recommendBean.disstid)
+                        (parentFragment as HomeFragment).start(SongListFragment.newInstance(Bundle().apply {
+                            putString("disstid", recommendBean.disstid)
+                        }))
                     }
                 }
             })

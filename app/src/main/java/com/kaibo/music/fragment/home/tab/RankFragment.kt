@@ -1,15 +1,15 @@
-package com.kaibo.music.fragment
+package com.kaibo.music.fragment.home.tab
 
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaibo.core.adapter.withItems
 import com.kaibo.core.fragment.BaseFragment
-import com.kaibo.core.util.animInStartActivity
 import com.kaibo.core.util.checkResult
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
-import com.kaibo.music.activity.SongListActivity
 import com.kaibo.music.bean.RankBean
+import com.kaibo.music.fragment.home.HomeFragment
+import com.kaibo.music.fragment.songlist.SongListFragment
 import com.kaibo.music.item.rank.RankItem
 import com.kaibo.music.net.Api
 
@@ -23,6 +23,14 @@ import kotlinx.android.synthetic.main.fragment_rank.*
  * @description：
  */
 class RankFragment : BaseFragment() {
+
+    companion object {
+        fun newInstance(arguments: Bundle = Bundle()): RankFragment {
+            return RankFragment().apply {
+                this.arguments = arguments
+            }
+        }
+    }
 
     override fun getLayoutRes() = R.layout.fragment_rank
 
@@ -41,7 +49,9 @@ class RankFragment : BaseFragment() {
         rankList.withItems(rankBeanList.map { rankBean: RankBean ->
             RankItem(rankBean) {
                 setOnClickListener {
-                    activity?.animInStartActivity<SongListActivity>("topid" to rankBean.id)
+                    (parentFragment as HomeFragment).start(SongListFragment.newInstance(Bundle().apply {
+                        putInt("topid", rankBean.id)
+                    }))
                 }
             }
         })

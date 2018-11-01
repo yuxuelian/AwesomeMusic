@@ -5,6 +5,7 @@ import android.view.WindowManager
 import android.widget.DatePicker
 import com.jakewharton.rxbinding2.view.clicks
 import com.kaibo.core.R
+import com.kaibo.core.util.easyClick
 import com.kaibo.core.util.toTimeMillis
 import kotlinx.android.synthetic.main.dialog_date_picker.*
 import java.util.*
@@ -28,11 +29,11 @@ class DatePickerDialog : BaseSheetDialog() {
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
         super.initViewCreated(savedInstanceState)
-        cancel.clicks().subscribe {
+        cancel.easyClick(bindLifecycle()).subscribe {
             dismiss()
         }
 
-        confirm.clicks().subscribe {
+        confirm.easyClick(bindLifecycle()).subscribe {
             dismiss()
             confirmClickListener?.invoke(date_picker.year, date_picker.month, date_picker.dayOfMonth)
         }

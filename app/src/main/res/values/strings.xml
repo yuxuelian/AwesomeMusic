@@ -107,4 +107,6 @@
     <string name="transition_recommend_logo">recommendLogo</string>
     <string name="transition_share_song_img">shareSongImage</string>
     <string name="random_play_all">随机播放全部</string>
+    <string name="i_love">我喜欢的</string>
+    <string name="recently_accept">最近听的</string>
 </resources>

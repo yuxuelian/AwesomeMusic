@@ -9,6 +9,7 @@
         android:id="@+id/blurBackGround"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:foreground="@color/colorForeground"
         android:scaleType="fitXY" />
 
     <LinearLayout

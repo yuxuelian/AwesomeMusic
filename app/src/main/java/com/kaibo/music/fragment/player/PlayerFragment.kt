@@ -1,5 +1,6 @@
-package com.kaibo.music.activity
+package com.kaibo.music.fragment.player
 
+import android.animation.Animator
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -9,36 +10,43 @@ import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.jakewharton.rxbinding2.view.clicks
 import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.toast.ToastUtils
 import com.kaibo.core.util.*
 import com.kaibo.music.R
-import com.kaibo.music.activity.base.BasePlayerActivity
 import com.kaibo.music.bean.SongBean
 import com.kaibo.music.player.manager.PlayManager
 import com.kaibo.music.utils.AnimatorUtils
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_player.*
+import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.include_play_bottom.*
 import kotlinx.android.synthetic.main.include_play_top.*
-import org.jetbrains.anko.dip
 import org.jetbrains.anko.matchParent
 import java.io.File
 import java.io.FileInputStream
-import java.util.concurrent.TimeUnit
-
 
 /**
  * @author kaibo
- * @createDate 2018/10/15 16:18
+ * @date 2018/11/1 9:48
  * @GitHub：https://github.com/yuxuelian
  * @email：kaibo1hao@gmail.com
  * @description：
  */
 
-class PlayerActivity : BasePlayerActivity() {
+class PlayerFragment : BasePlayerFragment() {
+
+    companion object {
+        fun newInstance(arguments: Bundle = Bundle()): PlayerFragment {
+            return PlayerFragment().apply {
+                this.arguments = arguments
+            }
+        }
+    }
+
+    override val isCanSwipeBack: Boolean = true
+
+    override fun getLayoutRes() = R.layout.fragment_player
 
     /**
      * 当前是否正在拖动
@@ -48,9 +56,7 @@ class PlayerActivity : BasePlayerActivity() {
     /**
      * 旋转动画
      */
-    private val rotateAnimator by lazy {
-        AnimatorUtils.getRotateAnimator(playRotaImg)
-    }
+    private var rotateAnimator: Animator? = null
 
     private var currentSongBean: SongBean? = null
         set(value) {
@@ -63,9 +69,10 @@ class PlayerActivity : BasePlayerActivity() {
 
                 // 切换歌曲时 旋转动画复位
                 playRotaImg.rotation = 0f
-                rotateAnimator.cancel()
+                // 动画取消
+                rotateAnimator?.cancel()
 
-                val blurTempFile = File(filesDir, "blur-temp-file.png")
+                val blurTempFile = File(mActivity.filesDir, "blur-temp-file.png")
                 // 修改背景
                 Observable
                         .create<Bitmap> {
@@ -88,7 +95,7 @@ class PlayerActivity : BasePlayerActivity() {
                         .observeOn(Schedulers.io())
                         .map {
                             // 从本地获取图片然后进行模糊
-                            BitmapFactory.decodeStream(FileInputStream(blurTempFile)).blur(this)
+                            BitmapFactory.decodeStream(FileInputStream(blurTempFile)).blur(mActivity)
                         }
                         .toMainThread()
                         .`as`(bindLifecycle())
@@ -106,15 +113,18 @@ class PlayerActivity : BasePlayerActivity() {
             if (field != value) {
                 field = value
                 if (value) {
+                    if (rotateAnimator == null) {
+                        rotateAnimator = AnimatorUtils.getRotateAnimator(playRotaImg)
+                    }
                     // 启动旋转动画
-                    if (rotateAnimator.isPaused) {
-                        rotateAnimator.resume()
+                    if (rotateAnimator!!.isPaused) {
+                        rotateAnimator!!.resume()
                     } else {
-                        rotateAnimator.start()
+                        rotateAnimator!!.start()
                     }
                 } else {
                     // 取消旋转动画
-                    rotateAnimator.pause()
+                    rotateAnimator?.pause()
                 }
             }
 
@@ -126,31 +136,25 @@ class PlayerActivity : BasePlayerActivity() {
             })
         }
 
-    override fun getLayoutRes() = R.layout.activity_player
-
-    override fun initOnCreate(savedInstanceState: Bundle?) {
-        super.initOnCreate(savedInstanceState)
-        playRootView.setPadding(0, statusBarHeight, 0, 0)
-        backBtn.clicks().`as`(bindLifecycle()).subscribe {
-            onBackPressed()
+    override fun initViewCreated(savedInstanceState: Bundle?) {
+        super.initViewCreated(savedInstanceState)
+        playRootView.setPadding(0, mActivity.statusBarHeight, 0, 0)
+        // 点击返回键
+        backBtn.easyClick(bindLifecycle()).subscribe {
+            onBackPressedSupport()
         }
 
         // 点击图片   显示歌词页
-        playRotaImg.clicks().`as`(bindLifecycle()).subscribe {
+        playRotaImg.easyClick(bindLifecycle()).subscribe {
             lrcPager.currentItem = 1
         }
 
-        // 模糊背景图(初始化模糊一张)
-//        Observable
-//                .create<Bitmap> {
-//                    it.onNext(BitmapFactory.decodeResource(resources, R.drawable.test_play_img).blur(this))
-//                }
-//                .subscribeOn(Schedulers.io())
-//                .toMainThread()
-//                .`as`(bindLifecycle())
-//                .subscribe {
-//                    blurBackGround.setImageBitmap(it)
-//                }
+        playTopLayout.postDelayed({
+            // 执行进入动画
+            playTopLayout.startAnimation(topLayoutIn)
+            playBottomLayout.startAnimation(bottomLayoutIn)
+            minLrcLayout.startAnimation(alpha01)
+        }, 100)
 
         // 初始化歌词显示页
         initLrcLayout()
@@ -176,33 +180,37 @@ class PlayerActivity : BasePlayerActivity() {
         })
 
         // 点击播放暂停按钮
-        playOrPauseBtn.clicks().`as`(bindLifecycle()).subscribe {
-            PlayManager.togglePlayer()
-            playOrPauseBtn.setImageResource(if (PlayManager.isPlaying) {
-                R.drawable.big_pause
-            } else {
-                R.drawable.big_play
-
-            })
+        playOrPauseBtn.easyClick(bindLifecycle()).subscribe {
+            singleAsync(bindLifecycle()) {
+                PlayManager.togglePlayer()
+            }
         }
 
         // 播放上一曲
-        prePlay.clicks().`as`(bindLifecycle()).subscribe {
-            PlayManager.prev()
+        prePlay.easyClick(bindLifecycle()).subscribe {
+            singleAsync(bindLifecycle()) {
+                PlayManager.prev()
+            }
         }
 
         // 播放下一曲
-        nextPlay.clicks().`as`(bindLifecycle()).subscribe {
-            PlayManager.next()
+        nextPlay.easyClick(bindLifecycle()).subscribe {
+            singleAsync(bindLifecycle()) {
+                PlayManager.next()
+            }
         }
 
         // 更新播放模式
-        changePlayMode.clicks().`as`(bindLifecycle()).subscribe {
-            ToastUtils.showSuccess(PlayManager.updatePlayMode())
+        changePlayMode.easyClick(bindLifecycle()).subscribe {
+            singleAsync(bindLifecycle(), onSuccess = {
+                ToastUtils.showSuccess(it)
+            }) {
+                PlayManager.updatePlayMode()
+            }
         }
 
         // 点击收藏按钮
-        collectionBtn.clicks().`as`(bindLifecycle()).subscribe {
+        collectionBtn.easyClick(bindLifecycle()).subscribe {
             // TODO 收藏到我的喜欢列表
         }
     }
@@ -229,12 +237,13 @@ class PlayerActivity : BasePlayerActivity() {
         }
     }
 
-    override fun onDestroy() {
+
+    override fun onDestroyView() {
         // 退出的时候停止旋转动画
-        if (rotateAnimator.isRunning) {
-            rotateAnimator.cancel()
+        if (rotateAnimator != null && rotateAnimator!!.isRunning) {
+            rotateAnimator?.cancel()
         }
-        super.onDestroy()
+        super.onDestroyView()
     }
 
     private fun initLrcLayout() {
@@ -243,7 +252,7 @@ class PlayerActivity : BasePlayerActivity() {
             private var lrcLayout: View? = null
 
             private val emptyLayout by lazy {
-                FrameLayout(this@PlayerActivity).apply {
+                FrameLayout(mActivity).apply {
                     layoutParams = ViewGroup.LayoutParams(matchParent, matchParent)
                 }
             }
@@ -330,26 +339,14 @@ class PlayerActivity : BasePlayerActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        // 执行进入动画
-        playTopLayout.startAnimation(topLayoutIn)
-        playBottomLayout.startAnimation(bottomLayoutIn)
-        minLrcLayout.startAnimation(alpha01)
-    }
-
-    override fun onBackPressed() {
+    override fun onBackPressedSupport(): Boolean {
         // 执行退出动画
         playTopLayout.startAnimation(topLayoutOut)
         playBottomLayout.startAnimation(bottomLayoutOut)
         minLrcLayout.startAnimation(alpha10)
-        Observable
-                .timer(100, TimeUnit.MILLISECONDS)
-                .toMainThread()
-                .`as`(bindLifecycle())
-                .subscribe {
-                    super.onBackPressed()
-                }
+        playTopLayout.postDelayed({
+            pop()
+        }, 200)
+        return true
     }
-
 }

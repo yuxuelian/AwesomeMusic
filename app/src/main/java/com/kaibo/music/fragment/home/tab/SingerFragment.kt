@@ -1,4 +1,4 @@
-package com.kaibo.music.fragment
+package com.kaibo.music.fragment.home.tab
 
 import android.os.Bundle
 import androidx.core.content.ContextCompat
@@ -7,14 +7,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gavin.com.library.StickyDecoration
 import com.kaibo.core.adapter.withItems
 import com.kaibo.core.fragment.BaseFragment
-import com.kaibo.core.util.*
+import com.kaibo.core.util.checkResult
+import com.kaibo.core.util.dip
+import com.kaibo.core.util.sp
+import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
-import com.kaibo.music.activity.SongListActivity
 import com.kaibo.music.bean.SingerBean
 import com.kaibo.music.bean.SingerListBean
+import com.kaibo.music.fragment.home.HomeFragment
+import com.kaibo.music.fragment.songlist.SongListFragment
 import com.kaibo.music.item.singer.SingerItem
 import com.kaibo.music.net.Api
-
 import kotlinx.android.synthetic.main.fragment_singer.*
 
 /**
@@ -25,6 +28,14 @@ import kotlinx.android.synthetic.main.fragment_singer.*
  * @description：
  */
 class SingerFragment : BaseFragment() {
+
+    companion object {
+        fun newInstance(arguments: Bundle = Bundle()): SingerFragment {
+            return SingerFragment().apply {
+                this.arguments = arguments
+            }
+        }
+    }
 
     override fun getLayoutRes() = R.layout.fragment_singer
 
@@ -84,7 +95,9 @@ class SingerFragment : BaseFragment() {
         singerList.withItems(singerBeanList.map { singerBean: SingerBean ->
             SingerItem(singerBean) {
                 setOnClickListener {
-                    activity?.animInStartActivity<SongListActivity>("singermid" to singerBean.id)
+                    (parentFragment as HomeFragment).start(SongListFragment.newInstance(Bundle().apply {
+                        putString("singermid", singerBean.id)
+                    }))
                 }
             }
         })

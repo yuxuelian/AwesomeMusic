@@ -26,7 +26,7 @@ public class SPUtils {
     private static final String DESKTOP_LYRIC_SIZE = "desktop_lyric_size";
     private static final String DESKTOP_LYRIC_COLOR = "desktop_lyric_color";
 
-    private static Context context = BaseApplication.Companion.getBaseApplication();
+    private static Context context = BaseApplication.Companion.getINSTANCE();
 
     public static int getPlayPosition() {
         return getAnyByKey(PLAY_POSITION, -1);
