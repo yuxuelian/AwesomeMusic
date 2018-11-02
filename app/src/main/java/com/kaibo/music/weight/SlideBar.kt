@@ -108,7 +108,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             // 修改大小
             lettersHeight = FloatArray(_value.size + 1)
             field = _value
-            Logger.d(_value)
             requestLayout()
             invalidate()
         }

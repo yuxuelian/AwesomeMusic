@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -27,12 +26,24 @@ import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
 import androidx.core.widget.ListViewCompat;
 
+import static org.jetbrains.anko.DimensionsKt.px2dip;
+
 public class BottomSheetLayout extends ViewGroup implements NestedScrollingParent, NestedScrollingChild {
 
-    private static final String TAG = "ReboundLayout";
+    private static final String TAG = "BottomSheetLayout";
 
     private static final int INVALID_POINTER = -1;
-    private static final float DRAG_RATE = 0.25f;
+
+    /**
+     * 这里不设置阻尼  滑动多少就移动多少
+     */
+    private static final float DRAG_RATE = 1f;
+
+    /**
+     * 动画最大持续时间
+     */
+    private static final long MAX_DURATION = 600L;
+
     private int mTouchSlop;
     private float mTotalUnconsumed;
     private final NestedScrollingParentHelper mNestedScrollingParentHelper;
@@ -42,9 +53,20 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
     private boolean mNestedScrollInProgress;
     private float mInitialMotionY;
     private float mInitialDownY;
+
+    /**
+     * 标记是否正在拖拽
+     */
     private boolean mIsBeingDragged;
+
+    /**
+     * 多点触控  标记触摸手指id
+     */
     private int mActivePointerId = INVALID_POINTER;
-    private boolean mReturningToStart;
+
+    /**
+     * 用于查找是否 enabled
+     */
     private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
     };
@@ -57,7 +79,30 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
     /**
      * 执行动画
      */
-    private Animator springBackAnimator;
+    private Animator mSpringBackAnimator;
+
+    /**
+     * targetView最大动画移动距离
+     */
+    private float maxSpringBackDistance;
+
+    private OnCollapseListener onCollapseListener;
+
+    /**
+     * 记录开始滑动的时间戳
+     */
+    private long startTouchTime;
+
+    public void setOnCollapseListener(OnCollapseListener onCollapseListener) {
+        this.onCollapseListener = onCollapseListener;
+    }
+
+    public interface OnCollapseListener {
+        /**
+         * 完全关闭了
+         */
+        void onCollapse();
+    }
 
     public BottomSheetLayout(@NonNull Context context) {
         this(context, null);
@@ -75,9 +120,16 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         setNestedScrollingEnabled(true);
-        final TypedArray a = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS);
-        setEnabled(a.getBoolean(0, true));
-        a.recycle();
+        // 查找xml中设置的是否enabled
+        final TypedArray typedArray = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS);
+        setEnabled(typedArray.getBoolean(0, true));
+        typedArray.recycle();
+    }
+
+    private void ensureTarget() {
+        if (mTargetView == null && getChildCount() > 0) {
+            mTargetView = getChildAt(0);
+        }
     }
 
     @Override
@@ -91,6 +143,7 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        ensureTarget();
         if (mTargetView == null) {
             return;
         }
@@ -98,6 +151,12 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
         int measureChildHeight = MeasureSpec.makeMeasureSpec(getMeasuredHeight() - getPaddingTop() - getPaddingBottom(), MeasureSpec.EXACTLY);
         // 测量子View
         mTargetView.measure(measureChildWidth, measureChildHeight);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        // 当View大小改变的时候  修改这个最大回弹距离
+        maxSpringBackDistance = h;
     }
 
     @Override
@@ -123,6 +182,11 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
         mTargetView.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
     }
 
+    /**
+     * 判断targetView是否还能够继续向下滑动
+     *
+     * @return
+     */
     public boolean canChildScrollUp() {
         if (mTargetView instanceof ListView) {
             return ListViewCompat.canScrollList((ListView) mTargetView, -1);
@@ -130,13 +194,21 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
         return mTargetView.canScrollVertically(-1);
     }
 
+    /**
+     * 移动子View
+     *
+     * @param overScrollTop
+     */
     private void moveSpinner(float overScrollTop) {
-        if (springBackAnimator != null && springBackAnimator.isRunning()) {
-            springBackAnimator.cancel();
+        // 向下拉
+        if (overScrollTop > 0) {
+            // 记录一下Top值
+            mLayoutTop = (int) overScrollTop;
+            mTargetView.layout(0, (int) overScrollTop, mTargetView.getMeasuredWidth(), (int) (mTargetView.getMeasuredHeight() + overScrollTop));
+        } else {
+            // 向下拉
+
         }
-        // 记录一下Top值
-        layoutTop = (int) overScrollTop;
-        mTargetView.layout(0, (int) overScrollTop, mTargetView.getMeasuredWidth(), (int) (mTargetView.getMeasuredHeight() + overScrollTop));
     }
 
     /**
@@ -146,16 +218,16 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
      * @return
      */
     private Animator createSpringBackAnimator(final boolean isExpand) {
-        // 全部展开还是全部关闭
+        // 结束位置
         final int endPosition = isExpand ? 0 : mTargetView.getMeasuredHeight();
-        Animator animator = ObjectAnimator.ofInt(this, "layoutTop", layoutTop, endPosition);
+        // 计算duration
+        long duration = (long) (MAX_DURATION * (Math.abs(endPosition - mLayoutTop) / maxSpringBackDistance));
+        Animator animator = ObjectAnimator.ofInt(this, "layoutTop", mLayoutTop, endPosition);
         animator.setInterpolator(new BezierInterpolator(.25f, .46f, .45f, .94f));
-        animator.setDuration(100 + Math.abs(endPosition - layoutTop) * 2);
+        animator.setDuration(duration);
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                // 结束的时候修改展开或者关闭状态
-                BottomSheetLayout.this.isExpand = isExpand;
                 // 回调关闭事件
                 if (!isExpand && onCollapseListener != null) {
                     onCollapseListener.onCollapse();
@@ -166,81 +238,93 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
     }
 
     /**
-     * 是否展开
+     * 当前TargetView的Top值
      */
-    private boolean isExpand = true;
+    private int mLayoutTop;
 
-    private OnCollapseListener onCollapseListener;
-
-    public void setOnCollapseListener(OnCollapseListener onCollapseListener) {
-        this.onCollapseListener = onCollapseListener;
-    }
-
-    public interface OnCollapseListener {
-        /**
-         * 完全关闭了
-         */
-        void onCollapse();
-    }
-
-    private int layoutTop = 0;
-
+    /**
+     * 提供给属性动画使用
+     *
+     * @param value
+     */
     public void setLayoutTop(int value) {
         // 获取到值
-        layoutTop = value;
+        mLayoutTop = value;
         // 改变布局位置
-        mTargetView.layout(0, layoutTop, mTargetView.getMeasuredWidth(), mTargetView.getMeasuredHeight() + layoutTop);
+        mTargetView.layout(0, mLayoutTop, mTargetView.getMeasuredWidth(), mTargetView.getMeasuredHeight() + mLayoutTop);
     }
 
+    /**
+     * 松手会调用这个方法
+     *
+     * @param overScrollTop
+     */
     private void finishSpinner(float overScrollTop) {
-        springBackAnimator = createSpringBackAnimator(overScrollTop < mTargetView.getMeasuredHeight() / 2.0);
-        springBackAnimator.start();
+        // 计算滑动速率
+        float velocity = px2dip(getContext(), (int) overScrollTop) / (System.currentTimeMillis() - startTouchTime);
+        if (velocity > 0.5f) {
+            // 速率过大的情况  不需要判断当前的滑动距离是否超过了中线   直接关闭
+            mSpringBackAnimator = createSpringBackAnimator(false);
+        } else {
+            // 速率过小的情况  去判断滑动距离是否超过了中线
+            mSpringBackAnimator = createSpringBackAnimator(overScrollTop < mTargetView.getMeasuredHeight() / 2.0);
+        }
+        // 启动回弹动画
+        mSpringBackAnimator.start();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (springBackAnimator != null && springBackAnimator.isRunning()) {
-            springBackAnimator.cancel();
+        // view从屏幕移出的时候 取消正在执行的动画
+        if (mSpringBackAnimator != null && mSpringBackAnimator.isRunning()) {
+            mSpringBackAnimator.cancel();
         }
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        Log.d(TAG, "onInterceptTouchEvent");
-        final int action = ev.getActionMasked();
+    public boolean onInterceptTouchEvent(MotionEvent event) {
+        ensureTarget();
+        final int action = event.getActionMasked();
         int pointerIndex;
-        if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
-            mReturningToStart = false;
-        }
 
-        if (!isEnabled() || mReturningToStart || canChildScrollUp() || mNestedScrollInProgress) {
+        if (!isEnabled() || canChildScrollUp() || mNestedScrollInProgress) {
             return false;
         }
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                mActivePointerId = ev.getPointerId(0);
+                // 记录开始滑动的时间戳
+                startTouchTime = System.currentTimeMillis();
+                mActivePointerId = event.getPointerId(0);
                 mIsBeingDragged = false;
-                pointerIndex = ev.findPointerIndex(mActivePointerId);
+                pointerIndex = event.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
                     return false;
                 }
-                mInitialDownY = ev.getY(pointerIndex);
+                // 记录触摸的起点Y
+                mInitialDownY = event.getY(pointerIndex);
+
+                int layoutTop = this.mLayoutTop;
+                // 当有手指按下时结束正在执行的动画
+                if (mSpringBackAnimator != null && mSpringBackAnimator.isRunning()) {
+                    mSpringBackAnimator.cancel();
+                }
+                this.setLayoutTop(layoutTop);
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (mActivePointerId == INVALID_POINTER) {
                     return false;
                 }
-                pointerIndex = ev.findPointerIndex(mActivePointerId);
+                pointerIndex = event.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
                     return false;
                 }
-                final float y = ev.getY(pointerIndex);
+                final float y = event.getY(pointerIndex);
                 startDragging(y);
                 break;
             case MotionEvent.ACTION_POINTER_UP:
-                onSecondaryPointerUp(ev);
+                onSecondaryPointerUp(event);
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -255,54 +339,50 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     @SuppressLint("ClickableViewAccessibility")
-    public boolean onTouchEvent(MotionEvent ev) {
-        Log.d(TAG, "onTouchEvent");
-        final int action = ev.getActionMasked();
+    public boolean onTouchEvent(MotionEvent event) {
+        final int action = event.getActionMasked();
         int pointerIndex;
-        if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
-            mReturningToStart = false;
-        }
 
-        if (!isEnabled() || mReturningToStart || canChildScrollUp() || mNestedScrollInProgress) {
+        if (!isEnabled() || canChildScrollUp() || mNestedScrollInProgress) {
             return false;
         }
-
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                mActivePointerId = ev.getPointerId(0);
+                mActivePointerId = event.getPointerId(0);
                 mIsBeingDragged = false;
                 break;
             case MotionEvent.ACTION_MOVE: {
-                pointerIndex = ev.findPointerIndex(mActivePointerId);
+                pointerIndex = event.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
                     return false;
                 }
-                final float y = ev.getY(pointerIndex);
+                final float y = event.getY(pointerIndex);
                 startDragging(y);
                 if (mIsBeingDragged) {
                     final float overScrollTop = (y - mInitialMotionY) * DRAG_RATE;
+                    // 直接拖拽this.View的时候
                     moveSpinner(overScrollTop);
                 }
                 break;
             }
             case MotionEvent.ACTION_POINTER_DOWN: {
-                pointerIndex = ev.getActionIndex();
+                pointerIndex = event.getActionIndex();
                 if (pointerIndex < 0) {
                     return false;
                 }
-                mActivePointerId = ev.getPointerId(pointerIndex);
+                mActivePointerId = event.getPointerId(pointerIndex);
                 break;
             }
             case MotionEvent.ACTION_POINTER_UP:
-                onSecondaryPointerUp(ev);
+                onSecondaryPointerUp(event);
                 break;
             case MotionEvent.ACTION_UP: {
-                pointerIndex = ev.findPointerIndex(mActivePointerId);
+                pointerIndex = event.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
                     return false;
                 }
                 if (mIsBeingDragged) {
-                    final float y = ev.getY(pointerIndex);
+                    final float y = event.getY(pointerIndex);
                     final float overScrollTop = (y - mInitialMotionY) * DRAG_RATE;
                     mIsBeingDragged = false;
                     finishSpinner(overScrollTop);
@@ -318,6 +398,11 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
         return true;
     }
 
+    /**
+     * 计算是否是在开始拖拽了(主要是为了区分点击事件)
+     *
+     * @param y
+     */
     private void startDragging(float y) {
         final float yDiff = Math.abs(y - mInitialDownY);
         if (yDiff > mTouchSlop && !mIsBeingDragged) {
@@ -326,6 +411,11 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
+    /**
+     * 释放了一个多点触控的手指时计算当前正在活动的手指id
+     *
+     * @param ev
+     */
     private void onSecondaryPointerUp(MotionEvent ev) {
         final int pointerIndex = ev.getActionIndex();
         final int pointerId = ev.getPointerId(pointerIndex);
@@ -335,6 +425,11 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
+    /**
+     * 子View调用这个方法并传入true   那么本次touch事件之后的所有事件都不会再调用onInterceptTouchEvent
+     *
+     * @param b
+     */
     @Override
     public void requestDisallowInterceptTouchEvent(boolean b) {
         boolean b1 = Build.VERSION.SDK_INT < 21 && mTargetView instanceof AbsListView;
@@ -348,7 +443,7 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, int nestedScrollAxes) {
-        return isEnabled() && !mReturningToStart && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+        return isEnabled() && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
     @Override
@@ -365,6 +460,7 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
         final int dy = dyUnconsumed + mParentOffsetInWindow[1];
         if (dy < 0 && !canChildScrollUp()) {
             mTotalUnconsumed += Math.abs(dy);
+            // 由子View回调过来的滑动距离
             moveSpinner(mTotalUnconsumed);
         }
     }

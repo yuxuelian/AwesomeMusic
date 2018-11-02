@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -63,6 +64,7 @@ class PlayerFragment : BasePlayerFragment() {
             if (value != null && value != field) {
                 // 赋值
                 field = value
+
                 // 修改歌曲名
                 songName.text = value.songname
                 singerName.text = value.singername
@@ -71,6 +73,9 @@ class PlayerFragment : BasePlayerFragment() {
                 playRotaImg.rotation = 0f
                 // 动画取消
                 rotateAnimator?.cancel()
+
+                // 更新界面歌词
+                updateLyric(value.mid)
 
                 val blurTempFile = File(mActivity.filesDir, "blur-temp-file.png")
                 // 修改背景
@@ -107,6 +112,17 @@ class PlayerFragment : BasePlayerFragment() {
                         }
             }
         }
+
+    private fun updateLyric(mid: String) {
+        // 首先获取歌词
+        Observable.create<String> {
+
+                }
+
+        // 刷新界面歌词
+
+
+    }
 
     private var isPlaying = false
         set(value) {
@@ -212,6 +228,9 @@ class PlayerFragment : BasePlayerFragment() {
         // 点击收藏按钮
         collectionBtn.easyClick(bindLifecycle()).subscribe {
             // TODO 收藏到我的喜欢列表
+            playTopLayout.startAnimation(topLayoutIn)
+            playBottomLayout.startAnimation(bottomLayoutIn)
+            minLrcLayout.startAnimation(alpha01)
         }
     }
 

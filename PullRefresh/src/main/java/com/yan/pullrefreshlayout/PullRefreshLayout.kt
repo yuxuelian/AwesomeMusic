@@ -632,10 +632,8 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
         if (!dispatchChildrenEventAble) {
             return false
         }
-
         val sign = if (type == 1) 1 else -1
         val velocity = (sign * Math.abs(scroller!!.currVelocity)).toInt()
-
         if (targetView is ScrollView && !isScrollAbleViewBackScroll) {
             (targetView as ScrollView).fling(velocity)
         } else if (targetView is WebView && !isScrollAbleViewBackScroll) {
@@ -675,11 +673,7 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
             if (animationOverScrollInterpolator == null) {
                 animationOverScrollInterpolator = LinearInterpolator()
             }
-            overScrollAnimator = getAnimator(mDistanceMove,
-                    0,
-                    overScrollAnimatorUpdate,
-                    overScrollAnimatorListener,
-                    animationOverScrollInterpolator!!)
+            overScrollAnimator = getAnimator(mDistanceMove, 0, overScrollAnimatorUpdate, overScrollAnimatorListener, animationOverScrollInterpolator!!)
         } else {
             overScrollAnimator!!.setIntValues(mDistanceMove, 0)
         }
@@ -735,7 +729,6 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
         var tempDistance = (moveDistance + distanceY).toInt()
         tempDistance = Math.min(tempDistance, pullDownMaxDistance)
         tempDistance = Math.max(tempDistance, -pullUpMaxDistance)
-
         if (!isTwinkEnable && (isRefreshing && tempDistance < 0 || isLoading && tempDistance > 0)) {
             if (moveDistance == 0) {
                 return
@@ -748,7 +741,6 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
             moveDistance = 0
             return
         }
-
         if (moveDistance >= 0 && headerView != null) {
             onHeaderPullChange()
             if (!isHoldingTrigger && moveDistance >= refreshTriggerDistance) {
@@ -785,18 +777,15 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
         if (parentOffsetInWindow[1] != 0 || (isTwinkEnable && (!isTargetAbleScrollUp && isTargetAbleScrollDown && moveDistance < 0 || isTargetAbleScrollUp && !isTargetAbleScrollDown && moveDistance > 0))) {
             return
         }
-
         if (type == 1) {
             onTopOverScroll()
         } else {
             onBottomOverScroll()
         }
-
         if (!isTwinkEnable) {
             abortScroller()
             return
         }
-
         isOverScrollTrigger = true
         startOverScrollAnimation(type, offset)
     }
@@ -957,8 +946,7 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
 
     private fun getOverScrollTime(distance: Int): Long {
         val ratio = Math.abs(distance.toFloat() / context.deviceHeight)
-        return Math.max(overScrollMinDuring.toLong(),
-                (Math.pow((2000 * ratio).toDouble(), 0.44) * overScrollAdjustValue).toLong())
+        return Math.max(overScrollMinDuring.toLong(), (Math.pow((2000 * ratio).toDouble(), 0.44) * overScrollAdjustValue).toLong())
     }
 
     private fun dellNestedScrollCheck() {
@@ -985,16 +973,13 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
      */
     private fun getDelayHandleActionRunnable(): Runnable {
         return Runnable {
-            if (!isTwinkEnable || (scroller != null
-                            && scroller!!.isFinished
-                            && overScrollState == 0)) {
+            if (!isTwinkEnable || (scroller != null && scroller!!.isFinished && overScrollState == 0)) {
                 handleAction()
             }
         }
     }
 
-    private fun setViewFront(firstFront: Boolean, secondFront: Boolean, firstView: View?,
-                             secondView: View?) {
+    private fun setViewFront(firstFront: Boolean, secondFront: Boolean, firstView: View?, secondView: View?) {
         if (firstFront) {
             bringViewToFront(firstView)
         } else {

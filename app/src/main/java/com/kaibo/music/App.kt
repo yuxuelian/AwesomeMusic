@@ -3,6 +3,7 @@ package com.kaibo.music
 import com.kaibo.core.BaseApplication
 import com.kaibo.music.database.PlayListDatabase
 import com.kaibo.music.database.PlayListHelper
+import com.squareup.leakcanary.LeakCanary
 
 /**
  * @author:Administrator
@@ -20,6 +21,9 @@ class App : BaseApplication() {
         PlayListDatabase.init(this)
         // 初始化播放歌单
         PlayListHelper.initPlayList()
+
+
+        LeakCanary.install(this)
     }
 
 }

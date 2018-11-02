@@ -44,4 +44,7 @@ interface Api {
     @GET("api/getRankSongList")
     fun getRankSongList(@Query("topid") topid: Int): Observable<BaseBean<RankSongListBean>>
 
+    @GET("api/lyric")
+    fun getLyricByMid(@Query("songmid") mid: String): Observable<BaseBean<String>>
+
 }

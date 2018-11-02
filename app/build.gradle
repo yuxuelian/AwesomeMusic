@@ -84,7 +84,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     //性能检测
-    androidTestImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
+    implementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
     implementation project(':Core')
     implementation project(':Player')
     implementation project(':PullRefresh')

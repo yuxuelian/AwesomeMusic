@@ -8,8 +8,7 @@ import com.kaibo.core.adapter.withItems
 import com.kaibo.core.dialog.BaseSheetDialog
 import com.kaibo.core.util.dip
 import com.kaibo.music.R
-import com.kaibo.music.item.recommend.SongTitleItem
-import com.kaibo.music.weight.BottomSheetLayout
+import com.kaibo.music.item.song.BeingPlayDialogItem
 import kotlinx.android.synthetic.main.dialog_being_play_list.*
 
 /**
@@ -24,14 +23,14 @@ class BeingPlayListDialog : BaseSheetDialog() {
 
     override fun getLayoutRes() = R.layout.dialog_being_play_list
 
-    override fun getSize() = Pair(WindowManager.LayoutParams.MATCH_PARENT, dip(350))
+    override fun getSize() = Pair(WindowManager.LayoutParams.MATCH_PARENT, dip(360))
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
         super.initViewCreated(savedInstanceState)
         testRecyclerView.layoutManager = LinearLayoutManager(mActivity)
         testRecyclerView.withItems {
             (0..30).forEach { _ ->
-                add(SongTitleItem())
+                add(BeingPlayDialogItem())
             }
         }
 
