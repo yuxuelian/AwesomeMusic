@@ -24,4 +24,4 @@ songInit(apiRoutes, redisClient)
 // 挂载到 /api
 app.use('/api', apiRoutes)
 // 启动监听
-app.listen(3000)
+app.listen(3001)

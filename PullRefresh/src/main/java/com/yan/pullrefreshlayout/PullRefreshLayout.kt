@@ -706,7 +706,7 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
                 scroller = OverScroller(context, scrollInterpolator)
                 return
             }
-            scroller = OverScroller(context, BezierInterpolator(.25f, .46f, .45f, .94f))
+            scroller = OverScroller(context, BezierInterpolator())
         }
     }
 

@@ -13,7 +13,7 @@ public interface Constants {
     /**
      * 展示播放的Activity界面
      */
-    String PLAY_ACTIVITY_CLASS = "com.kaibo.music.activity.PlayerActivity";
+    String PLAY_ACTIVITY_CLASS = "com.kaibo.music.activity.MainActivity";
 
     /**
      * 通知栏id
@@ -46,6 +46,9 @@ public interface Constants {
     String ACTION_CLOSE = "com.kaibo.music.notify.close";// 关闭播放器
     String ACTION_LYRIC = "com.kaibo.music.notify.lyric";// 歌词
     String ACTION_REPEAT = "com.kaibo.music.notify.repeat";// 循环方式
+
+    // 歌词准备完成
+    String ACTION_LYRIC_COMPLETE="com.kaibo.music.notify.lyric_complete";
 
     /**
      * 播放器向外共享出的播放状态广播标志,可全局更新UI 包括桌面小部件等

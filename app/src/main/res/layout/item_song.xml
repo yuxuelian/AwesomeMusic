@@ -30,7 +30,7 @@
             android:textColor="@color/white"
             android:textSize="12sp" />
 
-        <TextView
+        <com.kaibo.music.weight.MarqueeTextView
             android:id="@+id/songSinger"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

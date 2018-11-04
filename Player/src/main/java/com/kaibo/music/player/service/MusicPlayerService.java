@@ -27,10 +27,14 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.widget.RemoteViews;
 
+import com.kaibo.core.exception.DataException;
 import com.kaibo.core.toast.ToastUtils;
+import com.kaibo.core.util.Base64UtilsKt;
+import com.kaibo.music.bean.LyricRowBean;
 import com.kaibo.music.bean.PlayListBean;
 import com.kaibo.music.bean.SongBean;
 import com.kaibo.music.database.PlayListHelper;
+import com.kaibo.music.net.LyricApi;
 import com.kaibo.music.player.Constants;
 import com.kaibo.music.player.R;
 import com.kaibo.music.player.engine.MusicPlayerEngine;
@@ -44,6 +48,7 @@ import com.kaibo.music.utils.SPUtils;
 import com.kaibo.music.utils.SystemUtils;
 import com.orhanobut.logger.Logger;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -55,6 +60,9 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+
+import static com.kaibo.core.util.FileUtilsKt.readString;
+import static com.kaibo.core.util.StringUtilsKt.saveToFile;
 
 /**
  * 音乐播放后台服务
@@ -123,6 +131,11 @@ public class MusicPlayerService extends Service {
      * 工作线程和Handler
      */
     private HandlerThread mWorkThread = new HandlerThread("MusicPlayerThread");
+
+    /**
+     * 歌词
+     */
+    private List<LyricRowBean> lyricRowBeans;
 
     {
         //初始化工作线程
@@ -418,6 +431,45 @@ public class MusicPlayerService extends Service {
         // 组件调到正常音量
         mHandler.removeMessages(Constants.VOLUME_FADE_DOWN);
         mHandler.sendEmptyMessage(Constants.VOLUME_FADE_UP);
+        // 加载歌词
+        loadLyric(mPlayingMusic);
+    }
+
+    private void loadLyric(SongBean songBean) {
+        String mid = songBean.getMid();
+        File lyricFile = new File(this.getCacheDir(), mid);
+        if (!lyricFile.exists()) {
+            // 不存在 直接从网络获取
+            Disposable subscribe = LyricApi.Companion
+                    .getInstance()
+                    .getLyricByMid(songBean.getMid())
+                    .map(stringBaseBean -> {
+                        if (stringBaseBean.getCode() == 0) {
+                            String lyricText = Base64UtilsKt.decode(stringBaseBean.getData());
+                            // 保存本地
+                            saveToFile(lyricText, lyricFile);
+                            return LyricRowBean.parseLyric(lyricText);
+                        } else {
+                            throw new DataException(stringBaseBean.getCode(), stringBaseBean.getMessage());
+                        }
+                    })
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(lyricRowBeans -> {
+                        MusicPlayerService.this.lyricRowBeans = lyricRowBeans;
+                        LyricRowBean.currentLyricMid = mid;
+                    }, Throwable::printStackTrace);
+            compositeDisposable.add(subscribe);
+        } else {
+            // 否则直接读取
+            String lyricText = readString(lyricFile);
+            // 解析歌词
+            lyricRowBeans = LyricRowBean.parseLyric(lyricText);
+            LyricRowBean.currentLyricMid = mid;
+        }
+    }
+
+    public List<LyricRowBean> getLyricRowBeans() {
+        return lyricRowBeans;
     }
 
     /**
@@ -889,7 +941,7 @@ public class MusicPlayerService extends Service {
                 int lyricResId = isShowLyric ? R.drawable.ic_lyric_show : R.drawable.ic_lyric_hide;
                 notRemoteView.setImageViewResource(R.id.notificationLyric, lyricResId);
 
-                // 播放模式
+// 播放模式
                 final int playModeId = PlayModeManager.getPlayModeId();
                 if (playModeId == PlayModeManager.PLAY_MODE_REPEAT) {
                     // 单曲循环
@@ -920,7 +972,7 @@ public class MusicPlayerService extends Service {
             int lyricResId = isShowLyric ? R.drawable.ic_lyric_show : R.drawable.ic_lyric_hide;
             notRemoteView.setImageViewResource(R.id.notificationLyric, lyricResId);
 
-            // 播放模式
+// 播放模式
             final int playModeId = PlayModeManager.getPlayModeId();
             if (playModeId == PlayModeManager.PLAY_MODE_REPEAT) {
                 // 单曲循环
@@ -957,9 +1009,9 @@ public class MusicPlayerService extends Service {
      * @param intent
      */
     private void handleCommandIntent(Intent intent) {
-        // 获取action
+// 获取action
         final String action = intent.getAction();
-        // 获取发送的命令
+// 获取发送的命令
         final String command = Constants.SERVICE_CMD.equals(action) ? intent.getStringExtra(Constants.CMD_NAME) : null;
         if (Constants.CMD_NEXT.equals(command) || Constants.ACTION_NEXT.equals(action)) {
             // 下一曲
@@ -1107,6 +1159,7 @@ public class MusicPlayerService extends Service {
                 }
             }
         }
+
     }
 
     private void execDestroy() {

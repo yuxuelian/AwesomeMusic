@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.*
 import android.os.IBinder
 import com.kaibo.music.ISongService
+import com.kaibo.music.bean.LyricRowBean
 import com.kaibo.music.bean.SongBean
 import com.kaibo.music.player.service.MusicPlayerService
 import com.orhanobut.logger.Logger
@@ -22,39 +23,33 @@ object PlayManager {
      * 获取当前的所播放歌曲的播放进度
      */
     val currentPosition: Int
-        get() {
-            return try {
-                mService?.currentPosition ?: 0
-            } catch (e: Exception) {
-                e.printStackTrace()
-                0
-            }
+        get() = try {
+            mService?.currentPosition ?: 0
+        } catch (e: Exception) {
+            e.printStackTrace()
+            0
         }
 
     /**
      * 获取当前所播放的歌曲的总时长
      */
     val duration: Int
-        get() {
-            return try {
-                mService?.duration ?: 0
-            } catch (e: Exception) {
-                e.printStackTrace()
-                0
-            }
+        get() = try {
+            mService?.duration ?: 0
+        } catch (e: Exception) {
+            e.printStackTrace()
+            0
         }
 
     /**
      * 是否正在播放
      */
     val isPlaying: Boolean
-        get() {
-            return try {
-                mService?.isPlaying ?: false
-            } catch (e: Exception) {
-                e.printStackTrace()
-                false
-            }
+        get() = try {
+            mService?.isPlaying ?: false
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
 
     /**
@@ -63,26 +58,34 @@ object PlayManager {
      * @return
      */
     val playSong: SongBean?
-        get() {
-            return try {
-                mService?.playSong
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
-            }
+        get() = try {
+            mService?.playSong
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
 
     /**
      * 获取当前正在播放的播放队列
      */
     val playSongQueue: List<SongBean>
-        get() {
-            return try {
-                mService?.playSongQueue ?: emptyList()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                emptyList()
-            }
+        get() = try {
+            mService?.playSongQueue ?: emptyList()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+
+    /**
+     * 获取歌词
+     * 需要监听歌词准备完成广播
+     */
+    val lyricRowBeans: List<LyricRowBean>?
+        get() = try {
+            mService?.lyricRowBeans
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
 
     /**

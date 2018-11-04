@@ -3,6 +3,7 @@ package com.kaibo.music.player.service;
 import android.os.RemoteException;
 
 import com.kaibo.music.ISongService;
+import com.kaibo.music.bean.LyricRowBean;
 import com.kaibo.music.bean.SongBean;
 
 import java.lang.ref.WeakReference;
@@ -119,5 +120,10 @@ public class IMusicServiceStub extends ISongService.Stub {
     @Override
     public boolean isPrepared() throws RemoteException {
         return mService.get().isPrepared();
+    }
+
+    @Override
+    public List<LyricRowBean> getLyricRowBeans() throws RemoteException {
+        return mService.get().getLyricRowBeans();
     }
 }

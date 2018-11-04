@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!--圆形ImageView-->
     <declare-styleable name="CircleImageView">
         <attr name="civ_border_width" format="dimension" />
         <attr name="civ_border_color" format="color" />
@@ -7,6 +9,8 @@
         <attr name="civ_fill_color" format="color" />
         <attr name="civ_circle_background_color" format="color" />
     </declare-styleable>
+
+    <!--字母索引-->
     <declare-styleable name="SlideBar">
         <!--字符上下间距-->
         <attr name="letterMargin" format="dimension|reference" />
@@ -18,32 +22,46 @@
         <attr name="android:textColor" format="color|reference" />
     </declare-styleable>
 
+    <!--圆形进度条-->
     <declare-styleable name="CircleProgressBar">
-        <attr name="line_count" format="integer|reference"/>
-        <attr name="line_width" format="dimension|reference"/>
-        <attr name="progress_start_color" format="color|reference"/>
-        <attr name="progress_end_color" format="color|reference"/>
-        <attr name="progress_text_color" format="color|reference"/>
-        <attr name="progress_text_size" format="dimension|reference"/>
-        <attr name="progress_stroke_width" format="dimension|reference"/>
-        <attr name="progress_diff_radius" format="dimension|reference"/>
-        <attr name="progress_background_color" format="color|reference"/>
-        <attr name="progress_start_degree" format="integer|reference"/>
-        <attr name="drawBackgroundOutsideProgress" format="boolean|reference"/>
+        <attr name="line_count" format="integer|reference" />
+        <attr name="line_width" format="dimension|reference" />
+        <attr name="progress_start_color" format="color|reference" />
+        <attr name="progress_end_color" format="color|reference" />
+        <attr name="progress_text_color" format="color|reference" />
+        <attr name="progress_text_size" format="dimension|reference" />
+        <attr name="progress_stroke_width" format="dimension|reference" />
+        <attr name="progress_diff_radius" format="dimension|reference" />
+        <attr name="progress_background_color" format="color|reference" />
+        <attr name="progress_start_degree" format="integer|reference" />
+        <attr name="drawBackgroundOutsideProgress" format="boolean|reference" />
         <attr name="style">
-            <enum name="line" value="0"/>
-            <enum name="solid" value="1"/>
-            <enum name="solid_line" value="2"/>
+            <enum name="line" value="0" />
+            <enum name="solid" value="1" />
+            <enum name="solid_line" value="2" />
         </attr>
         <attr name="progress_shader">
-            <enum name="linear" value="0"/>
-            <enum name="radial" value="1"/>
-            <enum name="sweep" value="2"/>
+            <enum name="linear" value="0" />
+            <enum name="radial" value="1" />
+            <enum name="sweep" value="2" />
         </attr>
         <attr name="progress_stroke_cap">
-            <enum name="butt" value="0"/>
-            <enum name="round" value="1"/>
-            <enum name="square" value="2"/>
+            <enum name="butt" value="0" />
+            <enum name="round" value="1" />
+            <enum name="square" value="2" />
         </attr>
     </declare-styleable>
+
+    <!--歌词View-->
+    <declare-styleable name="LyricView">
+        <!--歌词行间距-->
+        <attr name="lyric_margin" format="dimension|reference" />
+        <!--字体大小-->
+        <attr name="android:textSize" format="dimension|reference" />
+        <!--字体颜色-->
+        <attr name="android:textColor" format="color|reference" />
+        <!--高亮行字体颜色-->
+        <attr name="high_textColor" format="color|reference" />
+    </declare-styleable>
+
 </resources>
