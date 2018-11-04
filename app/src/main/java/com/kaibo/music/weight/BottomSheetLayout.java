@@ -223,7 +223,7 @@ public class BottomSheetLayout extends ViewGroup implements NestedScrollingParen
         // 计算duration
         long duration = (long) (MAX_DURATION * (Math.abs(endPosition - mLayoutTop) / maxSpringBackDistance));
         Animator animator = ObjectAnimator.ofInt(this, "layoutTop", mLayoutTop, endPosition);
-        animator.setInterpolator(new BezierInterpolator(.25f, .46f, .45f, .94f));
+        animator.setInterpolator(new BezierInterpolator());
         animator.setDuration(duration);
         animator.addListener(new AnimatorListenerAdapter() {
             @Override

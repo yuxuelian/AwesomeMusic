@@ -4,10 +4,8 @@ import android.animation.Animator
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.os.Environment
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
@@ -15,15 +13,18 @@ import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.toast.ToastUtils
 import com.kaibo.core.util.*
 import com.kaibo.music.R
+import com.kaibo.music.bean.LyricRowBean
 import com.kaibo.music.bean.SongBean
 import com.kaibo.music.player.manager.PlayManager
 import com.kaibo.music.utils.AnimatorUtils
+import com.stx.xhb.xbanner.transformers.BasePageTransformer
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.include_play_bottom.*
 import kotlinx.android.synthetic.main.include_play_top.*
-import org.jetbrains.anko.matchParent
+import kotlinx.android.synthetic.main.item_lrc.*
+import kotlinx.android.synthetic.main.item_player.*
 import java.io.File
 import java.io.FileInputStream
 
@@ -47,8 +48,6 @@ class PlayerFragment : BasePlayerFragment() {
 
     override val isCanSwipeBack: Boolean = true
 
-    override fun getLayoutRes() = R.layout.fragment_player
-
     /**
      * 当前是否正在拖动
      */
@@ -58,6 +57,11 @@ class PlayerFragment : BasePlayerFragment() {
      * 旋转动画
      */
     private var rotateAnimator: Animator? = null
+
+    /**
+     * 歌词
+     */
+    private var lyricRowBeans: List<LyricRowBean>? = null
 
     private var currentSongBean: SongBean? = null
         set(value) {
@@ -73,10 +77,6 @@ class PlayerFragment : BasePlayerFragment() {
                 playRotaImg.rotation = 0f
                 // 动画取消
                 rotateAnimator?.cancel()
-
-                // 更新界面歌词
-                updateLyric(value.mid)
-
                 val blurTempFile = File(mActivity.filesDir, "blur-temp-file.png")
                 // 修改背景
                 Observable
@@ -113,17 +113,6 @@ class PlayerFragment : BasePlayerFragment() {
             }
         }
 
-    private fun updateLyric(mid: String) {
-        // 首先获取歌词
-        Observable.create<String> {
-
-                }
-
-        // 刷新界面歌词
-
-
-    }
-
     private var isPlaying = false
         set(value) {
             if (field != value) {
@@ -152,6 +141,37 @@ class PlayerFragment : BasePlayerFragment() {
             })
         }
 
+    override fun getLayoutRes() = R.layout.fragment_player
+
+    private fun updateLyric(mid: String, currentPosition: Int) {
+        if (lyricRowBeans == null || mid != LyricRowBean.currentLyricMid) {
+            // 获取歌词
+            lyricRowBeans = PlayManager.lyricRowBeans
+            // 设置歌词列表
+            lyricView.lyricRowBeans = lyricRowBeans
+        }
+        if (lyricRowBeans == null || lyricRowBeans!!.size <= 2) {
+            // 暂无歌词
+            centerLrc.text = "暂无歌词"
+        } else {
+            lyricRowBeans?.let {
+                (1..it.size - 2).forEach { index ->
+                    val current = it[index]
+                    val next = it[index + 1]
+                    if (currentPosition > current.timeMillis && currentPosition < next.timeMillis) {
+                        val last = it[index - 1]
+                        topLrc.text = last.rowText
+                        centerLrc.text = current.rowText
+                        bottomLrc.text = next.rowText
+
+                        // 更新lyricView显示的歌词
+                        lyricView.showPosition = index
+                    }
+                }
+            }
+        }
+    }
+
     override fun initViewCreated(savedInstanceState: Bundle?) {
         super.initViewCreated(savedInstanceState)
         playRootView.setPadding(0, mActivity.statusBarHeight, 0, 0)
@@ -160,20 +180,15 @@ class PlayerFragment : BasePlayerFragment() {
             onBackPressedSupport()
         }
 
-        // 点击图片   显示歌词页
-        playRotaImg.easyClick(bindLifecycle()).subscribe {
-            lrcPager.currentItem = 1
-        }
+        // 初始化歌词显示页
+        initLrcLayout()
 
+        // 执行进入动画
         playTopLayout.postDelayed({
-            // 执行进入动画
             playTopLayout.startAnimation(topLayoutIn)
             playBottomLayout.startAnimation(bottomLayoutIn)
             minLrcLayout.startAnimation(alpha01)
         }, 100)
-
-        // 初始化歌词显示页
-        initLrcLayout()
 
         // 设置SeekBar的拖动监听
         playerSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -253,9 +268,13 @@ class PlayerFragment : BasePlayerFragment() {
             // 修改进度条
             playerSeek.max = duration
             playerSeek.progress = currentPosition
+
+            // 更新界面歌词
+            if (currentSongBean != null) {
+                updateLyric(currentSongBean!!.mid, currentPosition)
+            }
         }
     }
-
 
     override fun onDestroyView() {
         // 退出的时候停止旋转动画
@@ -266,22 +285,21 @@ class PlayerFragment : BasePlayerFragment() {
     }
 
     private fun initLrcLayout() {
+        // 设置适配器
         lrcPager.adapter = object : PagerAdapter() {
-            // 加载歌词布局
-            private var lrcLayout: View? = null
 
-            private val emptyLayout by lazy {
-                FrameLayout(mActivity).apply {
-                    layoutParams = ViewGroup.LayoutParams(matchParent, matchParent)
-                }
-            }
+            private var lrcLayout: View? = null
+            private var playerLayout: View? = null
 
             override fun instantiateItem(container: ViewGroup, position: Int): Any {
                 // 这里返回的对象就是 destroyItem  方法中的最后一个参数
                 return when (position) {
                     0 -> {
-                        container.addView(emptyLayout)
-                        emptyLayout
+                        if (playerLayout == null) {
+                            playerLayout = layoutInflater.inflate(R.layout.item_player, container, false)
+                        }
+                        container.addView(playerLayout)
+                        playerLayout!!
                     }
                     1 -> {
                         if (lrcLayout == null) {
@@ -306,19 +324,34 @@ class PlayerFragment : BasePlayerFragment() {
             override fun getCount() = 2
         }
 
-        // 滑动歌词页
-        lrcPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
+        lrcPager.setPageTransformer(true, object : BasePageTransformer() {
+            override fun handleLeftPage(view: View, position: Float) {
+                view.translationX = -view.width * position
 
-            }
+                // 设置缩放中心
+                view.pivotX = view.width * .5f
+                view.pivotY = view.height * .5f
 
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                if (positionOffset == 0f) {
-                    return
+                var scale = 1 + position
+                view.alpha = scale
+                if (scale < .8f) {
+                    scale = .8f
                 }
-                playCenterLayout.alpha = 1f - positionOffset
+                view.scaleX = scale
+                view.scaleY = scale
             }
 
+            override fun handleRightPage(view: View, position: Float) {
+
+            }
+
+            override fun handleInvisiblePage(view: View, position: Float) {
+
+            }
+        })
+
+        // 滑动歌词页
+        lrcPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 selectIndicator(position)
             }

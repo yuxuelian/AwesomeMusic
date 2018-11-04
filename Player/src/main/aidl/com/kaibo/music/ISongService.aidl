@@ -3,6 +3,7 @@ package com.kaibo.music;
 
 // Declare any non-default types here with import statements
 import com.kaibo.music.bean.SongBean;
+import com.kaibo.music.bean.LyricRowBean;
 
 interface ISongService {
     void togglePlayer();
@@ -26,4 +27,5 @@ interface ISongService {
     void showDesktopLyric(boolean show);
     void clearQueue();
     String updatePlayMode();
+    List<LyricRowBean> getLyricRowBeans();
 }

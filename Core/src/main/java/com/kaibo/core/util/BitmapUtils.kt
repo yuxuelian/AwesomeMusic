@@ -71,7 +71,7 @@ fun File.toBitmap(): Bitmap = BitmapFactory.decodeStream(FileInputStream(this))
  * @return
  */
 fun Bitmap.blur(context: Context,
-                @FloatRange(from = 1.0, fromInclusive = false) scale: Float = 10.0f,
+                @FloatRange(from = 1.0, fromInclusive = false) scale: Float = 4.0f,
                 @FloatRange(from = 0.0, to = 25.0, fromInclusive = false) radius: Float = 25f): Bitmap {
     if (scale < 1F) {
         throw IllegalArgumentException("Value must be > 0.0 (was $scale)")

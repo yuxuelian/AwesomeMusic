@@ -23,6 +23,8 @@ class BezierInterpolator(x1: Float, y1: Float, x2: Float, y2: Float) : Interpola
         point2.y = y2
     }
 
+    constructor() : this(.25f, .46f, .45f, .94f)
+
     override fun getInterpolation(input: Float): Float {
         var t = input
         //如果重新开始要重置缓存的i。

@@ -82,7 +82,7 @@ abstract class BasePlayerFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // 启动心跳  更新UI
-        tickDisposable = Observable.interval(100L, 100L, TimeUnit.MILLISECONDS).toMainThread().subscribe({
+        tickDisposable = Observable.interval(100L, 200L, TimeUnit.MILLISECONDS).toMainThread().subscribe({
             tickTask()
         }) {
             it.printStackTrace()

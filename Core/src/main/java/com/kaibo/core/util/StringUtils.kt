@@ -5,8 +5,8 @@ import com.kaibo.core.http.HttpRequestManager
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import org.json.JSONObject
 import java.io.File
+import java.io.FileWriter
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
@@ -69,4 +69,27 @@ fun String.toTimeMillis(format: String = "yyyy-MM-dd HH:mm:ss"): Long {
     val dateFormat = SimpleDateFormat(format, Locale.CHINESE)
     return dateFormat.parse(this).time
 }
+
+fun String.saveToFile(targetFile: File) {
+    var fileWriter: FileWriter? = null
+    try {
+        // 判断是否存在
+        if (targetFile.exists()) {
+            // 存在就删除  然后重新创建
+            targetFile.delete()
+        }
+        // 重新创建
+        targetFile.createNewFile()
+        fileWriter = FileWriter(targetFile)
+        fileWriter.write(this)
+        fileWriter.flush()
+    } catch (e: Throwable) {
+        e.printStackTrace()
+    } finally {
+        fileWriter?.close()
+    }
+}
+
+
+
 

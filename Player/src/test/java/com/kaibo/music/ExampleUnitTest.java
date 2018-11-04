@@ -14,4 +14,14 @@ public class ExampleUnitTest {
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
+
+
+    @Test
+    public void test(){
+        String s = "123123123\n12312311661";
+        String[] split = s.split("\n");
+        for (String s1 : split) {
+            System.out.println(s1);
+        }
+    }
 }
