@@ -88,4 +88,5 @@ dependencies {
     implementation project(':Core')
     implementation project(':Player')
     implementation project(':PullRefresh')
+    implementation project(':BadgeViewLib')
 }

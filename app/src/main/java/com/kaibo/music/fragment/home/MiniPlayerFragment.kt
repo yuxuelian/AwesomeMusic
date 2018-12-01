@@ -8,9 +8,9 @@ import android.transition.ChangeImageTransform
 import android.transition.ChangeTransform
 import android.transition.TransitionSet
 import androidx.annotation.RequiresApi
-import androidx.transition.Fade
 import com.kaibo.core.fragment.BaseFragment
 import com.kaibo.core.glide.GlideApp
+import com.kaibo.core.toast.ToastUtils
 import com.kaibo.core.util.easyClick
 import com.kaibo.core.util.singleAsync
 import com.kaibo.core.util.toMainThread
@@ -123,10 +123,13 @@ class MiniPlayerFragment : BaseFragment() {
     override fun initViewCreated(savedInstanceState: Bundle?) {
         // 点击底部的播放条
         mini_play_layout.easyClick(bindLifecycle()).subscribe {
-            // 使用父Fragment来启动
-            val rootFragment = (parentFragment as RootFragment)
-            val playerFragment = PlayerFragment.newInstance()
-            // TODO 5.0以上系统使用共享元素的方式启动
+            if (PlayManager.playSongQueue.isEmpty()) {
+                ToastUtils.showWarning("播放队列为空")
+            } else {
+                // 使用父Fragment来启动
+                val rootFragment = (parentFragment as RootFragment)
+                val playerFragment = PlayerFragment.newInstance()
+                // TODO 5.0以上系统使用共享元素的方式启动
 //            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
 //                // 退出Transition
 //                rootFragment.exitTransition = Fade()
@@ -143,8 +146,8 @@ class MiniPlayerFragment : BaseFragment() {
 //                // 启动播放界面
 //
 //            }
-
-            rootFragment.start(playerFragment)
+                rootFragment.start(playerFragment)
+            }
         }
 
         // 点击播放暂停按钮
