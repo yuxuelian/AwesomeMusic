@@ -1,4 +1,4 @@
-include ':Core'
+include ':Core', ':BadgeViewLib'
 include ':PullRefresh'
 include ':Player'
 include ':app'

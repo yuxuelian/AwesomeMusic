@@ -27,7 +27,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/test_play_img"
+        android:src="@drawable/logo"
         tools:targetApi="lollipop" />
 
     <com.kaibo.music.weight.MarqueeTextView
@@ -42,7 +42,7 @@
         app:layout_constraintStart_toEndOf="@id/playRotaImg"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="演员" />
+        android:text="歌曲名" />
 
     <com.kaibo.music.weight.MarqueeTextView
         android:id="@+id/singerName"
@@ -55,7 +55,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/playRotaImg"
         app:layout_constraintTop_toBottomOf="@+id/songName"
-        tools:text="薛之谦" />
+        android:text="歌手" />
 
     <ImageView
         android:id="@+id/playOrPauseBtn"

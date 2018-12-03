@@ -4,10 +4,13 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaibo.core.adapter.withItems
 import com.kaibo.core.fragment.BaseFragment
+import com.kaibo.core.toast.ToastUtils
 import com.kaibo.music.R
 import com.kaibo.music.item.mine.PlayListItem
 import com.kaibo.music.item.mine.PlayListItemBean
 import kotlinx.android.synthetic.main.fragment_mine.*
+import q.rorbin.badgeview.Badge
+import q.rorbin.badgeview.QBadgeView
 
 /**
  * @author kaibo
@@ -56,6 +59,18 @@ class MineFragment : BaseFragment() {
                 }
             }
         })
+
+        QBadgeView(requireContext()).bindTarget(badgeTest).apply {
+            setBadgeTextSize(12f, true)
+            setBadgePadding(4f, true)
+            setOnDragStateChangedListener { dragState, _, _ ->
+                if (dragState == Badge.OnDragStateChangedListener.STATE_SUCCEED) {
+                    ToastUtils.showSuccess("成功")
+                }
+            }
+            badgeNumber = 999
+        }
+
     }
 
 }
