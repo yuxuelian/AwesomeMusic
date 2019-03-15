@@ -18,6 +18,7 @@ import com.kaibo.music.fragment.home.HomeFragment
 import com.kaibo.music.fragment.songlist.SongListFragment
 import com.kaibo.music.item.singer.SingerItem
 import com.kaibo.music.net.Api
+import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_singer.*
 
 /**
@@ -43,6 +44,7 @@ class SingerFragment : BaseFragment() {
         // 获取歌曲数据
         Api.instance.getSingerList().checkResult().toMainThread().`as`(bindLifecycle())
                 .subscribe({ singerListBeanList: List<SingerListBean> ->
+                    Logger.d(singerListBeanList)
                     // 初始化SingerList
                     initSingerList(singerListBeanList.flatMap { it.items })
                     initSlideBar(singerListBeanList)

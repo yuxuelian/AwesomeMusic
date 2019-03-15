@@ -19,6 +19,7 @@ import com.kaibo.music.fragment.player.PlayerFragment
 import com.kaibo.music.item.song.SongItem
 import com.kaibo.music.net.Api
 import com.kaibo.music.player.manager.PlayManager
+import com.orhanobut.logger.Logger
 import com.yan.pullrefreshlayout.PullRefreshLayout
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -180,6 +181,7 @@ class SongListFragment : BaseFragment() {
         songListView.withItems(songList.map { songBean: SongBean ->
             SongItem(songBean) {
                 setOnClickListener {
+                    Logger.d(songBean)
                     // 这个方法执行起来比较耗时  这里使用异步执行
                     singleAsync(bindLifecycle(), onSuccess = {
                         // 设置成功  启动PlayerFragment

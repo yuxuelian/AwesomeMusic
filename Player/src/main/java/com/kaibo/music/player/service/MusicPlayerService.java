@@ -941,7 +941,7 @@ public class MusicPlayerService extends Service {
                 int lyricResId = isShowLyric ? R.drawable.ic_lyric_show : R.drawable.ic_lyric_hide;
                 notRemoteView.setImageViewResource(R.id.notificationLyric, lyricResId);
 
-// 播放模式
+                // 播放模式
                 final int playModeId = PlayModeManager.getPlayModeId();
                 if (playModeId == PlayModeManager.PLAY_MODE_REPEAT) {
                     // 单曲循环
@@ -957,6 +957,7 @@ public class MusicPlayerService extends Service {
                 mNotification = mNotificationBuilder.build();
                 // 更新歌词
                 mFloatLyricViewManager.updatePlayStatus(songPlayFlag);
+//                Manifest.permission.FOREGROUND_SERVICE
                 // 显示到通知栏
                 startForeground(Constants.NOTIFICATION_ID, mNotification);
                 // 必须要主动发送一次到通知栏,否则会有兼容问题

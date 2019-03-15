@@ -15,9 +15,9 @@ abstract class BaseSheetDialog : BaseDialog() {
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
         //弹出动画
-        dialog.window.setWindowAnimations(R.style.dialogBottomSheet)
+        dialog.window?.setWindowAnimations(R.style.dialogBottomSheet)
         //设置Dialog的位置在底部显示
-        dialog.window.attributes.gravity = Gravity.BOTTOM
+        dialog.window?.attributes?.gravity = Gravity.BOTTOM
     }
 
 }

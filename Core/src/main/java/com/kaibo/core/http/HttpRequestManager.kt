@@ -23,9 +23,8 @@ import java.util.concurrent.TimeUnit
 
 object HttpRequestManager {
 
-//    internal var BASE_URL = "http://192.168.3.120:3000/"
     internal var BASE_URL = "http://118.126.108.24:3001/"
-//    internal var BASE_URL = "http://192.168.0.110:3000/"
+//    internal var BASE_URL = "https://music.kaibo123.com/"
 
     //缓存大小   20M
     private const val CACHE_SIZE = 1024 * 1024 * 20L

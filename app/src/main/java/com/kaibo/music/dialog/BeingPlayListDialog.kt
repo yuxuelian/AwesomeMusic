@@ -29,7 +29,7 @@ class BeingPlayListDialog : BaseSheetDialog() {
         super.initViewCreated(savedInstanceState)
         testRecyclerView.layoutManager = LinearLayoutManager(mActivity)
         testRecyclerView.withItems {
-            (0..30).forEach { _ ->
+            repeat(31) {
                 add(BeingPlayDialogItem())
             }
         }
@@ -37,7 +37,7 @@ class BeingPlayListDialog : BaseSheetDialog() {
         /**
          * 完全关闭了
          */
-        bottomSheetLayout.setOnCollapseListener {
+        bottomSheetLayout.onCollapseListener = {
             dismiss()
         }
     }
