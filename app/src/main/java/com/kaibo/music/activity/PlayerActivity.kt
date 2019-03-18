@@ -1,4 +1,4 @@
-package com.kaibo.music.fragment.player
+package com.kaibo.music.activity
 
 import android.animation.Animator
 import android.graphics.Bitmap
@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.include_play_bottom.*
 import kotlinx.android.synthetic.main.include_play_top.*
 import kotlinx.android.synthetic.main.item_lrc.*
 import kotlinx.android.synthetic.main.item_player.*
+import org.jetbrains.anko.dip
 import java.io.File
 import java.io.FileInputStream
 
@@ -36,17 +37,7 @@ import java.io.FileInputStream
  * @description：
  */
 
-class PlayerFragment : BasePlayerFragment() {
-
-    companion object {
-        fun newInstance(arguments: Bundle = Bundle()): PlayerFragment {
-            return PlayerFragment().apply {
-                this.arguments = arguments
-            }
-        }
-    }
-
-    override val isCanSwipeBack: Boolean = true
+class PlayerActivity : BasePlayerActivity() {
 
     /**
      * 当前是否正在拖动
@@ -77,7 +68,7 @@ class PlayerFragment : BasePlayerFragment() {
                 playRotaImg.rotation = 0f
                 // 动画取消
                 rotateAnimator?.cancel()
-                val blurTempFile = File(mActivity.filesDir, "blur-temp-file.png")
+                val blurTempFile = File(this.filesDir, "blur-temp-file.png")
                 // 修改背景
                 Observable
                         .create<Bitmap> {
@@ -100,7 +91,7 @@ class PlayerFragment : BasePlayerFragment() {
                         .observeOn(Schedulers.io())
                         .map {
                             // 从本地获取图片然后进行模糊
-                            BitmapFactory.decodeStream(FileInputStream(blurTempFile)).blur(mActivity)
+                            BitmapFactory.decodeStream(FileInputStream(blurTempFile)).blur(this)
                         }
                         .toMainThread()
                         .`as`(bindLifecycle())
@@ -172,9 +163,8 @@ class PlayerFragment : BasePlayerFragment() {
         }
     }
 
-    override fun initViewCreated(savedInstanceState: Bundle?) {
-        super.initViewCreated(savedInstanceState)
-        playRootView.setPadding(0, mActivity.statusBarHeight, 0, 0)
+    override fun initOnCreate(savedInstanceState: Bundle?) {
+        playRootView.setPadding(0, this.statusBarHeight, 0, 0)
         // 点击返回键
         backBtn.easyClick(bindLifecycle()).subscribe {
             onBackPressedSupport()
@@ -276,12 +266,12 @@ class PlayerFragment : BasePlayerFragment() {
         }
     }
 
-    override fun onDestroyView() {
+    override fun onDestroy() {
         // 退出的时候停止旋转动画
         if (rotateAnimator != null && rotateAnimator!!.isRunning) {
             rotateAnimator?.cancel()
         }
-        super.onDestroyView()
+        super.onDestroy()
     }
 
     private fun initLrcLayout() {
@@ -391,14 +381,13 @@ class PlayerFragment : BasePlayerFragment() {
         }
     }
 
-    override fun onBackPressedSupport(): Boolean {
+    override fun onBackPressedSupport() {
         // 执行退出动画
         playTopLayout.startAnimation(topLayoutOut)
         playBottomLayout.startAnimation(bottomLayoutOut)
         minLrcLayout.startAnimation(alpha10)
         playTopLayout.postDelayed({
-            pop()
+            super.onBackPressedSupport()
         }, 200)
-        return true
     }
 }

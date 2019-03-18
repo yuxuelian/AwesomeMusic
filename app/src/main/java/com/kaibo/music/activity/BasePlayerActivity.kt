@@ -1,10 +1,8 @@
-package com.kaibo.music.fragment.player
+package com.kaibo.music.activity
 
-import android.os.Bundle
-import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import com.kaibo.core.fragment.BaseFragment
+import com.kaibo.core.activity.SuperActivity
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
 import io.reactivex.Observable
@@ -19,40 +17,40 @@ import java.util.concurrent.TimeUnit
  * @description：
  */
 
-abstract class BasePlayerFragment : BaseFragment() {
+abstract class BasePlayerActivity : SuperActivity() {
 
     protected val topLayoutIn: Animation by lazy {
-        AnimationUtils.loadAnimation(mActivity, R.anim.top_layout_in).apply {
+        AnimationUtils.loadAnimation(this, R.anim.top_layout_in).apply {
             fillAfter = true
         }
     }
 
     protected val topLayoutOut: Animation by lazy {
-        AnimationUtils.loadAnimation(mActivity, R.anim.top_layout_out).apply {
+        AnimationUtils.loadAnimation(this, R.anim.top_layout_out).apply {
             fillAfter = true
         }
     }
 
     protected val bottomLayoutIn: Animation by lazy {
-        AnimationUtils.loadAnimation(mActivity, R.anim.bottom_layout_in).apply {
+        AnimationUtils.loadAnimation(this, R.anim.bottom_layout_in).apply {
             fillAfter = true
         }
     }
 
     protected val bottomLayoutOut: Animation by lazy {
-        AnimationUtils.loadAnimation(mActivity, R.anim.bottom_layout_out).apply {
+        AnimationUtils.loadAnimation(this, R.anim.bottom_layout_out).apply {
             fillAfter = true
         }
     }
 
     protected val alpha01: Animation by lazy {
-        AnimationUtils.loadAnimation(mActivity, R.anim.alpha_0_1).apply {
+        AnimationUtils.loadAnimation(this, R.anim.alpha_0_1).apply {
             fillAfter = true
         }
     }
 
     protected val alpha10: Animation by lazy {
-        AnimationUtils.loadAnimation(mActivity, R.anim.alpha_1_0).apply {
+        AnimationUtils.loadAnimation(this, R.anim.alpha_1_0).apply {
             fillAfter = true
         }
     }
@@ -79,8 +77,8 @@ abstract class BasePlayerFragment : BaseFragment() {
 
     private var tickDisposable: Disposable? = null
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onResume() {
+        super.onResume()
         // 启动心跳  更新UI
         tickDisposable = Observable.interval(100L, 200L, TimeUnit.MILLISECONDS).toMainThread().subscribe({
             tickTask()
@@ -89,9 +87,9 @@ abstract class BasePlayerFragment : BaseFragment() {
         }
     }
 
-    override fun onDestroyView() {
+    override fun onPause() {
         tickDisposable?.dispose()
-        super.onDestroyView()
-    }
+        super.onPause()
 
+    }
 }

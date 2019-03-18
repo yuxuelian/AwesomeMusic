@@ -15,16 +15,16 @@ import com.kaibo.core.util.easyClick
 import com.kaibo.core.util.singleAsync
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
+import com.kaibo.music.activity.PlayerActivity
 import com.kaibo.music.bean.SongBean
 import com.kaibo.music.dialog.BeingPlayListDialog
-import com.kaibo.music.fragment.RootFragment
-import com.kaibo.music.fragment.player.PlayerFragment
 import com.kaibo.music.player.manager.PlayManager
 import com.kaibo.music.utils.AnimatorUtils
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_mini_player.*
+import org.jetbrains.anko.support.v4.startActivity
 import java.util.concurrent.TimeUnit
 
 
@@ -110,14 +110,6 @@ class MiniPlayerFragment : BaseFragment() {
         AnimatorUtils.getRotateAnimator(playRotaImg)
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private class DetailTransition : TransitionSet() {
-        init {
-            ordering = TransitionSet.ORDERING_TOGETHER
-            addTransition(ChangeBounds()).addTransition(ChangeTransform()).addTransition(ChangeImageTransform())
-        }
-    }
-
     override fun getLayoutRes() = R.layout.fragment_mini_player
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
@@ -126,27 +118,7 @@ class MiniPlayerFragment : BaseFragment() {
             if (PlayManager.playSongQueue.isEmpty()) {
                 ToastUtils.showWarning("播放队列为空")
             } else {
-                // 使用父Fragment来启动
-                val rootFragment = (parentFragment as RootFragment)
-                val playerFragment = PlayerFragment.newInstance()
-                // TODO 5.0以上系统使用共享元素的方式启动
-//            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-//                // 退出Transition
-//                rootFragment.exitTransition = Fade()
-//                // 进入Transition
-//                playerFragment.enterTransition = Fade()
-//                // 共享返回共享元素
-//                playerFragment.sharedElementReturnTransition = DetailTransition()
-//                // 进入共享元素
-//                playerFragment.sharedElementEnterTransition = DetailTransition()
-//                // 25.1.0以下的support包,Material过渡动画只有在进栈时有,返回时没有;
-//                // 25.1.0+的support包，SharedElement正常
-//                rootFragment.extraTransaction().addSharedElement(playRotaImg, getString(R.string.transition_share_song_img)).start(playerFragment)
-//            } else {
-//                // 启动播放界面
-//
-//            }
-                rootFragment.start(playerFragment)
+                startActivity<PlayerActivity>()
             }
         }
 

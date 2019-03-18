@@ -11,11 +11,11 @@ import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.util.*
 import com.kaibo.music.R
 import com.kaibo.music.activity.MainActivity
+import com.kaibo.music.activity.PlayerActivity
 import com.kaibo.music.bean.RankSongListBean
 import com.kaibo.music.bean.RecommendSongListBean
 import com.kaibo.music.bean.SingerSongListBean
 import com.kaibo.music.bean.SongBean
-import com.kaibo.music.fragment.player.PlayerFragment
 import com.kaibo.music.item.song.SongItem
 import com.kaibo.music.net.Api
 import com.kaibo.music.player.manager.PlayManager
@@ -24,6 +24,7 @@ import com.yan.pullrefreshlayout.PullRefreshLayout
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_song_list.*
+import org.jetbrains.anko.support.v4.startActivity
 
 /**
  * @author kaibo
@@ -185,7 +186,7 @@ class SongListFragment : BaseFragment() {
                     // 这个方法执行起来比较耗时  这里使用异步执行
                     singleAsync(bindLifecycle(), onSuccess = {
                         // 设置成功  启动PlayerFragment
-                        (mActivity as MainActivity).rootFragment.start(PlayerFragment.newInstance())
+                        startActivity<PlayerActivity>()
                     }) {
                         PlayManager.setPlaySong(songBean)
                     }
