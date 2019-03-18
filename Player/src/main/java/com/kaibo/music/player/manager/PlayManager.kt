@@ -2,6 +2,7 @@ package com.kaibo.music.player.manager
 
 import android.app.Activity
 import android.content.*
+import android.os.Build
 import android.os.IBinder
 import com.kaibo.music.ISongService
 import com.kaibo.music.bean.LyricRowBean
@@ -232,8 +233,13 @@ object PlayManager {
             realActivity = context
         }
         val contextWrapper = ContextWrapper(realActivity)
+        val intent = Intent(contextWrapper, MusicPlayerService::class.java)
         // 启动Service
-        contextWrapper.startService(Intent(contextWrapper, MusicPlayerService::class.java))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            contextWrapper.startForegroundService(intent)
+        }else{
+            contextWrapper.startService(intent)
+        }
         val binder = ServiceBinder()
         // 绑定Service
         return if (contextWrapper.bindService(Intent().setClass(contextWrapper, MusicPlayerService::class.java), binder, 0)) {

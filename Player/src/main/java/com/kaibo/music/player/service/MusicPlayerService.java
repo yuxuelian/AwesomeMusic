@@ -413,8 +413,12 @@ public class MusicPlayerService extends Service {
         saveHistory();
         // 设置为正在播放
         songPlayFlag = true;
+
+        String url = mPlayingMusic.getUrl();
+        Logger.d("播放地址: url = " + url);
         // 设置播放源
-        mPlayer.setDataSource(mPlayingMusic.getUrl());
+        mPlayer.setDataSource(url);
+
         // 更新媒体状态
         mediaSessionManager.updateMetaData(mPlayingMusic);
         // 请求音频焦点

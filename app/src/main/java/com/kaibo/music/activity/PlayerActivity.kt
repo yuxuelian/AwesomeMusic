@@ -20,7 +20,7 @@ import com.kaibo.music.utils.AnimatorUtils
 import com.stx.xhb.xbanner.transformers.BasePageTransformer
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_player.*
+import kotlinx.android.synthetic.main.activity_player.*
 import kotlinx.android.synthetic.main.include_play_bottom.*
 import kotlinx.android.synthetic.main.include_play_top.*
 import kotlinx.android.synthetic.main.item_lrc.*
@@ -132,7 +132,7 @@ class PlayerActivity : BasePlayerActivity() {
             })
         }
 
-    override fun getLayoutRes() = R.layout.fragment_player
+    override fun getLayoutRes() = R.layout.activity_player
 
     private fun updateLyric(mid: String, currentPosition: Int) {
         if (lyricRowBeans == null || mid != LyricRowBean.currentLyricMid) {
