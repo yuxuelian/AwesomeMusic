@@ -41,17 +41,22 @@ public class MusicPlayerEngine implements
     private boolean mIsInitialized = false;
 
     /**
-     * 是否已经初始化
+     * 是否准备完成
      */
     private boolean mIsPrepared = false;
 
     public MusicPlayerEngine(final MusicPlayerService service, MusicPlayerHandler mHandler) {
         mService = new WeakReference<>(service);
-        // 设置屏幕长亮
+        // 锁定CPU,屏幕锁定后  CPU依然继续运行
         mCurrentMediaPlayer.setWakeMode(service, PowerManager.PARTIAL_WAKE_LOCK);
         this.mHandler = mHandler;
     }
 
+    /**
+     * 设置播放源
+     *
+     * @param path
+     */
     public void setDataSource(final String path) {
         // 返回是否初始化成功
         mIsInitialized = setDataSourceImpl(mCurrentMediaPlayer, path);
@@ -65,10 +70,16 @@ public class MusicPlayerEngine implements
         return mIsPrepared;
     }
 
+    /**
+     * 启动播放
+     */
     public void start() {
         mCurrentMediaPlayer.start();
     }
 
+    /**
+     * 停止播放
+     */
     public void stop() {
         try {
             mCurrentMediaPlayer.reset();
@@ -79,10 +90,16 @@ public class MusicPlayerEngine implements
         }
     }
 
+    /**
+     * 释放播放器
+     */
     public void release() {
         mCurrentMediaPlayer.release();
     }
 
+    /**
+     * 暂停播放
+     */
     public void pause() {
         mCurrentMediaPlayer.pause();
     }

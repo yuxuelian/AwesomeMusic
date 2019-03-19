@@ -1,5 +1,7 @@
 package com.kaibo.core.util
 
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -15,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.kaibo.core.R
@@ -73,5 +76,47 @@ private val mLruBitmapCache = LruCache<String, WeakReference<Bitmap>>(20)
  */
 fun RecyclerView.setDecoration(decoration: Drawable = ColorDrawable(context.getCompatColor(R.color.color_303030)), heightPx: Int = dip(1)) {
     this.addItemDecoration(ItemDividerDecoration(decoration, heightPx))
+}
+
+/**
+ * 设置默认的RecyclerView的分割线
+ */
+fun RecyclerView.addDefaultDecoration(decoration: Drawable = ColorDrawable(ContextCompat.getColor(context, R.color.color_303030)),
+                                      heightPx: Int = dip(1)) {
+    this.addItemDecoration(ItemDividerDecoration(decoration, heightPx))
+}
+
+/**
+ * 图片渐变切换动画
+ */
+fun ImageView.startTransition(targetBitmap: Bitmap) {
+    this.startTransition(BitmapDrawable(resources, targetBitmap))
+}
+
+/**
+ * 图片渐变切换动画
+ */
+fun ImageView.startTransition(targetDrawable: Drawable) {
+    val oldDrawable: Drawable = this.drawable
+    val oldBitmapDrawable = when (oldDrawable) {
+        null -> ColorDrawable(Color.TRANSPARENT)
+        is TransitionDrawable -> oldDrawable.getDrawable(1)
+        else -> oldDrawable
+    }
+    val td = TransitionDrawable(arrayOf(oldBitmapDrawable, targetDrawable))
+    this.setImageDrawable(td)
+    // 启动动画
+    td.startTransition(1000)
+}
+
+/**
+ * 颜色渐变动画
+ */
+fun View.startTransition(newColor: Int) {
+    val olderColor = (background as ColorDrawable).color
+    val objectAnimator: ObjectAnimator
+    objectAnimator = ObjectAnimator.ofInt(this, "backgroundColor", olderColor, newColor).setDuration(800)
+    objectAnimator.setEvaluator(ArgbEvaluator())
+    objectAnimator.start()
 }
 

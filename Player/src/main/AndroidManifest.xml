@@ -45,17 +45,11 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-        android:extractNativeLibs="false"
         android:largeHeap="true"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:supportsRtl="true"
-        tools:targetApi="m">
+        android:supportsRtl="true">
 
-        <service
-            android:name=".service.MusicPlayerService"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":player" />
+        <service android:name=".service.MusicPlayerService" />
 
         <receiver android:name=".receiver.MediaButtonIntentReceiver">
             <intent-filter android:priority="2147483647">

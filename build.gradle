@@ -13,7 +13,7 @@ ext {
 
 buildscript {
     ext.kotlin_version = '1.3.21'
-    ext.gradle_plugin_version = '3.3.1'
+    ext.gradle_plugin_version = '3.3.2'
 
     ext {
         LIBS_DIRS_PATH = "${projectDir.getPath()}/Core/libs"
@@ -39,6 +39,7 @@ buildscript {
         androidx_constraintlayout = 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
         androidx_room_runtime = 'androidx.room:room-runtime:2.1.0-alpha03'
         androidx_room_rxjava2 = 'androidx.room:room-rxjava2:2.1.0-alpha03'
+        androidx_annotation = 'androidx.annotation:annotation:1.0.0@jar'
 
         // rx系列
         rxjava2 = 'io.reactivex.rxjava2:rxjava:2.2.3'
@@ -104,6 +105,8 @@ buildscript {
         glide = 'com.github.bumptech.glide:glide:4.9.0'
         glide_okhttp = "com.github.bumptech.glide:okhttp3-integration:4.9.0"
         glide_compiler = 'com.github.bumptech.glide:compiler:4.9.0'
+
+        sticky_decoration = 'com.gavin.com.library:stickyDecoration:1.4.5'
     }
 
     repositories {

@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mini_play_layout"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="?actionBarSize"
     android:background="@drawable/btn_50_selector"
     android:clickable="true"
     android:focusable="true">
 
     <com.kaibo.music.weight.CircleImageView
         android:id="@+id/songImg"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
         android:layout_marginStart="20dp"
         android:src="@drawable/test_play_img"
         android:transitionName="@string/transition_share_song_img"
@@ -29,7 +29,7 @@
         android:maxWidth="160dp"
         android:text="演员"
         android:textColor="@color/white"
-        android:textSize="14sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/songSinger"
         app:layout_constraintStart_toEndOf="@id/songImg"
         app:layout_constraintTop_toTopOf="parent" />
@@ -42,14 +42,14 @@
         android:maxWidth="160dp"
         android:text="薛之谦"
         android:textColor="@color/colorThemeText"
-        android:textSize="12sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/songImg"
         app:layout_constraintTop_toBottomOf="@+id/songName" />
 
     <FrameLayout
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="?actionBarSize"
+        android:layout_height="?actionBarSize"
         android:background="@drawable/btn_50_selector"
         android:clickable="true"
         android:focusable="true"
@@ -74,23 +74,23 @@
             app:style="solid_line" />
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="?actionBarSize"
+            android:layout_height="?actionBarSize"
             android:padding="16dp"
-            android:src="@drawable/ic_pause"
-            android:tint="@color/colorTheme" />
+            android:tint="@color/colorTheme"
+            app:srcCompat="@drawable/ic_pause" />
     </FrameLayout>
 
     <ImageView
         android:id="@+id/playListBtn"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="?actionBarSize"
+        android:layout_height="?actionBarSize"
         android:background="@drawable/btn_50_selector"
         android:clickable="true"
         android:focusable="true"
         android:padding="12dp"
-        android:src="@drawable/play_list"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/play_list" />
 </androidx.constraintlayout.widget.ConstraintLayout>

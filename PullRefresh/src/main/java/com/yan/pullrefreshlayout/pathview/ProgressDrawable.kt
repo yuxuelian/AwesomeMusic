@@ -1,4 +1,4 @@
-package com.yishi.refresh.pathview
+package com.yan.pullrefreshlayout.pathview
 
 import android.animation.ValueAnimator
 import android.graphics.*

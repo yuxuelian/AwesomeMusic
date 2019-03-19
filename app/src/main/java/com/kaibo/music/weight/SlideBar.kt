@@ -12,10 +12,9 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
+import com.kaibo.core.util.dip
+import com.kaibo.core.util.sp
 import com.kaibo.music.R
-import com.orhanobut.logger.Logger
-import org.jetbrains.anko.dip
-import org.jetbrains.anko.sp
 
 /**
  * @author kaibo

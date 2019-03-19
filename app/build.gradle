@@ -101,11 +101,12 @@ dependencies {
     // 性能检测
     implementation leakcanary_android
 
-    kapt room_compiler
+//    kapt room_compiler
 
     implementation project(':Core')
     implementation project(':BadgeViewLib')
     implementation project(':PullRefresh')
     implementation project(':Player')
     implementation project(':RxPermissions')
+    implementation project(':SwipeBackLib')
 }

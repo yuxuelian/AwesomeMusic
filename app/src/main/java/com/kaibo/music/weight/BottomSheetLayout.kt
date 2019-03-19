@@ -17,8 +17,8 @@ import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import androidx.core.view.*
 import androidx.core.widget.ListViewCompat
+import com.kaibo.core.util.dip
 import com.yan.pullrefreshlayout.BezierInterpolator
-import org.jetbrains.anko.dip
 
 class BottomSheetLayout @JvmOverloads constructor(
         @NonNull context: Context,

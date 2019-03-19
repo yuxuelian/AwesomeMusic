@@ -27,8 +27,8 @@
 
     <ImageView
         android:id="@+id/search"
-        android:layout_width="@dimen/headerHeight"
-        android:layout_height="@dimen/headerHeight"
+        android:layout_width="?actionBarSize"
+        android:layout_height="?actionBarSize"
         android:layout_gravity="end"
         android:padding="10dp"
         android:src="@drawable/search_btn" />

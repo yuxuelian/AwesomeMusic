@@ -23,7 +23,7 @@
         app:pointLeftRightPadding="3dp"
         app:pointNormal="@drawable/banner_noraml"
         app:pointSelect="@drawable/banner_selected"
-        app:pointTopBottomPadding="0dp"
+        app:pointTopBottomPadding="6dp"
         app:pointsPosition="CENTER"
         app:tipTextSize="12sp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

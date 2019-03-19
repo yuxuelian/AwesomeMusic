@@ -1,4 +1,4 @@
-package com.yishi.refresh
+package com.yan.pullrefreshlayout
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -20,7 +20,6 @@ import androidx.core.view.*
 import androidx.core.widget.ListViewCompat
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
-import com.yan.pullrefreshlayout.R
 
 /**
  * @author 56896

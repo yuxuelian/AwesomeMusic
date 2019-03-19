@@ -13,7 +13,7 @@
 
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
-            android:layout_height="@dimen/headerHeight"
+            android:layout_height="?actionBarSize"
             app:contentInsetStart="0dp"
             app:layout_scrollFlags="scroll|enterAlways">
 

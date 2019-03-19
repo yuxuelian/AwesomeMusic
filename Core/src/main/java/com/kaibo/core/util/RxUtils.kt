@@ -59,7 +59,8 @@ fun <T> Flowable<T>.async(): Flowable<T> {
 @CheckResult
 fun <T> Observable<BaseBean<T>>.checkResult(): Observable<T> {
     return this.map {
-        if (it.code == 200) {
+        Logger.d(it)
+        if (it.code == 0) {
             it.data
         } else {
             throw DataException(it.code, it.message)

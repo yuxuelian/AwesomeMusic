@@ -1,18 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?><!--底部布局-->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_marginBottom="20dp"
-    android:layout_weight="3"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:alpha="0"
+    android:orientation="vertical"
+    android:translationY="180dp">
+
+    <LinearLayout
+        android:id="@+id/minLrcLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/topLrc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            tools:text="原来当爱放下防备后的这些那些" />
+
+        <TextView
+            android:id="@+id/centerLrc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/colorTheme"
+            android:textSize="12sp"
+            tools:text="都有个期限" />
+
+        <TextView
+            android:id="@+id/bottomLrc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            tools:text="其实台下的观众就我一个" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/playIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/playProgressLayout"
         app:layout_constraintEnd_toEndOf="parent"
@@ -39,6 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/playController"
@@ -78,6 +116,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -134,4 +173,4 @@
             app:layout_constraintStart_toEndOf="@+id/nextPlay"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

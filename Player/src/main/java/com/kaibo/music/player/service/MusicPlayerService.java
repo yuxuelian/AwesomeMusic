@@ -31,9 +31,7 @@ import android.widget.RemoteViews;
 import com.kaibo.core.exception.DataException;
 import com.kaibo.core.toast.ToastUtils;
 import com.kaibo.music.bean.LyricRowBean;
-import com.kaibo.music.bean.PlayListBean;
 import com.kaibo.music.bean.SongBean;
-import com.kaibo.music.database.PlayListHelper;
 import com.kaibo.music.net.LyricApi;
 import com.kaibo.music.player.Constants;
 import com.kaibo.music.player.R;
@@ -50,7 +48,6 @@ import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -81,11 +78,6 @@ public class MusicPlayerService extends Service {
      * 记录播放位置
      */
     private int mPlayingPos = -1;
-
-    /**
-     * 当前所播放的歌单Id
-     */
-    private String mPlaylistId = PlayListBean.PLAYLIST_QUEUE_ID;
 
     /**
      * 接收命令的广播接收器
@@ -193,6 +185,9 @@ public class MusicPlayerService extends Service {
         initNotify();
         //初始化音乐播放服务
         initMediaPlayer();
+
+        // 显示一次通知
+        updateNotification(false);
     }
 
     /**
@@ -252,8 +247,6 @@ public class MusicPlayerService extends Service {
      */
     private void initMediaPlayer() {
         mPlayer = new MusicPlayerEngine(this, mHandler);
-        // 加载保存到磁盘上的播放队列
-        reloadPlayQueue();
         // 实时向外发送播放器状态
         Disposable subscribe = Observable.interval(200, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -313,31 +306,6 @@ public class MusicPlayerService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mediaSessionManager.release();
         }
-    }
-
-    /**
-     * 重新加载当前播放进度
-     */
-    public void reloadPlayQueue() {
-        // 加载播放历史
-        Disposable disposable = PlayListHelper.INSTANCE.getSongListByPlayListId(PlayListBean.PLAYLIST_QUEUE_ID)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(songBeans -> {
-                    mPlayQueue.clear();
-                    mPlayQueue.addAll(songBeans);
-                    // 获取歌曲的播放位置
-                    mPlayingPos = SPUtils.getPlayPosition();
-                    if (mPlayingPos >= 0 && mPlayingPos < mPlayQueue.size()) {
-                        // 切换歌曲
-                        mPlayingMusic = mPlayQueue.get(mPlayingPos);
-                        updateNotification(true);
-                        notifyChange(Constants.META_CHANGED);
-                    }
-                    // 歌单变化
-                    notifyChange(Constants.PLAY_QUEUE_CHANGE);
-                }, Throwable::printStackTrace);
-
-        compositeDisposable.add(disposable);
     }
 
     /**
@@ -410,8 +378,6 @@ public class MusicPlayerService extends Service {
         mPlayingMusic = mPlayQueue.get(mPlayingPos);
         // 发送播放状态改变的通知
         notifyChange(Constants.META_CHANGED);
-        // 保存播放历史
-        saveHistory();
         // 设置为正在播放
         songPlayFlag = true;
 
@@ -675,9 +641,8 @@ public class MusicPlayerService extends Service {
         if (musicList.size() <= position) {
             return;
         }
-        if (!mPlaylistId.equals(playListId) || mPlayQueue.size() == 0 || mPlayQueue.size() != musicList.size()) {
+        if (mPlayQueue.size() == 0 || mPlayQueue.size() != musicList.size()) {
             setPlayQueue(musicList);
-            mPlaylistId = playListId;
         }
         mPlayingPos = position;
         playCurrentAndNext();
@@ -752,13 +717,8 @@ public class MusicPlayerService extends Service {
 
     /**
      * 保存播放队列
-     *
-     * @param full 是否存储歌单数据
      */
-    private void savePlayQueue(boolean full) {
-        if (full) {
-            PlayListHelper.INSTANCE.addMusicList(PlayListBean.PLAYLIST_QUEUE_ID, mPlayQueue);
-        }
+    private void savePlayQueue() {
         if (mPlayingMusic != null) {
             //保存歌曲id
             SPUtils.saveCurrentSongId(mPlayingMusic.getMid());
@@ -768,13 +728,6 @@ public class MusicPlayerService extends Service {
         //保存歌曲的进度
         SPUtils.savePosition(getCurrentPosition());
         notifyChange(Constants.PLAY_QUEUE_CHANGE);
-    }
-
-    /**
-     * 保存播放历史歌单
-     */
-    private void saveHistory() {
-        savePlayQueue(false);
     }
 
     /**
@@ -811,7 +764,7 @@ public class MusicPlayerService extends Service {
         songPlayFlag = false;
         mPlayingPos = -1;
         mPlayQueue.clear();
-        savePlayQueue(true);
+        savePlayQueue();
         stop(true);
         notifyChange(Constants.META_CHANGED);
         notifyChange(Constants.PLAY_STATE_CHANGED);
@@ -964,10 +917,6 @@ public class MusicPlayerService extends Service {
                 // 更新歌词
                 mFloatLyricViewManager.updatePlayStatus(songPlayFlag);
 //                Manifest.permission.FOREGROUND_SERVICE
-                // 显示到通知栏
-                startForeground(Constants.NOTIFICATION_ID, mNotification);
-                // 必须要主动发送一次到通知栏,否则会有兼容问题
-                mNotificationManager.notify(Constants.NOTIFICATION_ID, mNotification);
             }, Throwable::printStackTrace);
             compositeDisposable.add(disposable);
         } else {
@@ -995,11 +944,12 @@ public class MusicPlayerService extends Service {
             mNotification = mNotificationBuilder.build();
             // 更新歌词
             mFloatLyricViewManager.updatePlayStatus(songPlayFlag);
-            // 显示到通知栏
-            startForeground(Constants.NOTIFICATION_ID, mNotification);
-            // 必须要主动发送一次到通知栏,否则会有兼容问题
-            mNotificationManager.notify(Constants.NOTIFICATION_ID, mNotification);
         }
+
+        // 显示到通知栏
+        startForeground(Constants.NOTIFICATION_ID, mNotification);
+        // 必须要主动发送一次到通知栏,否则会有兼容问题
+        mNotificationManager.notify(Constants.NOTIFICATION_ID, mNotification);
     }
 
     /**
@@ -1176,7 +1126,7 @@ public class MusicPlayerService extends Service {
         audioEffectsIntent.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, getPackageName());
         sendBroadcast(audioEffectsIntent);
         // 保存播放队列
-        savePlayQueue(false);
+        savePlayQueue();
         //释放mPlayer
         if (mPlayer != null) {
             songPlayFlag = false;
@@ -1343,6 +1293,6 @@ public class MusicPlayerService extends Service {
         mPlayQueue.clear();
         mPlayQueue.addAll(playQueue);
         // 保存一次播放队列
-        savePlayQueue(true);
+        savePlayQueue();
     }
 }

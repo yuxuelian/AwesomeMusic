@@ -8,8 +8,8 @@ import com.kaibo.core.activity.SuperActivity
 import com.kaibo.core.toast.ToastUtils
 import com.kaibo.core.util.isDoubleClick
 import com.kaibo.music.R
-import com.kaibo.music.fragment.home.HomeFragment
-import com.kaibo.music.fragment.home.MiniPlayerFragment
+import com.kaibo.music.fragment.HomeFragment
+import com.kaibo.music.fragment.MiniPlayerFragment
 import com.kaibo.music.player.manager.PlayManager
 
 
@@ -41,7 +41,6 @@ class MainActivity : SuperActivity() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        super.initOnCreate(savedInstanceState)
         serviceToken = PlayManager.bindToService(this)
 
         supportFragmentManager

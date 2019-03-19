@@ -9,15 +9,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.pullrefreshlayout.R;
-import com.yishi.refresh.PullRefreshLayout;
-import com.yishi.refresh.pathview.ProgressDrawable;
+import com.yan.pullrefreshlayout.pathview.ProgressDrawable;
 
 import androidx.annotation.DrawableRes;
 import androidx.core.content.ContextCompat;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.yishi.refresh.DimensionsKt.dip;
+import static com.yan.pullrefreshlayout.DimensionsKt.dip;
 
 /**
  * @author kaibo

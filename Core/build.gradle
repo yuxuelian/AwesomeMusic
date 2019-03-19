@@ -35,6 +35,9 @@ android {
             }
         }
 
+        renderscriptTargetApi 18
+        renderscriptSupportModeEnabled true
+
         proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         signingConfig signingConfigs.configuration
     }
@@ -85,12 +88,12 @@ android {
 //}
 
 dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation junit
     androidTestImplementation androidx_test_runner
     androidTestImplementation androidx_test_espresso_core
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
     // kotlin 基础库
-    implementation kotlin_stdlib
+    api kotlin_stdlib
 
     // 调试日志输出
     api debug_logger
@@ -102,8 +105,8 @@ dependencies {
     api androidx_recyclerview
     api androidx_constraintlayout
     // 数据库 ORM 框架
-    api androidx_room_runtime
-    api androidx_room_rxjava2
+//    api androidx_room_runtime
+//    api androidx_room_rxjava2
 //    kapt room_compiler
 
     api gson
@@ -147,4 +150,6 @@ dependencies {
     api glide
     api glide_okhttp
     kapt glide_compiler
+
+    api sticky_decoration
 }

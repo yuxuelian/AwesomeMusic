@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -8,11 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY" />
-
-    <View
-        android:background="#80000000"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
     <LinearLayout
         android:id="@+id/playRootView"
@@ -26,12 +23,34 @@
             layout="@layout/include_play_top" />
 
         <!--中间布局-->
-        <androidx.viewpager.widget.ViewPager
+        <FrameLayout
             android:id="@+id/lrcPager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="7"
-            android:overScrollMode="never" />
+            android:overScrollMode="never">
+
+            <com.kaibo.music.weight.CircleImageView
+                android:id="@+id/playRotaImg"
+                android:layout_width="280dp"
+                android:layout_height="280dp"
+                android:layout_gravity="center"
+                android:src="@drawable/test_play_img"
+                android:transitionName="@string/transition_share_song_img"
+                app:civ_border_color="@color/color_3999"
+                app:civ_border_width="10dp"
+                tools:targetApi="lollipop" />
+
+            <com.kaibo.music.weight.LyricView
+                android:id="@+id/lyricView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:high_textColor="@color/colorTheme"
+                app:lyric_margin="10dp" />
+        </FrameLayout>
 
         <!--底部布局-->
         <include
