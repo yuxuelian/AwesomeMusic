@@ -1,49 +1,36 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-noarg'
-apply plugin: 'kotlin-allopen'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlinx-serialization'
+apply plugin: 'AndResGuard'
 
-noArg {
-    annotation("com.kaibo.core.annotation.PoKo")
-}
-
-allOpen {
-    annotation("com.kaibo.core.annotation.PoKo")
+// 资源文件混淆打包工具(只有发布版本的时候才用)
+andResGuard {
+    // mappingFile = file("./resource_mapping.txt")
+    mappingFile = null
+    use7zip = true
+    useSign = true
+    // 打开这个开关，会keep住所有资源的原始路径，只混淆资源的名字
+    keepRoot = false
+    // 白名单
+    whiteList = []
+    compressFilePattern = ["*.png", "*.jpg", "*.jpeg", "*.gif",]
+    sevenzip {
+        artifact = 'com.tencent.mm:SevenZip:1.2.15'
+        //path = "/usr/local/bin/7za"
+    }
+    // 可选： 如果不设置则会默认覆盖assemble输出的apk
+    finalApkBackupPath = "${project.rootDir}/final-release.apk"
+    // 可选: 指定v1签名时生成jar文件的摘要算法 默认值为“SHA-1”
+    digestalg = "SHA-256"
 }
 
 android {
-    compileSdkVersion 28
-
-    dataBinding.enabled true
-
-    defaultConfig {
-        applicationId "com.kaibo.music"
-        minSdkVersion 19
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        multiDexEnabled true
-
-        renderscriptTargetApi 18
-        renderscriptSupportModeEnabled true
-
-//        ndk {
-//            abiFilters 'armeabi-v7a', 'x86'
-//        }
-
-        buildConfigField 'String', 'APP_HOST', '\"http://www.baidu.com\"'
-        buildConfigField 'int', 'COUNT', "${versionCode}"
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = [AROUTER_MODULE_NAME: project.getName()]
-            }
-        }
-    }
-
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+//    enableD8.desugaring = true
+//    useDexArchive = false
     signingConfigs {
         configuration {
             keyAlias "kaibo"
@@ -53,40 +40,72 @@ android {
         }
     }
 
+    defaultConfig {
+        applicationId "com.kaibo.music"
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode rootProject.versionCode
+        versionName rootProject.versionName
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+        ndk {
+//            abiFilters 'armeabi-v7a'
+            abiFilters 'armeabi-v7a', 'x86'
+        }
+        vectorDrawables.useSupportLibrary = true
+
+        renderscriptTargetApi 18
+        renderscriptSupportModeEnabled true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            // 混淆规则
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // 签名
             signingConfig signingConfigs.configuration
         }
 
         debug {
+            minifyEnabled false
+            // 混淆规则
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // 签名
             signingConfig signingConfigs.configuration
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+    dexOptions {
+        javaMaxHeapSize "4g"
     }
 
-//    kapt {
-//        arguments {
-//            arg("AROUTER_MODULE_NAME", project.getName())
-//        }
-//    }
+    lintOptions {
+        disable "MissingTranslation"
+        disable 'GoogleAppIndexingWarning'
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility rootProject.sourceCompatibility
+        targetCompatibility rootProject.targetCompatibility
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    //-----------------------------Test---------------------------------------
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
-    //性能检测
-    implementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
+    testImplementation junit
+    androidTestImplementation androidx_test_runner
+    androidTestImplementation androidx_test_espresso_core
+    implementation kotlin_stdlib
+    // 性能检测
+    implementation leakcanary_android
+
+    kapt room_compiler
+
     implementation project(':Core')
-    implementation project(':Player')
-    implementation project(':PullRefresh')
     implementation project(':BadgeViewLib')
+    implementation project(':PullRefresh')
+    implementation project(':Player')
+    implementation project(':RxPermissions')
 }

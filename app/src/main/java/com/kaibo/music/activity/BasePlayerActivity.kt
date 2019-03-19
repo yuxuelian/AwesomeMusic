@@ -3,6 +3,7 @@ package com.kaibo.music.activity
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.kaibo.core.activity.SuperActivity
+import com.kaibo.core.util.bindLifecycle
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
 import io.reactivex.Observable
@@ -80,7 +81,7 @@ abstract class BasePlayerActivity : SuperActivity() {
     override fun onResume() {
         super.onResume()
         // 启动心跳  更新UI
-        tickDisposable = Observable.interval(100L, 200L, TimeUnit.MILLISECONDS).toMainThread().subscribe({
+        tickDisposable = Observable.interval(100L, 200L, TimeUnit.MILLISECONDS).toMainThread().`as`(bindLifecycle()).subscribe({
             tickTask()
         }) {
             it.printStackTrace()

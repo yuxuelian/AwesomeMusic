@@ -5,13 +5,13 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.wang.avi.AVLoadingIndicatorView
-        android:id="@+id/avLoadingIndicatorView"
+    <com.github.ybq.android.spinkit.SpinKitView
+        android:id="@+id/spin_kit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:background="@color/transparent"
-        app:indicatorColor="@color/white" />
+        app:SpinKit_Color="@color/white" />
 
     <TextView
         android:layout_width="wrap_content"

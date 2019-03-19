@@ -9,12 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.kaibo.core.dialog.LoadingDialog
 import com.kaibo.core.toast.ToastUtils
-import com.kaibo.core.util.bindToAutoDispose
+import com.kaibo.core.util.bindLifecycle
 import com.kaibo.core.util.immersive
 import com.tbruyelle.rxpermissions2.Permission
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.uber.autodispose.AutoDisposeConverter
-import me.yokeyword.fragmentation.SupportActivity
 
 /**
  * @author:Administrator
@@ -24,7 +23,7 @@ import me.yokeyword.fragmentation.SupportActivity
  * description:
  */
 
-abstract class SuperActivity : SupportActivity() {
+abstract class SuperActivity : AppCompatActivity() {
 
     protected val rxPermissions by lazy {
         RxPermissions(this)
@@ -77,7 +76,7 @@ abstract class SuperActivity : SupportActivity() {
         //默认设置Activity为沉浸式
         val (enableImmersive, isLight) = enableImmersive()
         if (enableImmersive) {
-            immersive(isLight)
+            window.immersive(isLight)
         }
 
         setContentViewBefore(savedInstanceState)
@@ -159,9 +158,4 @@ abstract class SuperActivity : SupportActivity() {
         }
         super.onConfigurationChanged(newConfig)
     }
-
-    /**
-     * Rx绑定生命周期
-     */
-    protected fun <T> bindLifecycle(): AutoDisposeConverter<T> = bindToAutoDispose(this)
 }

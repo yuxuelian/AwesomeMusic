@@ -8,9 +8,9 @@ import com.kaibo.core.activity.SuperActivity
 import com.kaibo.core.toast.ToastUtils
 import com.kaibo.core.util.isDoubleClick
 import com.kaibo.music.R
-import com.kaibo.music.fragment.RootFragment
+import com.kaibo.music.fragment.home.HomeFragment
+import com.kaibo.music.fragment.home.MiniPlayerFragment
 import com.kaibo.music.player.manager.PlayManager
-import me.yokeyword.fragmentation.anim.FragmentAnimator
 
 
 /**
@@ -24,10 +24,6 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator
 class MainActivity : SuperActivity() {
 
     private var serviceToken: PlayManager.ServiceToken? = null
-
-    val rootFragment by lazy {
-        RootFragment.newInstance()
-    }
 
     private fun setNeedsMenuKey() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
@@ -47,21 +43,19 @@ class MainActivity : SuperActivity() {
     override fun initOnCreate(savedInstanceState: Bundle?) {
         super.initOnCreate(savedInstanceState)
         serviceToken = PlayManager.bindToService(this)
-        // 加载根Fragment
-        if (findFragment(RootFragment::class.java) == null) {
-            loadRootFragment(R.id.rootFragmentContainer, rootFragment)
-        }
+
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.homeContainer, HomeFragment())
+                .replace(R.id.miniPlayerContainer, MiniPlayerFragment())
+                .commitAllowingStateLoss()
+
         setNeedsMenuKey()
     }
 
-    override fun onCreateFragmentAnimator(): FragmentAnimator {
-        return FragmentAnimator(R.anim.translation_right_in, R.anim.translation_left_out,
-                R.anim.translation_left_in, R.anim.translation_right_out)
-    }
-
-    override fun onBackPressedSupport() {
+    override fun onBackPressed() {
         if (isDoubleClick()) {
-            super.onBackPressedSupport()
+            super.onBackPressed()
         } else {
             ToastUtils.showInfo("再点击一次返回键退出")
         }

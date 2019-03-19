@@ -5,13 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.kaibo.core.toast.ToastUtils
-import com.kaibo.core.util.bindToAutoDispose
+import com.kaibo.core.util.bindLifecycle
 import com.tbruyelle.rxpermissions2.Permission
 import com.tbruyelle.rxpermissions2.RxPermissions
-import com.uber.autodispose.AutoDisposeConverter
-import me.yokeyword.fragmentation_swipeback.SwipeBackFragment
 
 /**
  * @author:Administrator
@@ -21,7 +20,7 @@ import me.yokeyword.fragmentation_swipeback.SwipeBackFragment
  * description:
  */
 
-abstract class BaseFragment : SwipeBackFragment() {
+abstract class BaseFragment : Fragment() {
 
     private lateinit var fragmentActivity: FragmentActivity
 
@@ -29,7 +28,7 @@ abstract class BaseFragment : SwipeBackFragment() {
         get() = fragmentActivity
 
     private val rxPermissions by lazy {
-        RxPermissions(activity!!)
+        RxPermissions(requireActivity())
     }
 
     /**
@@ -62,18 +61,13 @@ abstract class BaseFragment : SwipeBackFragment() {
         }
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         fragmentActivity = context as FragmentActivity
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(getLayoutRes(), container, false)
-        return if (isCanSwipeBack) {
-            attachToSwipeBack(rootView)
-        } else {
-            rootView
-        }
+        return inflater.inflate(getLayoutRes(), container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -85,7 +79,4 @@ abstract class BaseFragment : SwipeBackFragment() {
     }
 
     protected abstract fun getLayoutRes(): Int
-
-    protected fun <T> bindLifecycle(): AutoDisposeConverter<T> = bindToAutoDispose(this)
-
 }

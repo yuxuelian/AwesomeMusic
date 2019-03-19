@@ -1,6 +1,6 @@
 package com.kaibo.core.service
 
-import dagger.android.DaggerService
+import android.app.Service
 
 /**
  * @author:Administrator
@@ -10,4 +10,4 @@ import dagger.android.DaggerService
  * @description:
  */
 
-abstract class BaseService : DaggerService()
+abstract class BaseService : Service()

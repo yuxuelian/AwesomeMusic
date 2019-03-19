@@ -12,7 +12,7 @@ package com.kaibo.core.util
  * 判断字符串是否是合法的手机号
  */
 fun CharSequence.isPhoneValid(): Boolean {
-    return Regex(pattern = """^[1][34578][0-9]{9}${'$'}""").matches(this)
+    return Regex(pattern = """^[1][3456789][0-9]{9}${'$'}""").matches(this)
 }
 
 /**
@@ -26,7 +26,7 @@ fun CharSequence.isVerCodeValid(): Boolean {
  * 判断密码是否合法
  */
 fun CharSequence.isPwdValid(): Boolean {
-    return this.length in 6..16
+    return this.length in 8..20
 }
 
 /**
@@ -44,7 +44,7 @@ fun CharSequence.isIdCardValid(): Boolean {
         return false
     }
     // 定义判别用户身份证号的正则表达式（15位或者18位，最后一位可以为字母）
-    val regularExpression = """^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]${'$'}"""
+    val regularExpression = """^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}([0-9]|X|x])${'$'}"""
     //假设18位身份证号码:41000119910101123X  410001 19910101 123X
     //^开头
     //[1-9] 第一位1-9中的一个              4

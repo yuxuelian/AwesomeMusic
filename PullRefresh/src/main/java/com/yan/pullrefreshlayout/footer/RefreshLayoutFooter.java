@@ -9,16 +9,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.pullrefreshlayout.R;
-import com.yan.pullrefreshlayout.pathview.PathsDrawable;
-import com.yan.pullrefreshlayout.pathview.ProgressDrawable;
+import com.yishi.refresh.PullRefreshLayout;
+import com.yishi.refresh.pathview.ProgressDrawable;
 
 import androidx.annotation.DrawableRes;
 import androidx.core.content.ContextCompat;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static org.jetbrains.anko.DimensionsKt.dip;
+import static com.yishi.refresh.DimensionsKt.dip;
 
 /**
  * @author kaibo
@@ -40,7 +39,7 @@ public class RefreshLayoutFooter extends NestedLinearLayout implements PullRefre
     private ImageView mArrowView;
     private ImageView mProgressView;
     private FrameLayout mImageContainer;
-    private PathsDrawable mArrowDrawable;
+    private Drawable mArrowDrawable;
     private ProgressDrawable mProgressDrawable;
 
     public RefreshLayoutFooter(Context context) {
@@ -62,9 +61,8 @@ public class RefreshLayoutFooter extends NestedLinearLayout implements PullRefre
 
         mArrowView = new ImageView(context);
         mArrowView.setRotation(180f);
-        mArrowDrawable = new PathsDrawable();
-        mArrowDrawable.parserColors(0xff303030);
-        mArrowDrawable.parserPaths("M20,12l-1.41,-1.41L13,16.17V4h-2v12.17l-5.58,-5.59L4,12l8,8 8,-8z");
+
+        mArrowDrawable = ContextCompat.getDrawable(context, R.drawable.ic_arrow_downward_black_24dp);
         mArrowView.setImageDrawable(mArrowDrawable);
 
         if (isInEditMode()) {

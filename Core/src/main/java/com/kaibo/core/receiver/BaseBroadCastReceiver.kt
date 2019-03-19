@@ -1,6 +1,6 @@
 package com.kaibo.core.receiver
 
-import dagger.android.DaggerBroadcastReceiver
+import android.content.BroadcastReceiver
 
 /**
  * @author:Administrator
@@ -10,4 +10,4 @@ import dagger.android.DaggerBroadcastReceiver
  * @description:
  */
 
-abstract class BaseBroadCastReceiver : DaggerBroadcastReceiver()
+abstract class BaseBroadCastReceiver : BroadcastReceiver()

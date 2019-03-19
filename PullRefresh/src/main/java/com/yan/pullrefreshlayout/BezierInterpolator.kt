@@ -1,4 +1,4 @@
-package com.yan.pullrefreshlayout
+package com.yishi.refresh
 
 import android.graphics.PointF
 import android.view.animation.Interpolator

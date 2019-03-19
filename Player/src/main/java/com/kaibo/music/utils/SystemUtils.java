@@ -9,6 +9,7 @@ import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.provider.Settings;
 
+import com.kaibo.core.AppContext;
 import com.kaibo.music.utils.rom.FloatUtil;
 import com.kaibo.core.BaseApplication;
 
@@ -51,7 +52,7 @@ public class SystemUtils {
      * @return
      */
     public static boolean isOpenFloatWindow() {
-        return FloatUtil.INSTANCE.checkPermission(BaseApplication.Companion.getINSTANCE());
+        return FloatUtil.INSTANCE.checkPermission(AppContext.INSTANCE);
     }
 
     /**
@@ -60,7 +61,7 @@ public class SystemUtils {
      * @return
      */
     public static void applySystemWindow() {
-        FloatUtil.INSTANCE.applyOrShowFloatWindow(BaseApplication.Companion.getINSTANCE());
+        FloatUtil.INSTANCE.applyOrShowFloatWindow(AppContext.INSTANCE);
     }
 
     /**
@@ -83,7 +84,7 @@ public class SystemUtils {
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private static boolean isNoOptions() {
-        PackageManager packageManager = BaseApplication.Companion.getINSTANCE().getPackageManager();
+        PackageManager packageManager = AppContext.INSTANCE.getPackageManager();
         Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
         List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         return list.size() > 0;
@@ -97,7 +98,7 @@ public class SystemUtils {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
     private static boolean isNoSwitch() {
         long dujinyang = System.currentTimeMillis();
-        UsageStatsManager usageStatsManager = (UsageStatsManager) BaseApplication.Companion.getINSTANCE().getSystemService(Context.USAGE_STATS_SERVICE);
+        UsageStatsManager usageStatsManager = (UsageStatsManager) AppContext.INSTANCE.getSystemService(Context.USAGE_STATS_SERVICE);
         List<UsageStats> queryUsageStats = null;
         if (usageStatsManager != null) {
             queryUsageStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, 0, dujinyang);

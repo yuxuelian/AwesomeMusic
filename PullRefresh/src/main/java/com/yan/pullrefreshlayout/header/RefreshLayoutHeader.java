@@ -4,18 +4,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.pullrefreshlayout.R;
-import com.yan.pullrefreshlayout.pathview.PathsDrawable;
-import com.yan.pullrefreshlayout.pathview.ProgressDrawable;
+import com.yishi.refresh.PullRefreshLayout;
+import com.yishi.refresh.pathview.ProgressDrawable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -30,7 +27,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static org.jetbrains.anko.DimensionsKt.dip;
+import static com.yishi.refresh.DimensionsKt.dip;
 
 /**
  * @author kaibo
@@ -54,9 +51,11 @@ public class RefreshLayoutHeader extends NestedRelativeLayout implements PullRef
     protected TextView mLastUpdateText;
     protected ImageView mArrowView;
     protected ImageView mProgressView;
-    protected PathsDrawable mArrowDrawable;
+
+    protected Drawable mArrowDrawable;
+
     protected ProgressDrawable mProgressDrawable;
-    private DateFormat mFormat = new SimpleDateFormat("上次更新 M-d HH:mm", Locale.CHINA);
+    private DateFormat mFormat = new SimpleDateFormat("上次更新 M-d HH:mm", Locale.CHINESE);
     private SharedPreferences mShared;
 
     public RefreshLayoutHeader(Context context) {
@@ -86,13 +85,13 @@ public class RefreshLayoutHeader extends NestedRelativeLayout implements PullRef
         LinearLayout.LayoutParams lpUpdateText = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
         layout.addView(mLastUpdateText, lpUpdateText);
 
-        RelativeLayout.LayoutParams lpHeaderLayout = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        LayoutParams lpHeaderLayout = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
         lpHeaderLayout.addRule(CENTER_IN_PARENT);
         addView(layout, lpHeaderLayout);
 
         mProgressView = new ImageView(context);
         mProgressView.animate().setInterpolator(new LinearInterpolator());
-        RelativeLayout.LayoutParams lpProgress = new RelativeLayout.LayoutParams(dip(getContext(), 20), dip(getContext(), 20));
+        LayoutParams lpProgress = new LayoutParams(dip(getContext(), 20), dip(getContext(), 20));
         lpProgress.rightMargin = dip(getContext(), 20);
         lpProgress.addRule(CENTER_VERTICAL);
         lpProgress.addRule(LEFT_OF, android.R.id.widget_frame);
@@ -108,9 +107,7 @@ public class RefreshLayoutHeader extends NestedRelativeLayout implements PullRef
             mProgressView.setVisibility(GONE);
         }
 
-        mArrowDrawable = new PathsDrawable();
-        mArrowDrawable.parserColors(0xff303030);
-        mArrowDrawable.parserPaths("M20,12l-1.41,-1.41L13,16.17V4h-2v12.17l-5.58,-5.59L4,12l8,8 8,-8z");
+        mArrowDrawable = ContextCompat.getDrawable(context, R.drawable.ic_arrow_downward_black_24dp);
         mArrowView.setImageDrawable(mArrowDrawable);
         mProgressDrawable = new ProgressDrawable();
         mProgressDrawable.setColor(ContextCompat.getColor(getContext(), R.color.color_303030));
@@ -208,7 +205,6 @@ public class RefreshLayoutHeader extends NestedRelativeLayout implements PullRef
 
     @Override
     public void onPullHolding() {
-        Log.e("onPullHolding", "onPullHolding: ");
         mHeaderText.setText(REFRESH_HEADER_REFRESHING);
         mProgressView.setVisibility(VISIBLE);
         mArrowView.setVisibility(GONE);
@@ -234,7 +230,6 @@ public class RefreshLayoutHeader extends NestedRelativeLayout implements PullRef
 
     @Override
     public void onPullFinish(boolean flag) {
-        Log.e("onPullFinish", "onPullFinish: ");
         if (mProgressDrawable != null) {
             mProgressDrawable.stop();
         } else {
@@ -249,7 +244,6 @@ public class RefreshLayoutHeader extends NestedRelativeLayout implements PullRef
 
     @Override
     public void onPullReset() {
-        Log.e("onPullReset", "onPullReset: ");
         onPullHoldUnTrigger();
     }
 }

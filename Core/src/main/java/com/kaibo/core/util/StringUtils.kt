@@ -8,8 +8,6 @@ import okhttp3.RequestBody
 import java.io.File
 import java.io.FileWriter
 import java.security.MessageDigest
-import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  * @author:Administrator
@@ -27,13 +25,13 @@ fun String.isNotEmpty() = this != "" && this.toLowerCase() != "null"
 /**
  * 将  String  转成  RequestBody
  */
-fun String.toJsonRequestBody(): RequestBody = RequestBody.create(HttpRequestManager.JSON, this)
+fun String.toJsonRequestBody(): RequestBody = RequestBody.create(HttpRequestManager.mediaTypeJson, this)
 
 /**
  * 将路径列表转换成  List<MultipartBody.Part>
  *  适用于后台一个key接收文件数组的情况
  */
-fun List<String>.toMultiBodyParts(key: String, mediaType: MediaType?) = this
+fun List<String>.toMultiBodyParts(key: String, mediaType: MediaType): List<MultipartBody.Part> = this
         .filter { it.isNotEmpty() }
         .map {
             val file = File(it)
@@ -47,27 +45,11 @@ fun String.toUri(): Uri {
 }
 
 fun String.toMd5(): String {
-    val md5: MessageDigest = MessageDigest.getInstance("MD5")
-    md5.update(this.toByteArray(charset("UTF-8")))
-    val encryption: ByteArray = md5.digest()
-    val strBuf = StringBuffer()
-    encryption.forEach {
-        val enc = it.toInt()
-        if (Integer.toHexString(0xFF and enc).length == 1) {
-            strBuf.append("0").append(Integer.toHexString(0xFF and enc))
-        } else {
-            strBuf.append(Integer.toHexString(0xFF and enc))
-        }
-    }
-    return strBuf.toString()
-}
-
-/**
- * 将时间字符串对象转换成Long
- */
-fun String.toTimeMillis(format: String = "yyyy-MM-dd HH:mm:ss"): Long {
-    val dateFormat = SimpleDateFormat(format, Locale.CHINESE)
-    return dateFormat.parse(this).time
+    return MessageDigest
+            .getInstance("MD5")
+            .apply { update(toByteArray()) }
+            .digest()
+            .joinToString("", transform = Byte::toHexString)
 }
 
 fun String.saveToFile(targetFile: File) {

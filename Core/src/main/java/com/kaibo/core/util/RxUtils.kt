@@ -1,6 +1,7 @@
 package com.kaibo.core.util
 
 import android.view.View
+import androidx.annotation.CheckResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.jakewharton.rxbinding2.view.clicks
@@ -11,6 +12,7 @@ import com.uber.autodispose.AutoDispose
 import com.uber.autodispose.AutoDisposeConverter
 import com.uber.autodispose.ObservableSubscribeProxy
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -25,25 +27,52 @@ import java.util.concurrent.TimeUnit
  * @description：
  */
 
-fun <T> bindToAutoDispose(lifecycleOwner: LifecycleOwner): AutoDisposeConverter<T> {
-    return AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner, Lifecycle.Event.ON_DESTROY))
+@CheckResult
+fun <T> LifecycleOwner.bindLifecycle(): AutoDisposeConverter<T> {
+    // 在OnDestroy的时候解除绑定
+    return AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this, Lifecycle.Event.ON_DESTROY))
 }
 
+@CheckResult
 fun <T> Observable<T>.toMainThread(): Observable<T> {
     return this.observeOn(AndroidSchedulers.mainThread())
+}
+
+@CheckResult
+fun <T> Observable<T>.async(): Observable<T> {
+    return this.subscribeOn(Schedulers.io()).toMainThread()
+}
+
+@CheckResult
+fun <T> Flowable<T>.toMainThread(): Flowable<T> {
+    return this.observeOn(AndroidSchedulers.mainThread())
+}
+
+@CheckResult
+fun <T> Flowable<T>.async(): Flowable<T> {
+    return this.subscribeOn(Schedulers.io()).toMainThread()
 }
 
 /**
  * 检查  BaseBean  中的参数
  */
+@CheckResult
 fun <T> Observable<BaseBean<T>>.checkResult(): Observable<T> {
     return this.map {
-        if (it.code == 0) {
+        if (it.code == 200) {
             it.data
         } else {
             throw DataException(it.code, it.message)
         }
     }
+}
+
+/**
+ * 延时指定的时长  单位毫秒
+ */
+@CheckResult
+fun Long.delay(autoDispose: AutoDisposeConverter<Long>): ObservableSubscribeProxy<Long> {
+    return Observable.timer(this, TimeUnit.MILLISECONDS).toMainThread().`as`(autoDispose)
 }
 
 fun <T> singleAsync(autoDispose: AutoDisposeConverter<T>, onSuccess: (T) -> Unit = {}, task: () -> T) {
@@ -70,6 +99,7 @@ fun <T> singleAsync(autoDispose: AutoDisposeConverter<T>, onSuccess: (T) -> Unit
 /**
  * 带防重复点击的方法
  */
+@CheckResult
 fun View.easyClick(autoDispose: AutoDisposeConverter<Unit>, timeout: Long = 200L): ObservableSubscribeProxy<Unit> {
     return this.clicks().debounce(timeout, TimeUnit.MILLISECONDS).toMainThread().`as`(autoDispose)
 }

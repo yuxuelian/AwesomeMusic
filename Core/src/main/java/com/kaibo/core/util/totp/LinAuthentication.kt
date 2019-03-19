@@ -1,5 +1,6 @@
 package com.kaibo.core.util.totp
 
+import com.kaibo.core.util.totp.Base32String
 import java.security.GeneralSecurityException
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
@@ -17,7 +18,7 @@ object LinAuthentication {
     /**
      * 默认秘钥
      */
-    const val KEY = "BV6NVZYTWEKSI4E3"
+    private const val KEY = "BV6NVZYTWEKSI4E3"
 
     private const val startTime: Long = 0
     private const val timeStep: Long = 120

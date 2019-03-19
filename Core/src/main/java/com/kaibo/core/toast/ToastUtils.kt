@@ -10,7 +10,6 @@ import android.view.View
 import android.widget.Toast
 import com.kaibo.core.R
 import kotlinx.android.synthetic.main.toast_layout.view.*
-import org.jetbrains.anko.backgroundResource
 
 
 /**
@@ -82,8 +81,7 @@ object ToastUtils {
     }
 
     private fun set(showIcon: Boolean, @ColorInt textColor: Int, @DrawableRes bgDrawable: Int, msg: CharSequence?, @DrawableRes icon: Int) {
-        toast.view.backgroundResource = bgDrawable
-
+        toast.view.setBackgroundResource(bgDrawable)
         toast.view.toast_icon.visibility = if (showIcon) View.VISIBLE else View.GONE
         toast.view.toast_icon.setImageResource(icon)
         toast.view.toast_text.setTextColor(textColor)

@@ -1,4 +1,4 @@
-package com.yan.pullrefreshlayout
+package com.yishi.refresh
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -20,8 +20,7 @@ import androidx.core.view.*
 import androidx.core.widget.ListViewCompat
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
-import com.kaibo.core.util.deviceHeight
-import org.jetbrains.anko.dip
+import com.yan.pullrefreshlayout.R
 
 /**
  * @author 56896
@@ -30,6 +29,7 @@ import org.jetbrains.anko.dip
  * @email：kaibo1hao@gmail.com
  * @description：
  */
+
 class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
         ViewGroup(context, attrs, defStyleAttr),
         NestedScrollingParent,
@@ -240,9 +240,9 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
 
     private val recyclerDefaultInterpolator: Interpolator
         get() = Interpolator { t ->
-            var t = t
-            t -= 1.0f
-            t * t * t * t * t + 1.0f
+            var t1 = t
+            t1 -= 1.0f
+            t1 * t1 * t1 * t1 * t1 + 1.0f
         }
 
     /**
@@ -430,8 +430,8 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
         dragDampingRatio = ta.getFloat(R.styleable.PullRefreshLayout_prl_dragDampingRatio, dragDampingRatio)
         overScrollAdjustValue = ta.getFloat(R.styleable.PullRefreshLayout_prl_overScrollAdjustValue, overScrollAdjustValue)
         overScrollDampingRatio = ta.getFloat(R.styleable.PullRefreshLayout_prl_overScrollDampingRatio, overScrollDampingRatio)
-        topOverScrollMaxTriggerOffset = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_topOverScrollMaxTriggerOffset, dip(topOverScrollMaxTriggerOffset))
-        bottomOverScrollMaxTriggerOffset = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_downOverScrollMaxTriggerOffset, dip(bottomOverScrollMaxTriggerOffset))
+        topOverScrollMaxTriggerOffset = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_topOverScrollMaxTriggerOffset, context.dip(topOverScrollMaxTriggerOffset))
+        bottomOverScrollMaxTriggerOffset = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_downOverScrollMaxTriggerOffset, context.dip(bottomOverScrollMaxTriggerOffset))
         showGravity.headerShowGravity = ta.getInteger(R.styleable.PullRefreshLayout_prl_headerShowGravity, ShowGravity.FOLLOW)
         showGravity.footerShowGravity = ta.getInteger(R.styleable.PullRefreshLayout_prl_footerShowGravity, ShowGravity.FOLLOW)
         targetViewId = ta.getResourceId(R.styleable.PullRefreshLayout_prl_targetId, targetViewId)
@@ -594,8 +594,7 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
                     && moveDistance <= 0) {
                 overScrollDell(2, currScrollOffset)
             }
-            // invalidate View ,the method invalidate() sometimes not work , so i use ViewCompat.postInvalidateOnAnimation(this) instead of invalidate()
-            ViewCompat.postInvalidateOnAnimation(this)
+            this.postInvalidateOnAnimation()
         }
     }
 
@@ -632,8 +631,10 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
         if (!dispatchChildrenEventAble) {
             return false
         }
+
         val sign = if (type == 1) 1 else -1
         val velocity = (sign * Math.abs(scroller!!.currVelocity)).toInt()
+
         if (targetView is ScrollView && !isScrollAbleViewBackScroll) {
             (targetView as ScrollView).fling(velocity)
         } else if (targetView is WebView && !isScrollAbleViewBackScroll) {
@@ -673,7 +674,11 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
             if (animationOverScrollInterpolator == null) {
                 animationOverScrollInterpolator = LinearInterpolator()
             }
-            overScrollAnimator = getAnimator(mDistanceMove, 0, overScrollAnimatorUpdate, overScrollAnimatorListener, animationOverScrollInterpolator!!)
+            overScrollAnimator = getAnimator(mDistanceMove,
+                    0,
+                    overScrollAnimatorUpdate,
+                    overScrollAnimatorListener,
+                    animationOverScrollInterpolator!!)
         } else {
             overScrollAnimator!!.setIntValues(mDistanceMove, 0)
         }
@@ -729,6 +734,7 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
         var tempDistance = (moveDistance + distanceY).toInt()
         tempDistance = Math.min(tempDistance, pullDownMaxDistance)
         tempDistance = Math.max(tempDistance, -pullUpMaxDistance)
+
         if (!isTwinkEnable && (isRefreshing && tempDistance < 0 || isLoading && tempDistance > 0)) {
             if (moveDistance == 0) {
                 return
@@ -741,6 +747,7 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
             moveDistance = 0
             return
         }
+
         if (moveDistance >= 0 && headerView != null) {
             onHeaderPullChange()
             if (!isHoldingTrigger && moveDistance >= refreshTriggerDistance) {
@@ -777,15 +784,18 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
         if (parentOffsetInWindow[1] != 0 || (isTwinkEnable && (!isTargetAbleScrollUp && isTargetAbleScrollDown && moveDistance < 0 || isTargetAbleScrollUp && !isTargetAbleScrollDown && moveDistance > 0))) {
             return
         }
+
         if (type == 1) {
             onTopOverScroll()
         } else {
             onBottomOverScroll()
         }
+
         if (!isTwinkEnable) {
             abortScroller()
             return
         }
+
         isOverScrollTrigger = true
         startOverScrollAnimation(type, offset)
     }
@@ -945,8 +955,9 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     private fun getOverScrollTime(distance: Int): Long {
-        val ratio = Math.abs(distance.toFloat() / context.deviceHeight)
-        return Math.max(overScrollMinDuring.toLong(), (Math.pow((2000 * ratio).toDouble(), 0.44) * overScrollAdjustValue).toLong())
+        val ratio = Math.abs(distance.toFloat() / context.resources.displayMetrics.heightPixels)
+        return Math.max(overScrollMinDuring.toLong(),
+                (Math.pow((2000 * ratio).toDouble(), 0.44) * overScrollAdjustValue).toLong())
     }
 
     private fun dellNestedScrollCheck() {
@@ -1143,21 +1154,21 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     private fun onScrollAny(dy: Int) {
-        var dy = dy
-        if (dy < 0
+        var dy1 = dy
+        dy1 = if (dy1 < 0
                 && dragDampingRatio < 1
                 && pullDownMaxDistance > 0
-                && moveDistance - dy > pullDownMaxDistance * dragDampingRatio) {
-            dy = (dy * (1 - moveDistance / pullDownMaxDistance.toFloat())).toInt()
-        } else if (dy > 0
+                && moveDistance - dy1 > pullDownMaxDistance * dragDampingRatio) {
+            (dy1 * (1 - moveDistance / pullDownMaxDistance.toFloat())).toInt()
+        } else if (dy1 > 0
                 && dragDampingRatio < 1
                 && pullUpMaxDistance > 0
-                && -moveDistance + dy > pullUpMaxDistance * dragDampingRatio) {
-            dy = (dy * (1 - -moveDistance / pullUpMaxDistance.toFloat())).toInt()
+                && -moveDistance + dy1 > pullUpMaxDistance * dragDampingRatio) {
+            (dy1 * (1 - -moveDistance / pullUpMaxDistance.toFloat())).toInt()
         } else {
-            dy = (dy * dragDampingRatio).toInt()
+            (dy1 * dragDampingRatio).toInt()
         }
-        dellScroll((-dy).toFloat())
+        dellScroll((-dy1).toFloat())
     }
 
     internal fun onStopScroll() {
@@ -1306,9 +1317,9 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     interface OnRefreshListener {
-        fun onRefresh() {}
+        fun onRefresh() = Unit
 
-        fun onLoading() {}
+        fun onLoading() = Unit
     }
 
     /**
@@ -1412,20 +1423,12 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    fun autoLoading(toLoadDistance: Int) {
-        autoLoading(true, toLoadDistance)
-    }
-
     @JvmOverloads
     fun autoLoading(withAction: Boolean = true, toLoadDistance: Int = -1) {
         if (!isLoadMoreEnable || isHoldingTrigger) {
             return
         }
         startLoadMore(moveDistance, toLoadDistance, withAction)
-    }
-
-    fun autoRefresh(toRefreshDistance: Int) {
-        autoRefresh(true, toRefreshDistance)
     }
 
     @JvmOverloads
@@ -1597,14 +1600,17 @@ class PullRefreshLayout @JvmOverloads constructor(context: Context, attrs: Attri
         this.animationOverScrollInterpolator = animationOverScrollInterpolator
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : View> getHeaderView(): T {
         return headerView as T
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : View> getFooterView(): T {
         return footerView as T
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : View> getTargetView(): T {
         return targetView as T
     }

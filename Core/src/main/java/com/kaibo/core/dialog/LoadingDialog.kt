@@ -4,9 +4,8 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.WindowManager
 import androidx.fragment.app.FragmentManager
+import com.github.ybq.android.spinkit.style.FadingCircle
 import com.kaibo.core.R
-import com.kaibo.core.util.getRandom
-import com.wang.avi.indicators.*
 import kotlinx.android.synthetic.main.dialog_loading.*
 
 /**
@@ -19,52 +18,18 @@ import kotlinx.android.synthetic.main.dialog_loading.*
 
 class LoadingDialog : BaseDialog() {
 
-    companion object {
-        val loadingStyle by lazy {
-            arrayOf(
-                    BallBeatIndicator::class.java,
-                    BallClipRotateIndicator::class.java,
-                    BallClipRotateMultipleIndicator::class.java,
-                    BallClipRotatePulseIndicator::class.java,
-                    BallGridBeatIndicator::class.java,
-                    BallGridPulseIndicator::class.java,
-                    BallPulseIndicator::class.java,
-                    BallPulseRiseIndicator::class.java,
-                    BallPulseSyncIndicator::class.java,
-                    BallRotateIndicator::class.java,
-                    BallScaleIndicator::class.java,
-                    BallScaleMultipleIndicator::class.java,
-                    BallScaleRippleIndicator::class.java,
-                    BallScaleRippleMultipleIndicator::class.java,
-                    BallSpinFadeLoaderIndicator::class.java,
-                    BallTrianglePathIndicator::class.java,
-                    BallZigZagDeflectIndicator::class.java,
-                    BallZigZagIndicator::class.java,
-                    CubeTransitionIndicator::class.java,
-                    LineScaleIndicator::class.java,
-                    LineScalePartyIndicator::class.java,
-                    LineScalePulseOutIndicator::class.java,
-                    LineScalePulseOutRapidIndicator::class.java,
-                    LineSpinFadeLoaderIndicator::class.java,
-                    PacmanIndicator::class.java,
-                    SemiCircleSpinIndicator::class.java,
-                    SquareSpinIndicator::class.java,
-                    TriangleSkewSpinIndicator::class.java
-            )
-        }
-    }
-
     override fun getLayoutRes() = R.layout.dialog_loading
 
     override fun initViewCreated(savedInstanceState: Bundle?) {
         super.initViewCreated(savedInstanceState)
-        dialog.setCanceledOnTouchOutside(false)
+        dialog?.setCanceledOnTouchOutside(false)
         isCancelable = false
         //屏蔽返回键
-        dialog.setOnKeyListener { _, keyCode, _ ->
+        dialog?.setOnKeyListener { _, keyCode, _ ->
             keyCode == KeyEvent.KEYCODE_BACK
         }
-        avLoadingIndicatorView.indicator = loadingStyle[getRandom(0, loadingStyle.size)].newInstance()
+        val doubleBounce = FadingCircle()
+        spin_kit.setIndeterminateDrawable(doubleBounce)
     }
 
     fun show(manager: FragmentManager) {

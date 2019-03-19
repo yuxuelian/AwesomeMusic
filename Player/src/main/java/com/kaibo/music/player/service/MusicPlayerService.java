@@ -25,11 +25,11 @@ import android.os.PowerManager;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.util.Base64;
 import android.widget.RemoteViews;
 
 import com.kaibo.core.exception.DataException;
 import com.kaibo.core.toast.ToastUtils;
-import com.kaibo.core.util.Base64UtilsKt;
 import com.kaibo.music.bean.LyricRowBean;
 import com.kaibo.music.bean.PlayListBean;
 import com.kaibo.music.bean.SongBean;
@@ -50,6 +50,7 @@ import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -449,7 +450,8 @@ public class MusicPlayerService extends Service {
                     .getLyricByMid(songBean.getMid())
                     .map(stringBaseBean -> {
                         if (stringBaseBean.getCode() == 0) {
-                            String lyricText = Base64UtilsKt.decode(stringBaseBean.getData());
+                            byte[] decode = Base64.decode(stringBaseBean.getData(), Base64.DEFAULT);
+                            String lyricText = new String(decode);
                             // 保存本地
                             saveToFile(lyricText, lyricFile);
                             return LyricRowBean.parseLyric(lyricText);
@@ -464,7 +466,7 @@ public class MusicPlayerService extends Service {
                     }, Throwable::printStackTrace);
             compositeDisposable.add(subscribe);
         } else {
-            // 否则直接读取
+//             否则直接读取
             String lyricText = readString(lyricFile);
             // 解析歌词
             lyricRowBeans = LyricRowBean.parseLyric(lyricText);

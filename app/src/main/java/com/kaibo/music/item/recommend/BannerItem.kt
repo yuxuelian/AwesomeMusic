@@ -10,7 +10,7 @@ import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.util.inflate
 import com.kaibo.music.R
 import com.kaibo.music.bean.BannerDataBean
-import com.stx.xhb.xbanner.XBanner
+import com.stx.xhb.androidx.XBanner
 import kotlinx.android.synthetic.main.item_banner.view.*
 
 /**

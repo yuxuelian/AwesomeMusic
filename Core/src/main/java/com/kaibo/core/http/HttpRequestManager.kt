@@ -1,5 +1,6 @@
 package com.kaibo.core.http
 
+import com.kaibo.core.AppContext
 import com.kaibo.core.BaseApplication
 import io.reactivex.schedulers.Schedulers
 import okhttp3.Cache
@@ -37,13 +38,13 @@ object HttpRequestManager {
     private const val WRITE_TIMEOUT_TIME = 30L
 
     //上传图片
-    val IMAGE_MEDIA_TYPE: MediaType? = MediaType.parse("image/*")
+    val IMAGE_MEDIA_TYPE: MediaType = MediaType.get("image/*")
     //上传json
-    val JSON: MediaType? = MediaType.parse("application/json; charset=utf-8")
+    val mediaTypeJson: MediaType = MediaType.get("application/json; charset=utf-8")
     //普通文本
-    val TEXT: MediaType? = MediaType.parse("text/plain; charset=utf-8")
+    val TEXT: MediaType = MediaType.get("text/plain; charset=utf-8")
     //文件
-    val FORM_DATA: MediaType? = MediaType.parse("multipart/form-data")
+    val FORM_DATA: MediaType = MediaType.get("multipart/form-data")
 
     private val interceptors: MutableList<Interceptor> = ArrayList()
 
@@ -74,7 +75,7 @@ object HttpRequestManager {
                 .connectTimeout(CONNECT_TIMEOUT_TIME, TimeUnit.SECONDS)
                 .readTimeout(READ_TIMEOUT_TIME, TimeUnit.SECONDS)
                 .writeTimeout(WRITE_TIMEOUT_TIME, TimeUnit.SECONDS)
-                .cache(Cache(File("${BaseApplication.INSTANCE.cacheDir.absolutePath}${File.separator}okHttpCaches"), CACHE_SIZE))
+                .cache(Cache(File("${AppContext.cacheDir.absolutePath}${File.separator}okHttpCaches"), CACHE_SIZE))
 
         //添加别的拦截器
         interceptors.forEach {

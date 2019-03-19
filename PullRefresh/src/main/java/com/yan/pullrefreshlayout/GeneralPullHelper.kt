@@ -1,4 +1,4 @@
-package com.yan.pullrefreshlayout
+package com.yishi.refresh
 
 import android.content.Context
 import android.view.MotionEvent

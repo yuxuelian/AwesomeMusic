@@ -5,11 +5,7 @@ import com.kaibo.music.bean.SongBean
 import com.kaibo.music.bean.SongListRelBean
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
-import org.jetbrains.anko.doAsync
 
-/**
- * 作者：yonglong on 2016/11/6 17:02
- */
 object PlayListHelper {
 
     private val playListBeanDao = PlayListDatabase.playListBeanDao()
@@ -21,11 +17,9 @@ object PlayListHelper {
      */
     fun initPlayList() {
         // 初始化创建三个歌单
-        doAsync {
-            playListBeanDao.saveOrUpdate(PlayListBean.love())
-            playListBeanDao.saveOrUpdate(PlayListBean.queue())
-            playListBeanDao.saveOrUpdate(PlayListBean.history())
-        }
+        playListBeanDao.saveOrUpdate(PlayListBean.love())
+        playListBeanDao.saveOrUpdate(PlayListBean.queue())
+        playListBeanDao.saveOrUpdate(PlayListBean.history())
     }
 
     /**
@@ -58,9 +52,7 @@ object PlayListHelper {
                 imageUrl = imageUrl,
                 createDate = System.currentTimeMillis(),
                 updateDate = System.currentTimeMillis())
-        doAsync {
-            playListBeanDao.saveOrUpdate(playListBean)
-        }
+        playListBeanDao.saveOrUpdate(playListBean)
     }
 
     /**
@@ -81,44 +73,34 @@ object PlayListHelper {
      * 向指定的歌单中添加一些歌曲
      */
     fun addMusicList(playListId: String, songList: List<SongBean>) {
-        doAsync {
-            songListRelBeanDao.saveList(songList.map { SongListRelBean(0, it.mid, playListId) })
-        }
+        songListRelBeanDao.saveList(songList.map { SongListRelBean(0, it.mid, playListId) })
     }
 
     /**
      * 向指定的歌单中添加一首歌曲
      */
     fun addToPlaylist(songMid: String, layListId: String) {
-        doAsync {
-            songListRelBeanDao.saveOrUpdate(SongListRelBean(0, songMid, layListId))
-        }
+        songListRelBeanDao.saveOrUpdate(SongListRelBean(0, songMid, layListId))
     }
 
     /**
      * 从指定的歌单中移出一首歌曲
      */
     fun removeSong(mid: String, playListId: String) {
-        doAsync {
-            songListRelBeanDao.deleteByMidAndListId(mid, playListId)
-        }
+        songListRelBeanDao.deleteByMidAndListId(mid, playListId)
     }
 
     /**
      * 删除歌单
      */
     fun deletePlaylist(playListId: String) {
-        doAsync {
-            playListBeanDao.deleteByPlayListId(playListId)
-        }
+        playListBeanDao.deleteByPlayListId(playListId)
     }
 
     /**
      * 清空播放列表
      */
     fun clearPlaylist() {
-        doAsync {
-            playListBeanDao.clearAll()
-        }
+        playListBeanDao.clearAll()
     }
 }

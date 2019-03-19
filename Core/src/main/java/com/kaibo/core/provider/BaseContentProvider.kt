@@ -1,6 +1,6 @@
 package com.kaibo.core.provider
 
-import dagger.android.DaggerContentProvider
+import android.content.ContentProvider
 
 /**
  * @author:Administrator
@@ -10,4 +10,4 @@ import dagger.android.DaggerContentProvider
  * @description:
  */
 
-abstract class BaseContentProvider : DaggerContentProvider()
+abstract class BaseContentProvider : ContentProvider()

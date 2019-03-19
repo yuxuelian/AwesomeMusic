@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.kaibo.core.R
-import com.kaibo.core.util.bindToAutoDispose
 import com.uber.autodispose.AutoDisposeConverter
 
 /**
@@ -48,13 +47,13 @@ abstract class BaseDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         //去掉默认的背景
-        dialog.window.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(context!!, R.color.transparent)))
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(context!!, R.color.transparent)))
         initViewCreated(savedInstanceState)
     }
 
     protected open fun initViewCreated(savedInstanceState: Bundle?) {
         //设置一个默认的对话框动画,默认是淡入淡出,可重写
-        dialog.window.setWindowAnimations(R.style.dialogShadow)
+        dialog?.window?.setWindowAnimations(R.style.dialogShadow)
     }
 
     /**
@@ -63,17 +62,12 @@ abstract class BaseDialog : DialogFragment() {
     abstract fun getLayoutRes(): Int
 
     /**
-     * 生命周期处理
-     */
-    protected fun <T> bindLifecycle(): AutoDisposeConverter<T> = bindToAutoDispose(this)
-
-    /**
      * 设置对话框的大小
      */
     override fun onResume() {
         super.onResume()
         val size = getSize()
-        dialog.window.setLayout(size.first, size.second)
+        dialog?.window?.setLayout(size.first, size.second)
     }
 
     /**

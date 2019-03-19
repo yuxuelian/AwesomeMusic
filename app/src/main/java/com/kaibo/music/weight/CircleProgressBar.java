@@ -26,7 +26,7 @@ import java.lang.annotation.RetentionPolicy;
 
 import androidx.annotation.IntDef;
 
-import static org.jetbrains.anko.DimensionsKt.dip;
+import static com.kaibo.core.util.DimensionsExtKt.dip;
 
 /**
  * @author Administrator

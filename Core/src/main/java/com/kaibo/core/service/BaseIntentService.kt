@@ -1,6 +1,6 @@
 package com.kaibo.core.service
 
-import dagger.android.DaggerIntentService
+import android.app.IntentService
 
 /**
  * @author:Administrator
@@ -10,4 +10,4 @@ import dagger.android.DaggerIntentService
  * @description:
  */
 
-abstract class BaseIntentService(name: String) : DaggerIntentService(name)
+abstract class BaseIntentService(name: String) : IntentService(name)

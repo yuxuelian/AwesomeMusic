@@ -1,29 +1,16 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-noarg'
-apply plugin: 'kotlin-allopen'
-apply plugin: 'kotlin-kapt'
-
-noArg {
-    annotation("com.kaibo.core.annotation.PoKo")
-}
-
-allOpen {
-    annotation("com.kaibo.core.annotation.PoKo")
-}
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode rootProject.versionCode
+        versionName rootProject.versionName
     }
 
     buildTypes {
@@ -32,23 +19,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
-    }
 
+    lintOptions {
+        abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility rootProject.sourceCompatibility
+        targetCompatibility rootProject.targetCompatibility
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    //-----------------------------Test---------------------------------------
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
-    //性能检测
-    androidTestImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
-
+    testImplementation junit
+    androidTestImplementation androidx_test_runner
+    androidTestImplementation androidx_test_espresso_core
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':Core')
-
-    kapt "androidx.room:room-compiler:$android_room_version"
 }

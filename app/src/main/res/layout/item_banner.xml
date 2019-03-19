@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.stx.xhb.xbanner.XBanner
+    <com.stx.xhb.androidx.XBanner
         android:id="@+id/xbanner"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -16,6 +16,7 @@
         app:layout_constraintDimensionRatio="5:2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:pageChangeDuration="300"
         app:pointContainerLeftRightPadding="0dp"
         app:pointContainerPosition="BOTTOM"

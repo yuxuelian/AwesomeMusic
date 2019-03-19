@@ -17,7 +17,7 @@ import com.kaibo.music.bean.LyricRowBean
 import com.kaibo.music.bean.SongBean
 import com.kaibo.music.player.manager.PlayManager
 import com.kaibo.music.utils.AnimatorUtils
-import com.stx.xhb.xbanner.transformers.BasePageTransformer
+import com.stx.xhb.androidx.transformers.BasePageTransformer
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_player.*
@@ -25,7 +25,6 @@ import kotlinx.android.synthetic.main.include_play_bottom.*
 import kotlinx.android.synthetic.main.include_play_top.*
 import kotlinx.android.synthetic.main.item_lrc.*
 import kotlinx.android.synthetic.main.item_player.*
-import org.jetbrains.anko.dip
 import java.io.File
 import java.io.FileInputStream
 
@@ -82,8 +81,7 @@ class PlayerActivity : BasePlayerActivity() {
                                 it.onError(e)
                             }
                         }
-                        .subscribeOn(Schedulers.io())
-                        .toMainThread()
+                        .async()
                         .doOnNext {
                             // 设置到旋转的ImageView
                             playRotaImg.setImageBitmap(it)
@@ -94,10 +92,10 @@ class PlayerActivity : BasePlayerActivity() {
                             BitmapFactory.decodeStream(FileInputStream(blurTempFile)).blur(this)
                         }
                         .toMainThread()
-                        .`as`(bindLifecycle())
                         .subscribe({
                             // 设置背景
-                            blurBackGround.startTransition(it)
+                            blurBackGround.setImageBitmap(it)
+//                            blurBackGround.startTransition(it)
                         }) {
                             it.printStackTrace()
                         }
@@ -167,7 +165,7 @@ class PlayerActivity : BasePlayerActivity() {
         playRootView.setPadding(0, this.statusBarHeight, 0, 0)
         // 点击返回键
         backBtn.easyClick(bindLifecycle()).subscribe {
-            onBackPressedSupport()
+            onBackPressed()
         }
 
         // 初始化歌词显示页
@@ -381,13 +379,13 @@ class PlayerActivity : BasePlayerActivity() {
         }
     }
 
-    override fun onBackPressedSupport() {
+    override fun onBackPressed() {
         // 执行退出动画
         playTopLayout.startAnimation(topLayoutOut)
         playBottomLayout.startAnimation(bottomLayoutOut)
         minLrcLayout.startAnimation(alpha10)
         playTopLayout.postDelayed({
-            super.onBackPressedSupport()
+            super.onBackPressed()
         }, 200)
     }
 }

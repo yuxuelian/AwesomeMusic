@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 
+import com.kaibo.core.AppContext;
 import com.kaibo.core.BaseApplication;
 import com.kaibo.music.player.R;
 
@@ -26,7 +27,7 @@ public class SPUtils {
     private static final String DESKTOP_LYRIC_SIZE = "desktop_lyric_size";
     private static final String DESKTOP_LYRIC_COLOR = "desktop_lyric_color";
 
-    private static Context context = BaseApplication.Companion.getINSTANCE();
+    private static Context context = AppContext.INSTANCE;
 
     public static int getPlayPosition() {
         return getAnyByKey(PLAY_POSITION, -1);
