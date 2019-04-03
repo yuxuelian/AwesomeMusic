@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="text_default_color">#303030</color>
+    <color name="notify_default_bgcolor">#80CBC4</color>
+    <color name="icon_default_color">#1D92EC</color>
+</resources>

@@ -10,13 +10,12 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import com.kaibo.core.glide.GlideApp
-import com.kaibo.core.toast.ToastUtils
 import com.kaibo.core.util.*
 import com.kaibo.music.R
-import com.kaibo.music.bean.LyricRowBean
-import com.kaibo.music.bean.SongBean
-import com.kaibo.music.player.manager.PlayManager
-import com.kaibo.music.utils.AnimatorUtils
+import com.kaibo.music.player.bean.LyricRowBean
+import com.kaibo.music.player.bean.SongBean
+import com.kaibo.music.player.PlayerController
+import com.kaibo.music.player.utils.AnimatorUtils
 import com.yishi.swipebacklib.activity.BaseSwipeBackActivity
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -152,7 +151,7 @@ class PlayerActivity : BaseSwipeBackActivity() {
     private fun updateLyric(mid: String, currentPosition: Int) {
         if (lyricRowBeans == null || mid != LyricRowBean.currentLyricMid) {
             // 获取歌词
-            lyricRowBeans = PlayManager.lyricRowBeans
+            lyricRowBeans = PlayerController.getLyricRowBeans()
             // 设置歌词列表
             lyricView.lyricRowBeans = lyricRowBeans
         }
@@ -210,37 +209,37 @@ class PlayerActivity : BaseSwipeBackActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 isSeeking = false
                 // 设置播放进度
-                PlayManager.seekTo(seekBar.progress)
+                PlayerController.seekTo(seekBar.progress)
             }
         })
 
         // 点击播放暂停按钮
         playOrPauseBtn.easyClick(bindLifecycle()).subscribe {
             singleAsync(bindLifecycle()) {
-                PlayManager.togglePlayer()
+                PlayerController.togglePlayer()
             }
         }
 
         // 播放上一曲
         prePlay.easyClick(bindLifecycle()).subscribe {
             singleAsync(bindLifecycle()) {
-                PlayManager.prev()
+                PlayerController.prev()
             }
         }
 
         // 播放下一曲
         nextPlay.easyClick(bindLifecycle()).subscribe {
             singleAsync(bindLifecycle()) {
-                PlayManager.next()
+                PlayerController.next()
             }
         }
 
         // 更新播放模式
         changePlayMode.easyClick(bindLifecycle()).subscribe {
             singleAsync(bindLifecycle(), onSuccess = {
-                ToastUtils.showSuccess(it)
+                //                ToastUtils.showSuccess(it)
             }) {
-                PlayManager.updatePlayMode()
+                PlayerController.updatePlayMode()
             }
         }
 
@@ -262,14 +261,14 @@ class PlayerActivity : BaseSwipeBackActivity() {
      */
     private fun tickTask() {
         // 获取播放的歌曲
-        currentSongBean = PlayManager.playSong
+        currentSongBean = PlayerController.getPlaySong()
         // 获取播放状态
-        isPlaying = PlayManager.isPlaying
+        isPlaying = PlayerController.isPlaying()
 
         // 歌曲进度修改
         if (!isSeeking) {
-            val duration = PlayManager.duration
-            val currentPosition = PlayManager.currentPosition
+            val duration = PlayerController.getDuration()
+            val currentPosition = PlayerController.getCurrentPosition()
             // 修改文字进度
             maxSeek.text = duration.formatMinute()
             currentSeek.text = currentPosition.formatMinute()
@@ -279,7 +278,7 @@ class PlayerActivity : BaseSwipeBackActivity() {
 
             // 更新界面歌词
             if (currentSongBean != null) {
-                updateLyric(currentSongBean!!.mid, currentPosition)
+                updateLyric(currentSongBean!!.songmid, currentPosition)
             }
         }
     }
@@ -338,7 +337,7 @@ class PlayerActivity : BaseSwipeBackActivity() {
                 leftDot.setBackgroundResource(R.drawable.page_noraml)
             }
             else -> {
-                throw IllegalStateException("position error")
+                throw IllegalStateException("getCurrentPosition error")
             }
         }
     }

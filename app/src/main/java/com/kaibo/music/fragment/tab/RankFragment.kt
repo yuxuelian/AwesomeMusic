@@ -7,9 +7,9 @@ import com.kaibo.core.fragment.BaseFragment
 import com.kaibo.core.util.*
 import com.kaibo.music.R
 import com.kaibo.music.activity.SongListActivity
-import com.kaibo.music.bean.RankBean
+import com.kaibo.music.player.bean.RankBean
 import com.kaibo.music.item.rank.RankItem
-import com.kaibo.music.net.Api
+import com.kaibo.music.player.net.Api
 import kotlinx.android.synthetic.main.fragment_rank.*
 
 /**

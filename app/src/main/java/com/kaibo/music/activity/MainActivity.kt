@@ -7,10 +7,10 @@ import android.view.WindowManager
 import com.kaibo.core.activity.SuperActivity
 import com.kaibo.core.toast.ToastUtils
 import com.kaibo.core.util.isDoubleClick
+import com.kaibo.music.player.PlayerController
 import com.kaibo.music.R
 import com.kaibo.music.fragment.HomeFragment
 import com.kaibo.music.fragment.MiniPlayerFragment
-import com.kaibo.music.player.manager.PlayManager
 
 
 /**
@@ -23,7 +23,7 @@ import com.kaibo.music.player.manager.PlayManager
 
 class MainActivity : SuperActivity() {
 
-    private var serviceToken: PlayManager.ServiceToken? = null
+    private var bindToken: PlayerController.BindToken? = null
 
     private fun setNeedsMenuKey() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
@@ -41,7 +41,7 @@ class MainActivity : SuperActivity() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        serviceToken = PlayManager.bindToService(this)
+        bindToken = PlayerController.bindService(this)
 
         supportFragmentManager
                 .beginTransaction()
@@ -61,7 +61,7 @@ class MainActivity : SuperActivity() {
     }
 
     override fun onDestroy() {
-        PlayManager.unbindFromService(serviceToken)
+        PlayerController.unbindService(bindToken)
         super.onDestroy()
     }
 }

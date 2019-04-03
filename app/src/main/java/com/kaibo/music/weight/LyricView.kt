@@ -14,7 +14,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import com.kaibo.core.util.dip
 import com.kaibo.music.R
-import com.kaibo.music.bean.LyricRowBean
+import com.kaibo.music.player.bean.LyricRowBean
 import com.yan.pullrefreshlayout.BezierInterpolator
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable

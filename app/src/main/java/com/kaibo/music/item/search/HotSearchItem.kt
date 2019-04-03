@@ -8,7 +8,7 @@ import com.kaibo.core.adapter.Item
 import com.kaibo.core.adapter.ItemController
 import com.kaibo.core.util.inflate
 import com.kaibo.music.R
-import com.kaibo.music.bean.HotSearchBean
+import com.kaibo.music.player.bean.HotSearchBean
 import kotlinx.android.synthetic.main.item_hot_search.view.*
 
 /**

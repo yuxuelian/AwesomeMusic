@@ -10,7 +10,7 @@ import com.kaibo.core.adapter.ItemController
 import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.util.inflate
 import com.kaibo.music.R
-import com.kaibo.music.bean.SongBean
+import com.kaibo.music.player.bean.SongBean
 import kotlinx.android.synthetic.main.item_song.view.*
 
 /**

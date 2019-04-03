@@ -10,7 +10,7 @@ import com.kaibo.core.adapter.ItemController
 import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.util.inflate
 import com.kaibo.music.R
-import com.kaibo.music.bean.RecommendBean
+import com.kaibo.music.player.bean.RecommendBean
 import kotlinx.android.synthetic.main.item_recommend_banner.view.*
 
 /**

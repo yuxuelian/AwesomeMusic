@@ -7,12 +7,12 @@ import com.kaibo.core.fragment.BaseFragment
 import com.kaibo.core.util.*
 import com.kaibo.music.R
 import com.kaibo.music.activity.SongListActivity
-import com.kaibo.music.bean.BannerDataBean
-import com.kaibo.music.bean.RecommendBean
+import com.kaibo.music.player.bean.BannerDataBean
+import com.kaibo.music.player.bean.RecommendBean
 import com.kaibo.music.item.recommend.BannerItem
 import com.kaibo.music.item.recommend.RecommendItem
 import com.kaibo.music.item.recommend.SongTitleItem
-import com.kaibo.music.net.Api
+import com.kaibo.music.player.net.Api
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import kotlinx.android.synthetic.main.fragment_recommend.*
@@ -63,7 +63,7 @@ class RecommendFragment : BaseFragment() {
             addAll(netRes.second.map { recommendBean: RecommendBean ->
                 RecommendItem(recommendBean) {
                     setOnClickListener {
-                        animStartActivity<SongListActivity>("disstid" to recommendBean.disstid)
+                        animStartActivity<SongListActivity>("songmid" to recommendBean.disstid)
                     }
                 }
             })

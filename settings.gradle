@@ -1,6 +1,6 @@
 include ':NodeMusic'
 include ':Core'
-include ':Player'
+include ':MusicPlayer'
 include ':PullRefresh'
 include ':BadgeViewLib'
 include ':RxPermissions'

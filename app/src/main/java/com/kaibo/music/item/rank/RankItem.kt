@@ -13,7 +13,7 @@ import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.toast.ToastUtils
 import com.kaibo.core.util.inflate
 import com.kaibo.music.R
-import com.kaibo.music.bean.RankBean
+import com.kaibo.music.player.bean.RankBean
 import kotlinx.android.synthetic.main.item_rank.view.*
 import q.rorbin.badgeview.Badge
 import q.rorbin.badgeview.QBadgeView

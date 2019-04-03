@@ -11,17 +11,16 @@ import com.kaibo.core.util.bindLifecycle
 import com.kaibo.core.util.easyClick
 import com.kaibo.core.util.singleAsync
 import com.kaibo.core.util.toMainThread
+import com.kaibo.music.player.PlayerController
+import com.kaibo.music.player.bean.SongBean
+import com.kaibo.music.player.utils.AnimatorUtils
 import com.kaibo.music.R
 import com.kaibo.music.activity.PlayerActivity
-import com.kaibo.music.bean.SongBean
 import com.kaibo.music.dialog.BeingPlayListDialog
-import com.kaibo.music.player.manager.PlayManager
-import com.kaibo.music.utils.AnimatorUtils
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_mini_player.*
-import java.util.concurrent.TimeUnit
 
 
 /**
@@ -103,7 +102,7 @@ class MiniPlayerFragment : BaseFragment() {
     override fun initViewCreated(savedInstanceState: Bundle?) {
         // 点击底部的播放条
         mini_play_layout.easyClick(bindLifecycle()).subscribe {
-            if (PlayManager.playSongQueue.isEmpty()) {
+            if (PlayerController.getPlayQueue()?.isEmpty() == true) {
                 ToastUtils.showWarning("播放队列为空")
             } else {
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), playRotaImg, getString(R.string.transition_share_song_img))
@@ -116,7 +115,7 @@ class MiniPlayerFragment : BaseFragment() {
         // 点击播放暂停按钮
         playOrPauseBtn.easyClick(bindLifecycle()).subscribe {
             singleAsync(bindLifecycle()) {
-                PlayManager.togglePlayer()
+                PlayerController.togglePlayer()
             }
         }
 
@@ -133,12 +132,12 @@ class MiniPlayerFragment : BaseFragment() {
      */
     private fun tickTask() {
         // 获取播放的歌曲
-        currentSongBean = PlayManager.playSong
+        currentSongBean = PlayerController.getPlaySong()
         // 获取播放状态
-        isPlaying = PlayManager.isPlaying
+        isPlaying = PlayerController.isPlaying()
         // 歌曲进度修改
-        miniProgressBar.max = PlayManager.duration
-        miniProgressBar.progress = PlayManager.currentPosition
+        miniProgressBar.max = PlayerController.getDuration()
+        miniProgressBar.progress = PlayerController.getCurrentPosition()
     }
 
 }

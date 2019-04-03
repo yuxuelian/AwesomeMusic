@@ -106,7 +106,7 @@ dependencies {
     implementation project(':Core')
     implementation project(':BadgeViewLib')
     implementation project(':PullRefresh')
-    implementation project(':Player')
+    implementation project(':MusicPlayer')
     implementation project(':RxPermissions')
     implementation project(':SwipeBackLib')
 }

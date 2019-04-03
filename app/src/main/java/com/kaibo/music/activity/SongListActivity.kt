@@ -4,18 +4,17 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kaibo.core.activity.SuperActivity
 import com.kaibo.core.adapter.withItems
 import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.util.*
 import com.kaibo.music.R
-import com.kaibo.music.bean.RankSongListBean
-import com.kaibo.music.bean.RecommendSongListBean
-import com.kaibo.music.bean.SingerSongListBean
-import com.kaibo.music.bean.SongBean
+import com.kaibo.music.player.bean.RankSongListBean
+import com.kaibo.music.player.bean.RecommendSongListBean
+import com.kaibo.music.player.bean.SingerSongListBean
+import com.kaibo.music.player.bean.SongBean
 import com.kaibo.music.item.song.SongItem
-import com.kaibo.music.net.Api
-import com.kaibo.music.player.manager.PlayManager
+import com.kaibo.music.player.net.Api
+import com.kaibo.music.player.PlayerController
 import com.orhanobut.logger.Logger
 import com.yan.pullrefreshlayout.PullRefreshLayout
 import com.yishi.swipebacklib.activity.BaseSwipeBackActivity
@@ -62,8 +61,8 @@ class SongListActivity : BaseSwipeBackActivity() {
             onBackPressed()
         }
         when {
-            intent.hasExtra("disstid") -> {
-                val disstid: String = intent.getStringExtra("disstid")
+            intent.hasExtra("songmid") -> {
+                val disstid: String = intent.getStringExtra("songmid")
                 Api.instance.getRecommendSongList(disstid).checkResult()
                         .toMainThread().`as`(bindLifecycle()).subscribe({ recommendSongListBean: RecommendSongListBean ->
                             loadHeaderImage(recommendSongListBean.logo)
@@ -172,7 +171,7 @@ class SongListActivity : BaseSwipeBackActivity() {
                         // 设置成功  启动PlayerFragment
                         animStartActivity<PlayerActivity>()
                     }) {
-                        PlayManager.setPlaySong(songBean)
+                        PlayerController.setPlaySong(songBean)
                     }
                 }
             }
