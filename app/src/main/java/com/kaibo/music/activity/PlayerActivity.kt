@@ -5,25 +5,25 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
 import android.widget.SeekBar
-import com.kaibo.core.glide.GlideApp
+import androidx.lifecycle.Lifecycle
 import com.kaibo.core.util.*
 import com.kaibo.music.R
-import com.kaibo.music.player.bean.LyricRowBean
-import com.kaibo.music.player.bean.SongBean
+import com.kaibo.music.callback.BasePlayerCallbackStub
 import com.kaibo.music.player.PlayerController
+import com.kaibo.music.player.bean.SongBean
 import com.kaibo.music.player.utils.AnimatorUtils
-import com.yishi.swipebacklib.activity.BaseSwipeBackActivity
+import com.orhanobut.logger.Logger
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_player.*
 import kotlinx.android.synthetic.main.include_play_bottom.*
 import kotlinx.android.synthetic.main.include_play_top.*
-import java.io.File
-import java.io.FileInputStream
+import java.lang.ref.WeakReference
+import java.util.concurrent.TimeUnit
 
 /**
  * @author kaibo
@@ -33,156 +33,27 @@ import java.io.FileInputStream
  * @description：
  */
 
-class PlayerActivity : BaseSwipeBackActivity() {
+class PlayerActivity : BaseMusicActivity() {
 
-    /**
-     * 当前是否正在拖动
-     */
+    // 当前是否正在拖动
     private var isSeeking = false
 
-    /**
-     * 旋转动画
-     */
-    private var rotateAnimator: Animator? = null
 
-    /**
-     * 歌词
-     */
-    private var lyricRowBeans: List<LyricRowBean>? = null
-
-    private var currentSongBean: SongBean? = null
-        set(value) {
-            if (value != null && value != field) {
-                // 赋值
-                field = value
-
-                // 修改歌曲名
-                songName.text = value.songname
-                singerName.text = value.singername
-
-                // 切换歌曲时 旋转动画复位
-                playRotaImg.rotation = 0f
-                // 动画取消
-                rotateAnimator?.cancel()
-                val blurTempFile = File(this.filesDir, "blur-temp-file.png")
-                // 修改背景
-                Observable
-                        .create<Bitmap> {
-                            try {
-                                val bitmap = GlideApp.with(this).asBitmap().load(value.image).submit().get()
-                                // 先把图片保存到本地  然后再从本地读取图片进行模糊  否则不能模糊成功
-                                bitmap.saveToFile(blurTempFile)
-                                it.onNext(bitmap)
-                                it.onComplete()
-                            } catch (e: Throwable) {
-                                it.onError(e)
-                            }
-                        }
-                        .async()
-                        .doOnNext {
-                            // 设置到旋转的ImageView
-                            playRotaImg.setImageBitmap(it)
-
-                            // 图片加载完成的回调中，启动过渡动画
-                            supportStartPostponedEnterTransition()
-                        }
-                        .observeOn(Schedulers.io())
-                        .map {
-                            // 从本地获取图片然后进行模糊
-                            BitmapFactory.decodeStream(FileInputStream(blurTempFile)).blur(this)
-                        }
-                        .toMainThread()
-                        .`as`(bindLifecycle())
-                        .subscribe({
-                            // 设置背景
-//                            blurBackGround.setImageBitmap(it)
-                            blurBackGround.startTransition(it)
-                        }) {
-                            it.printStackTrace()
-                        }
-            }
-        }
-
-    private var isPlaying = false
-        set(value) {
-            if (field != value) {
-                field = value
-                if (value) {
-                    if (rotateAnimator == null) {
-                        rotateAnimator = AnimatorUtils.getRotateAnimator(playRotaImg)
-                    }
-                    // 启动旋转动画
-                    if (rotateAnimator!!.isPaused) {
-                        rotateAnimator!!.resume()
-                    } else {
-                        rotateAnimator!!.start()
-                    }
-                } else {
-                    // 取消旋转动画
-                    rotateAnimator?.pause()
-                }
-            }
-
-            // 播放状态发生改变
-            playOrPauseBtn.setImageResource(if (value) {
-                R.drawable.big_pause
-            } else {
-                R.drawable.big_play
-            })
-        }
-
-    /**
-     * 将毫秒数转化成字符串
-     */
-    private fun Int.formatMinute(): String {
-        // 5999000 99:59 minute
-        return when {
-            this >= 5999000 -> "99:59"
-            this <= 0 -> "00:00"
-            else -> {
-                val second = Math.floor(this / 1000.0).toInt()
-                String.format("%02d:%02d", second / 60, second % 60)
-            }
-        }
+    // 旋转动画
+    private val rotateAnimator: Animator by lazy {
+        AnimatorUtils.getRotateAnimator(playRotaImg)
     }
+
+    // 远程回调
+    private val playerCallbackStub = PlayerCallbackStub(this)
 
     override fun getLayoutRes() = R.layout.activity_player
-
-    private fun updateLyric(mid: String, currentPosition: Int) {
-        if (lyricRowBeans == null || mid != LyricRowBean.currentLyricMid) {
-            // 获取歌词
-            lyricRowBeans = PlayerController.getLyricRowBeans()
-            // 设置歌词列表
-            lyricView.lyricRowBeans = lyricRowBeans
-        }
-        if (lyricRowBeans == null || lyricRowBeans!!.size <= 2) {
-            // 暂无歌词
-            centerLrc.text = "暂无歌词"
-        } else {
-            lyricRowBeans?.let {
-                (1..it.size - 2).forEach { index ->
-                    val current = it[index]
-                    val next = it[index + 1]
-                    if (currentPosition > current.timeMillis && currentPosition < next.timeMillis) {
-                        val last = it[index - 1]
-                        topLrc.text = last.rowText
-                        centerLrc.text = current.rowText
-                        bottomLrc.text = next.rowText
-
-                        // 更新lyricView显示的歌词
-                        lyricView.showPosition = index
-                    }
-                }
-            }
-        }
-    }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
         // 延迟共享动画的执行
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             postponeEnterTransition()
         }
-
         // 设置沉浸式
         playTopLayout.layoutParams = playTopLayout.layoutParams.let { it as LinearLayout.LayoutParams }.apply {
             this.topMargin = statusBarHeight
@@ -191,6 +62,15 @@ class PlayerActivity : BaseSwipeBackActivity() {
         // 点击返回键
         backBtn.easyClick(bindLifecycle()).subscribe {
             onBackPressed()
+        }
+
+        // 设置默认的背景图片
+        singleAsync(bindLifecycle(), onSuccess = {
+            // 模糊图片执行成功
+            blurBackGround.setImageBitmap(it)
+        }) {
+            // 异步模糊图片
+            BitmapFactory.decodeResource(resources, R.drawable.default_cover).blur(this)
         }
 
         // 设置SeekBar的拖动监听
@@ -215,32 +95,23 @@ class PlayerActivity : BaseSwipeBackActivity() {
 
         // 点击播放暂停按钮
         playOrPauseBtn.easyClick(bindLifecycle()).subscribe {
-            singleAsync(bindLifecycle()) {
-                PlayerController.togglePlayer()
-            }
+            PlayerController.togglePlayer()
         }
 
         // 播放上一曲
         prePlay.easyClick(bindLifecycle()).subscribe {
-            singleAsync(bindLifecycle()) {
-                PlayerController.prev()
-            }
+            PlayerController.prev()
         }
 
         // 播放下一曲
         nextPlay.easyClick(bindLifecycle()).subscribe {
-            singleAsync(bindLifecycle()) {
-                PlayerController.next()
-            }
+            PlayerController.next()
         }
 
         // 更新播放模式
         changePlayMode.easyClick(bindLifecycle()).subscribe {
-            singleAsync(bindLifecycle(), onSuccess = {
-                //                ToastUtils.showSuccess(it)
-            }) {
-                PlayerController.updatePlayMode()
-            }
+            val playMode = PlayerController.updatePlayMode()
+            Logger.d("playMode = $playMode")
         }
 
         // 点击收藏按钮
@@ -248,43 +119,7 @@ class PlayerActivity : BaseSwipeBackActivity() {
 
         }
 
-        // TODO 执行一次   待优化
-        tickTask()
-
-        // 从本地获取图片然后进行模糊
-//        val blur = BitmapFactory.decodeResource(resources, R.drawable.test_play_img).blur(this)
-//        blurBackGround.setImageBitmap(blur)
-    }
-
-    /**
-     * 这个方法会被定时执行
-     */
-    private fun tickTask() {
-        // 获取播放的歌曲
-        currentSongBean = PlayerController.getPlaySong()
-        // 获取播放状态
-        isPlaying = PlayerController.isPlaying()
-
-        // 歌曲进度修改
-        if (!isSeeking) {
-            val duration = PlayerController.getDuration()
-            val currentPosition = PlayerController.getCurrentPosition()
-            // 修改文字进度
-            maxSeek.text = duration.formatMinute()
-            currentSeek.text = currentPosition.formatMinute()
-            // 修改进度条
-            playerSeek.max = duration
-            playerSeek.progress = currentPosition
-
-            // 更新界面歌词
-            if (currentSongBean != null) {
-                updateLyric(currentSongBean!!.songmid, currentPosition)
-            }
-        }
-    }
-
-    override fun onPostResume() {
-        super.onPostResume()
+        // 执行进入动画
         playTopLayout.postDelayed({
             playTopLayout.animate()
                     .translationY(0f).alpha(1f)
@@ -301,12 +136,89 @@ class PlayerActivity : BaseSwipeBackActivity() {
         }, 500)
     }
 
+    override fun onResume() {
+        super.onResume()
+        // 注册播放状态回调
+        PlayerController.registerCallback(playerCallbackStub)
+
+        // 主动加载一次歌曲信息
+        PlayerController.getPlaySong()?.let(::showSongInfo)
+        PlayerController.getSongImage()?.let(::showSongImage)
+
+        // 刷新一次进度
+        val duration = PlayerController.getDuration()
+        playerSeek.max = duration
+        maxSeek.text = duration.formatMinute()
+        val currentPosition = PlayerController.getCurrentPosition()
+        playerSeek.progress = currentPosition
+        currentSeek.text = currentPosition.formatMinute()
+
+        if (PlayerController.isPrepared()) {
+            prepareDone()
+        } else {
+            startPrepare()
+        }
+    }
+
+    override fun onPause() {
+        PlayerController.unregisterCallback(playerCallbackStub)
+        super.onPause()
+    }
+
     override fun onDestroy() {
         // 退出的时候停止旋转动画
-        if (rotateAnimator != null && rotateAnimator!!.isRunning) {
-            rotateAnimator?.cancel()
+        if (rotateAnimator.isRunning) {
+            rotateAnimator.cancel()
         }
+
         super.onDestroy()
+    }
+
+    private fun showSongInfo(songBean: SongBean) {
+        songName.text = songBean.songname
+        singerName.text = songBean.singername
+    }
+
+    private fun showSongImage(songImage: Bitmap) {
+        // 切换歌曲时 旋转动画复位
+        playRotaImg.rotation = 0f
+        // 设置到旋转的ImageView
+        playRotaImg.setImageBitmap(songImage)
+        // 模糊操作
+        singleAsync(bindLifecycle(), onSuccess = {
+            // 设置背景
+            blurBackGround.startTransition(it)
+        }) {
+            songImage.blur(this)
+        }
+    }
+
+    private fun startPrepare() {
+        prepareProgress.visibility = View.VISIBLE
+        playOrPauseBtn.visibility = View.GONE
+    }
+
+    private fun prepareDone() {
+        prepareProgress.visibility = View.GONE
+        playOrPauseBtn.visibility = View.VISIBLE
+        val duration = PlayerController.getDuration()
+        // 获取播放总时长
+        playerSeek.max = duration
+        maxSeek.text = duration.formatMinute()
+        // 这个心跳在界面 pause 的时候会自动停止
+        Observable.interval(1000L, TimeUnit.MILLISECONDS).toMainThread()
+                .`as`(bindLifecycle(Lifecycle.Event.ON_PAUSE)).subscribe({
+                    if (!isSeeking) {
+                        // 没有正在拖拽
+                        val currentPosition = PlayerController.getCurrentPosition()
+                        playerSeek.progress = currentPosition
+                        currentSeek.text = currentPosition.formatMinute()
+                    }
+                    // TODO 更新歌词进度
+
+                }) {
+                    it.printStackTrace()
+                }
     }
 
     /**
@@ -349,7 +261,7 @@ class PlayerActivity : BaseSwipeBackActivity() {
                 .setInterpolator(AccelerateInterpolator()).setDuration(400)
                 .start()
         playBottomLayout.animate()
-                .translationY(dip(180).toFloat()).alpha(0f)
+                .translationY(dip(200).toFloat()).alpha(0f)
                 .setInterpolator(AccelerateInterpolator()).setDuration(400)
                 .start()
         minLrcLayout.animate()
@@ -359,5 +271,42 @@ class PlayerActivity : BaseSwipeBackActivity() {
         playTopLayout.postDelayed({
             supportFinishAfterTransition()
         }, 400)
+    }
+
+    private class PlayerCallbackStub(playerActivity: PlayerActivity) : BasePlayerCallbackStub() {
+        // 使用弱引用持有 Activity，防止内存泄漏
+        private val weakReference = WeakReference(playerActivity)
+
+        override fun songChange(songBean: SongBean) {
+            weakReference.get()?.let {
+                it.runOnUiThread {
+                    it.showSongInfo(songBean)
+                }
+            }
+        }
+
+        override fun songImageLoadDone(songImage: Bitmap) {
+            weakReference.get()?.let {
+                it.runOnUiThread {
+                    it.showSongImage(songImage)
+                }
+            }
+        }
+
+        override fun startPrepare() {
+            weakReference.get()?.let {
+                it.runOnUiThread {
+                    it.startPrepare()
+                }
+            }
+        }
+
+        override fun prepareDone() {
+            weakReference.get()?.let {
+                it.runOnUiThread {
+                    it.prepareDone()
+                }
+            }
+        }
     }
 }

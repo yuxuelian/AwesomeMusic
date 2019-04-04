@@ -89,7 +89,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     /**
      * 字母数组
      */
-    var letters = listOf("热", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U")
+    var letters = emptyList<String>()
         set(value) {
             val _value = value.toMutableList()
             // 参数验证

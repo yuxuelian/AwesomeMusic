@@ -10,6 +10,7 @@ import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
 import android.util.Base64
 import android.util.Log
+import androidx.annotation.FloatRange
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream

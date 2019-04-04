@@ -47,13 +47,13 @@ private fun String.toMd5(): String {
             .joinToString("", transform = Byte::toHexString)
 }
 
-fun Context.loadBitmap(url: String): Observable<Bitmap> {
+fun Context.loadBitmap(imageUrl: String): Observable<Bitmap> {
     return Observable
             .create<Bitmap> { emit ->
                 try {
-                    val bitmapFile = File(this.externalCacheDir, url.toMd5())
+                    val bitmapFile = File(this.externalCacheDir, imageUrl.toMd5())
                     if (!bitmapFile.exists()) {
-                        val request: Request = Request.Builder().url(url).build()
+                        val request: Request = Request.Builder().url(imageUrl).build()
                         val response: Response = okHttpClient.newCall(request).execute()
                         if (response.isSuccessful) {
                             val inputStream = response.body()?.byteStream()

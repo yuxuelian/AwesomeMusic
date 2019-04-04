@@ -6,8 +6,9 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
     android:alpha="0"
+
     android:orientation="vertical"
-    android:translationY="180dp">
+    android:translationY="200dp">
 
     <LinearLayout
         android:id="@+id/minLrcLayout"
@@ -118,6 +119,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -139,19 +141,32 @@
             android:layout_height="40dp"
             android:src="@drawable/last_song"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/playOrPauseBtn"
+            app:layout_constraintEnd_toStartOf="@+id/playOrPauseBtnLayout"
             app:layout_constraintStart_toEndOf="@+id/changePlayMode"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/playOrPauseBtn"
+        <FrameLayout
+            android:id="@+id/playOrPauseBtnLayout"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/big_pause"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/nextPlay"
             app:layout_constraintStart_toEndOf="@+id/prePlay"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/playOrPauseBtn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/big_pause" />
+
+            <ProgressBar
+                android:id="@+id/prepareProgress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+        </FrameLayout>
 
         <ImageView
             android:id="@+id/nextPlay"
@@ -160,7 +175,7 @@
             android:src="@drawable/next_song"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/collectionBtn"
-            app:layout_constraintStart_toEndOf="@+id/playOrPauseBtn"
+            app:layout_constraintStart_toEndOf="@+id/playOrPauseBtnLayout"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView

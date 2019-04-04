@@ -3,24 +3,25 @@ package com.kaibo.music.fragment
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.View
 import androidx.core.app.ActivityOptionsCompat
+import androidx.lifecycle.Lifecycle
 import com.kaibo.core.fragment.BaseFragment
-import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.toast.ToastUtils
 import com.kaibo.core.util.bindLifecycle
 import com.kaibo.core.util.easyClick
-import com.kaibo.core.util.singleAsync
 import com.kaibo.core.util.toMainThread
+import com.kaibo.music.R
+import com.kaibo.music.activity.PlayerActivity
+import com.kaibo.music.callback.BasePlayerCallbackStub
+import com.kaibo.music.dialog.BeingPlayListDialog
 import com.kaibo.music.player.PlayerController
 import com.kaibo.music.player.bean.SongBean
 import com.kaibo.music.player.utils.AnimatorUtils
-import com.kaibo.music.R
-import com.kaibo.music.activity.PlayerActivity
-import com.kaibo.music.dialog.BeingPlayListDialog
 import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_mini_player.*
+import java.lang.ref.WeakReference
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -33,62 +34,9 @@ import kotlinx.android.synthetic.main.fragment_mini_player.*
 
 class MiniPlayerFragment : BaseFragment() {
 
-    private var disposable: Disposable? = null
-
-    private var currentSongBean: SongBean? = null
-        set(value) {
-            if (value != null && value != field) {
-                field = value
-                // 修改歌曲名
-                songName.text = value.songname
-                singerName.text = value.singername
-                // 修改显示的歌曲图片
-                Observable
-                        .create<Bitmap> {
-                            try {
-                                it.onNext(GlideApp.with(this).asBitmap().load(value.image).submit().get())
-                                it.onComplete()
-                            } catch (e: Throwable) {
-                                it.onError(e)
-                            }
-                        }
-                        .subscribeOn(Schedulers.io())
-                        .toMainThread()
-                        .`as`(bindLifecycle())
-                        .subscribe({
-                            // 设置到旋转的ImageView
-                            playRotaImg.setImageBitmap(it)
-                        }) {
-
-                        }
-            }
-        }
-
-    private var isPlaying = false
-        set(value) {
-            if (value != field) {
-                // 获取播放状态并记录状态
-                field = value
-                if (value) {
-                    // 启动旋转动画
-                    if (rotateAnimator.isPaused) {
-                        rotateAnimator.resume()
-                    } else {
-                        rotateAnimator.start()
-                    }
-                } else {
-                    // 取消旋转动画
-                    rotateAnimator.pause()
-                }
-            }
-
-            // 播放状态发生改变
-            playOrPauseBtn.setImageResource(if (value) {
-                R.drawable.big_pause
-            } else {
-                R.drawable.big_play
-            })
-        }
+    private val beingPlayListDialog by lazy {
+        BeingPlayListDialog()
+    }
 
     /**
      * 旋转动画
@@ -96,6 +44,8 @@ class MiniPlayerFragment : BaseFragment() {
     private val rotateAnimator by lazy {
         AnimatorUtils.getRotateAnimator(playRotaImg)
     }
+
+    private val playerCallbackStub = PlayerCallbackStub(this)
 
     override fun getLayoutRes() = R.layout.fragment_mini_player
 
@@ -108,18 +58,14 @@ class MiniPlayerFragment : BaseFragment() {
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), playRotaImg, getString(R.string.transition_share_song_img))
                 val intent = Intent(requireContext(), PlayerActivity::class.java)
                 startActivity(intent, options.toBundle())
-//                animStartActivity<PlayerActivity>()
             }
         }
 
         // 点击播放暂停按钮
         playOrPauseBtn.easyClick(bindLifecycle()).subscribe {
-            singleAsync(bindLifecycle()) {
-                PlayerController.togglePlayer()
-            }
+            PlayerController.togglePlayer()
         }
 
-        val beingPlayListDialog = BeingPlayListDialog()
         // 点击正在播放的歌曲列表
         playListBtn.easyClick(bindLifecycle()).subscribe {
             // 现实底部Dialog
@@ -127,17 +73,94 @@ class MiniPlayerFragment : BaseFragment() {
         }
     }
 
-    /**
-     * 每隔200ms执行一次这个方法
-     */
-    private fun tickTask() {
-        // 获取播放的歌曲
-        currentSongBean = PlayerController.getPlaySong()
-        // 获取播放状态
-        isPlaying = PlayerController.isPlaying()
-        // 歌曲进度修改
+    override fun onResume() {
+        super.onResume()
+        PlayerController.registerCallback(playerCallbackStub)
+
+        // 主动获取一次歌曲信息
+        PlayerController.getPlaySong()?.let(::showSongInfo)
+        PlayerController.getSongImage()?.let(::showSongImage)
+
+        // 刷新一次进度条
         miniProgressBar.max = PlayerController.getDuration()
         miniProgressBar.progress = PlayerController.getCurrentPosition()
+
+        if (PlayerController.isPrepared()) {
+            prepareDone()
+        } else {
+            startPrepare()
+        }
     }
 
+    override fun onPause() {
+        PlayerController.unregisterCallback(playerCallbackStub)
+        super.onPause()
+    }
+
+    private fun showSongInfo(songBean: SongBean) {
+        songName.text = songBean.songname
+        singerName.text = songBean.singername
+    }
+
+    private fun showSongImage(songImage: Bitmap) {
+        playRotaImg.rotation = 0f
+        playRotaImg.setImageBitmap(songImage)
+    }
+
+    private fun startPrepare() {
+        // 显示加载条
+        playOrPauseBtn.visibility = View.GONE
+        prepareProgress.visibility = View.VISIBLE
+    }
+
+    private fun prepareDone() {
+        // 停止加载条
+        playOrPauseBtn.visibility = View.VISIBLE
+        prepareProgress.visibility = View.GONE
+        // 获取播放总时长
+        miniProgressBar.max = PlayerController.getDuration()
+        // 这个心跳在界面 pause 的时候会自动停止
+        Observable.interval(1000L, TimeUnit.MILLISECONDS).toMainThread()
+                .`as`(bindLifecycle(Lifecycle.Event.ON_PAUSE)).subscribe({
+                    miniProgressBar.progress = PlayerController.getCurrentPosition()
+                }) {
+                    it.printStackTrace()
+                }
+    }
+
+    private class PlayerCallbackStub(miniPlayerFragment: MiniPlayerFragment) : BasePlayerCallbackStub() {
+        private val weakReference = WeakReference(miniPlayerFragment)
+
+        override fun songChange(songBean: SongBean) {
+            weakReference.get()?.let { fragment ->
+                fragment.activity?.runOnUiThread {
+                    fragment.showSongInfo(songBean)
+                }
+            }
+        }
+
+        override fun songImageLoadDone(songImage: Bitmap) {
+            weakReference.get()?.let { fragment ->
+                fragment.activity?.runOnUiThread {
+                    fragment.showSongImage(songImage)
+                }
+            }
+        }
+
+        override fun startPrepare() {
+            weakReference.get()?.let { fragment ->
+                fragment.activity?.runOnUiThread {
+                    fragment.startPrepare()
+                }
+            }
+        }
+
+        override fun prepareDone() {
+            weakReference.get()?.let { fragment ->
+                fragment.activity?.runOnUiThread {
+                    fragment.prepareDone()
+                }
+            }
+        }
+    }
 }

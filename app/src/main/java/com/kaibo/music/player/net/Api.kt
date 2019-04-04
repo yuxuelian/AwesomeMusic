@@ -36,7 +36,7 @@ interface Api {
     fun getHotSearch(): Observable<BaseBean<List<HotSearchBean>>>
 
     @GET("api/getRecommendSongList")
-    fun getRecommendSongList(@Query("songmid") disstid: String): Observable<BaseBean<RecommendSongListBean>>
+    fun getRecommendSongList(@Query("disstid") disstid: String): Observable<BaseBean<RecommendSongListBean>>
 
     @GET("api/getSingerSongList")
     fun getSingerSongList(@Query("singermid") singermid: String): Observable<BaseBean<SingerSongListBean>>

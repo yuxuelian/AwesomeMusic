@@ -1,5 +1,6 @@
 package com.kaibo.music.player.player.service
 
+import android.graphics.Bitmap
 import com.kaibo.music.player.IMusicPlayer
 import com.kaibo.music.player.IPlayerStateCallback
 import com.kaibo.music.player.bean.LyricRowBean
@@ -60,6 +61,10 @@ class IMusicPlayerStub(private val musicPlayerService: MusicPlayerService) : IMu
 
     override fun getPlaySong(): SongBean? {
         return musicPlayerService.getPlaySong()
+    }
+
+    override fun getSongImage(): Bitmap? {
+        return musicPlayerService.getSongImage()
     }
 
     override fun isPlaying(): Boolean {

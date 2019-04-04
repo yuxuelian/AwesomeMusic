@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit
  */
 
 
-class SearchActivity : BaseSwipeBackActivity() {
+class SearchActivity : BaseMusicActivity() {
 
     override fun getLayoutRes() = R.layout.fragment_search
 

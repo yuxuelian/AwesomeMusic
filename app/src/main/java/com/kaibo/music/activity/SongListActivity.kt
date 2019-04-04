@@ -1,6 +1,7 @@
 package com.kaibo.music.activity
 
 import android.graphics.Bitmap
+import android.os.Binder
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -8,13 +9,13 @@ import com.kaibo.core.adapter.withItems
 import com.kaibo.core.glide.GlideApp
 import com.kaibo.core.util.*
 import com.kaibo.music.R
+import com.kaibo.music.item.song.SongItem
+import com.kaibo.music.player.PlayerController
 import com.kaibo.music.player.bean.RankSongListBean
 import com.kaibo.music.player.bean.RecommendSongListBean
 import com.kaibo.music.player.bean.SingerSongListBean
 import com.kaibo.music.player.bean.SongBean
-import com.kaibo.music.item.song.SongItem
 import com.kaibo.music.player.net.Api
-import com.kaibo.music.player.PlayerController
 import com.orhanobut.logger.Logger
 import com.yan.pullrefreshlayout.PullRefreshLayout
 import com.yishi.swipebacklib.activity.BaseSwipeBackActivity
@@ -30,7 +31,7 @@ import kotlinx.android.synthetic.main.activity_song_list.*
  * @description：
  */
 
-class SongListActivity : BaseSwipeBackActivity() {
+class SongListActivity : BaseMusicActivity() {
 
     override fun getLayoutRes() = R.layout.activity_song_list
 
@@ -61,8 +62,8 @@ class SongListActivity : BaseSwipeBackActivity() {
             onBackPressed()
         }
         when {
-            intent.hasExtra("songmid") -> {
-                val disstid: String = intent.getStringExtra("songmid")
+            intent.hasExtra("disstid") -> {
+                val disstid: String = intent.getStringExtra("disstid")
                 Api.instance.getRecommendSongList(disstid).checkResult()
                         .toMainThread().`as`(bindLifecycle()).subscribe({ recommendSongListBean: RecommendSongListBean ->
                             loadHeaderImage(recommendSongListBean.logo)
@@ -113,7 +114,6 @@ class SongListActivity : BaseSwipeBackActivity() {
                         }
                     })
                 }
-                .toMainThread()
                 .`as`(bindLifecycle())
                 .subscribe {
                     // 修改headerView的高度
@@ -177,5 +177,4 @@ class SongListActivity : BaseSwipeBackActivity() {
             }
         })
     }
-
 }

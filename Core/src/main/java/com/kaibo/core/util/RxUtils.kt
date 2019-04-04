@@ -28,9 +28,9 @@ import java.util.concurrent.TimeUnit
  */
 
 @CheckResult
-fun <T> LifecycleOwner.bindLifecycle(): AutoDisposeConverter<T> {
+fun <T> LifecycleOwner.bindLifecycle(untilEvent: Lifecycle.Event = Lifecycle.Event.ON_DESTROY): AutoDisposeConverter<T> {
     // 在OnDestroy的时候解除绑定
-    return AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this, Lifecycle.Event.ON_DESTROY))
+    return AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this, untilEvent))
 }
 
 @CheckResult
@@ -59,7 +59,6 @@ fun <T> Flowable<T>.async(): Flowable<T> {
 @CheckResult
 fun <T> Observable<BaseBean<T>>.checkResult(): Observable<T> {
     return this.map {
-        Logger.d(it)
         if (it.code == 0) {
             it.data
         } else {
@@ -91,7 +90,6 @@ fun <T> singleAsync(autoDispose: AutoDisposeConverter<T>, onSuccess: (T) -> Unit
             .`as`(autoDispose)
             .subscribe({
                 onSuccess.invoke(it)
-                Logger.d("异步任务执行成功")
             }) {
                 it.printStackTrace()
             }

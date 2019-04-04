@@ -1,15 +1,12 @@
 package com.kaibo.music.player.player
 
-import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.PowerManager
-import com.kaibo.music.player.IMusicPlayer
+import com.kaibo.music.player.player.service.MusicPlayerService
 
-class MediaPlayerWrap(
-        private val context: Context,
-        private val iMusicPlayer: IMusicPlayer
-
+class MediaPlayerEngine(
+        private val musicPlayerService: MusicPlayerService
 ) :
         MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener,
@@ -20,7 +17,7 @@ class MediaPlayerWrap(
 
     init {
         // 无需显示的为其解锁(release的时候会自动解锁)
-        mMediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK)
+        mMediaPlayer.setWakeMode(musicPlayerService, PowerManager.PARTIAL_WAKE_LOCK)
     }
 
     /**
@@ -72,13 +69,15 @@ class MediaPlayerWrap(
 
     private fun setDataSourceImpl(path: String): Boolean {
         return try {
+            // 如果正在播放,则停止播放
             if (mMediaPlayer.isPlaying) {
                 mMediaPlayer.stop()
             }
             isPrepared = false
+            // 重置一下播放器,同步状态
             mMediaPlayer.reset()
             if (path.startsWith("content://")) {
-                mMediaPlayer.setDataSource(context, Uri.parse(path))
+                mMediaPlayer.setDataSource(musicPlayerService, Uri.parse(path))
             } else {
                 mMediaPlayer.setDataSource(path)
             }
@@ -150,7 +149,7 @@ class MediaPlayerWrap(
                 // 重新创建一个新的播放器
                 mMediaPlayer = MediaPlayer()
                 // 屏幕长亮
-                mMediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK)
+                mMediaPlayer.setWakeMode(musicPlayerService, PowerManager.PARTIAL_WAKE_LOCK)
                 // TODO 将错误信息发送出去
                 return true
             }
@@ -162,7 +161,7 @@ class MediaPlayerWrap(
 
     override fun onCompletion(mediaPlayer: MediaPlayer) {
         // 播放完成  切换下一首歌
-        iMusicPlayer.next()
+        musicPlayerService.next()
     }
 
     override fun onBufferingUpdate(mediaPlayer: MediaPlayer, percent: Int) {
@@ -174,5 +173,7 @@ class MediaPlayerWrap(
         mediaPlayer.start()
         // 准备结束标记置为true
         isPrepared = true
+        // 准备完成,回调
+        musicPlayerService.onPrepared()
     }
 }

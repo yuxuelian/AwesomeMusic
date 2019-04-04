@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Bitmap
 import android.os.IBinder
 import com.kaibo.music.player.bean.LyricRowBean
 import com.kaibo.music.player.bean.SongBean
@@ -40,6 +41,7 @@ object PlayerController {
         iMusicPlayer?.next()
     }
 
+    // 播放总进度
     fun getDuration(): Int {
         return iMusicPlayer?.getDuration() ?: 0
     }
@@ -48,6 +50,7 @@ object PlayerController {
         iMusicPlayer?.seekTo(pos)
     }
 
+    // 当前的播放进度
     fun getCurrentPosition(): Int {
         return iMusicPlayer?.getCurrentPosition() ?: 0
     }
@@ -66,6 +69,10 @@ object PlayerController {
 
     fun getPlaySong(): SongBean? {
         return iMusicPlayer?.getPlaySong()
+    }
+
+    fun getSongImage(): Bitmap? {
+        return iMusicPlayer?.getSongImage()
     }
 
     fun isPlaying(): Boolean {

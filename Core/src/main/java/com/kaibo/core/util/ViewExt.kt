@@ -97,7 +97,7 @@ fun ImageView.startTransition(targetBitmap: Bitmap) {
  * 图片渐变切换动画
  */
 fun ImageView.startTransition(targetDrawable: Drawable) {
-    val oldDrawable: Drawable = this.drawable
+    val oldDrawable: Drawable? = this.drawable
     val oldBitmapDrawable = when (oldDrawable) {
         null -> ColorDrawable(Color.TRANSPARENT)
         is TransitionDrawable -> oldDrawable.getDrawable(1)
@@ -114,8 +114,7 @@ fun ImageView.startTransition(targetDrawable: Drawable) {
  */
 fun View.startTransition(newColor: Int) {
     val olderColor = (background as ColorDrawable).color
-    val objectAnimator: ObjectAnimator
-    objectAnimator = ObjectAnimator.ofInt(this, "backgroundColor", olderColor, newColor).setDuration(800)
+    val objectAnimator = ObjectAnimator.ofInt(this, "backgroundColor", olderColor, newColor).setDuration(800)
     objectAnimator.setEvaluator(ArgbEvaluator())
     objectAnimator.start()
 }

@@ -6,7 +6,12 @@ import android.preference.PreferenceManager
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class Preference<T>(val context: Context, val name: String, private val default: T, private val prefName: String) : ReadWriteProperty<Any?, T> {
+class Preference<T>(
+        context: Context,
+        private val name: String,
+        private val default: T,
+        private val prefName: String
+) : ReadWriteProperty<Any?, T> {
 
     private val prefs by lazy {
         if (prefName.isNotEmpty()) {
@@ -58,4 +63,8 @@ class Preference<T>(val context: Context, val name: String, private val default:
     }
 }
 
-inline fun <reified R, T> R.pref(context: Context, default: T, prefName: String = "") = Preference(context, "", default, prefName)
+inline fun <reified R, T> R.pref(
+        context: Context,
+        default: T,
+        prefName: String = ""
+) = Preference(context, "", default, prefName)

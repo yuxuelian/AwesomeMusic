@@ -33,3 +33,16 @@ fun Char.toInt2() = if (this in '0'..'9') {
 } else {
     throw IllegalArgumentException("只能转换数字字符")
 }
+
+// 将毫秒数转化成字符串
+fun Int.formatMinute(): String {
+    // 5999000 99:59 minute
+    return when {
+        this >= 5999000 -> "99:59"
+        this <= 0 -> "00:00"
+        else -> {
+            val second = Math.floor(this / 1000.0).toInt()
+            String.format("%02d:%02d", second / 60, second % 60)
+        }
+    }
+}

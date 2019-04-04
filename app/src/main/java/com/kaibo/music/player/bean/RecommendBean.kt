@@ -14,7 +14,7 @@ import com.kaibo.core.annotation.PoKo
 
 @PoKo
 data class RecommendBean(
-        @SerializedName("songmid") val disstid: String,
+        @SerializedName("disstid") val disstid: String,
         @SerializedName("dissname") val dissname: String,
         @SerializedName("name") val name: String,
         @SerializedName("imgurl") val imgurl: String

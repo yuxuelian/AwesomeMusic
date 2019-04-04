@@ -63,7 +63,7 @@ class RecommendFragment : BaseFragment() {
             addAll(netRes.second.map { recommendBean: RecommendBean ->
                 RecommendItem(recommendBean) {
                     setOnClickListener {
-                        animStartActivity<SongListActivity>("songmid" to recommendBean.disstid)
+                        animStartActivity<SongListActivity>("disstid" to recommendBean.disstid)
                     }
                 }
             })

@@ -9,7 +9,13 @@
         android:id="@+id/blurBackGround"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:src="@drawable/default_cover" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000" />
 
     <LinearLayout
         android:id="@+id/playRootView"
@@ -35,7 +41,7 @@
                 android:layout_width="280dp"
                 android:layout_height="280dp"
                 android:layout_gravity="center"
-                android:src="@drawable/test_play_img"
+                android:src="@drawable/default_cover"
                 android:transitionName="@string/transition_share_song_img"
                 app:civ_border_color="@color/color_3999"
                 app:civ_border_width="10dp"

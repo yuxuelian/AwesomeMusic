@@ -21,9 +21,7 @@ import com.kaibo.music.fragment.MiniPlayerFragment
  * @description：
  */
 
-class MainActivity : SuperActivity() {
-
-    private var bindToken: PlayerController.BindToken? = null
+class MainActivity : BaseMusicActivity() {
 
     private fun setNeedsMenuKey() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
@@ -41,8 +39,6 @@ class MainActivity : SuperActivity() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        bindToken = PlayerController.bindService(this)
-
         supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.homeContainer, HomeFragment())
@@ -58,10 +54,5 @@ class MainActivity : SuperActivity() {
         } else {
             ToastUtils.showInfo("再点击一次返回键退出")
         }
-    }
-
-    override fun onDestroy() {
-        PlayerController.unbindService(bindToken)
-        super.onDestroy()
     }
 }

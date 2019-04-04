@@ -1,5 +1,7 @@
 package com.kaibo.music.player;
 
+import android.graphics.Bitmap;
+
 import com.kaibo.music.player.bean.SongBean;
 import com.kaibo.music.player.bean.LyricRowBean;
 import com.kaibo.music.player.IPlayerStateCallback;
@@ -31,6 +33,8 @@ interface IMusicPlayer {
     void setPlaySong(in SongBean songBean);
     // 获取播放单曲
     SongBean getPlaySong();
+    // 获取播放歌曲的图片
+    Bitmap getSongImage();
     // 是否正在播放中
     boolean isPlaying();
     // 是否准备完成
