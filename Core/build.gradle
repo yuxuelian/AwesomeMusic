@@ -29,6 +29,8 @@ android {
             abiFilters 'armeabi-v7a', 'x86'
         }
 
+        vectorDrawables.useSupportLibrary = true
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [moduleName: project.getName()]

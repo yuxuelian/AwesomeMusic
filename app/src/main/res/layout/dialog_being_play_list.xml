@@ -32,7 +32,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/random_song" />
+                    app:srcCompat="@drawable/random_song" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -52,7 +52,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="8dp"
-                android:src="@drawable/ic_playlist_add"
+                app:srcCompat="@drawable/ic_playlist_add"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/clearPlayList"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -66,7 +66,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="10dp"
-                android:src="@drawable/delete"
+                app:srcCompat="@drawable/delete"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

@@ -23,12 +23,10 @@
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_marginStart="20dp"
-        android:src="@drawable/default_cover"
-        android:transitionName="@string/transition_share_song_img"
+        app:srcCompat="@drawable/default_cover"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:targetApi="lollipop" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.kaibo.music.weight.MarqueeTextView
         android:id="@+id/songName"
@@ -71,7 +69,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/btn_50_selector"
             android:padding="10dp"
-            android:src="@drawable/big_play" />
+            app:srcCompat="@drawable/big_play" />
 
         <ProgressBar
             android:id="@+id/prepareProgress"
@@ -89,7 +87,7 @@
         android:clickable="true"
         android:focusable="true"
         android:padding="12dp"
-        android:src="@drawable/play_list"
+        app:srcCompat="@drawable/play_list"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

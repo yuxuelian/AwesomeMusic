@@ -234,7 +234,7 @@ class MusicPlayerService : Service() {
     private fun initNotify() {
         mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mNotificationBuilder = NotificationCompat.Builder(this, initNotifyChannel())
-                .setSmallIcon(R.drawable.ic_icon)
+                .setSmallIcon(R.drawable.ic_music)
                 .setWhen(System.currentTimeMillis())
                 .setContentIntent(PendingIntent.getActivity(this, 0, Intent(this, EmptyActivity::class.java), 0))
                 .setOngoing(true)
@@ -670,7 +670,7 @@ class MusicPlayerService : Service() {
         remoteCallbackList.finishBroadcast()
     }
 
-    private fun startPrepare(){
+    private fun startPrepare() {
         // 回调歌曲改变接口
         remoteCallbackList.beginBroadcast()
         repeat(remoteCallbackList.registeredCallbackCount) { index ->

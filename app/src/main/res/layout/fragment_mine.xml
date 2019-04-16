@@ -59,7 +59,7 @@
                         android:layout_marginEnd="6dp"
                         android:background="@drawable/btn_50_selector"
                         android:padding="8dp"
-                        android:src="@drawable/ic_playlist_add" />
+                        app:srcCompat="@drawable/ic_playlist_add" />
                 </FrameLayout>
 
                 <View style="@style/horizontal_line" />

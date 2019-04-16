@@ -3,7 +3,9 @@ package com.kaibo.core
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDex
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.kaibo.core.toast.ToastUtils
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
@@ -21,10 +23,15 @@ private lateinit var AppInstance: BaseApplication
 object AppContext : ContextWrapper(AppInstance)
 
 abstract class BaseApplication : Application() {
+    companion object {
+        init {
+            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+        }
+    }
 
     override fun attachBaseContext(base: Context?) {
-        super.attachBaseContext(base)
         MultiDex.install(base)
+        super.attachBaseContext(base)
     }
 
     override fun onCreate() {

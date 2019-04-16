@@ -14,8 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:foreground="@color/colorForeground"
-            android:scaleType="centerCrop"
-            android:transitionName="@string/transition_recommend_logo" />
+            android:scaleType="centerCrop" />
 
         <LinearLayout
             android:id="@+id/playBtn"
@@ -33,7 +32,7 @@
                 android:id="@+id/playBtnImage"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:src="@drawable/play" />
+                app:srcCompat="@drawable/play" />
 
             <TextView
                 android:id="@+id/playBtnText"
@@ -77,7 +76,7 @@
                         android:layout_width="?actionBarSize"
                         android:layout_height="?actionBarSize"
                         android:padding="12dp"
-                        android:src="@drawable/back" />
+                        app:srcCompat="@drawable/back" />
 
                     <com.kaibo.music.weight.MarqueeTextView
                         android:id="@+id/titleText"

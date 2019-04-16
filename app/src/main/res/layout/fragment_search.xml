@@ -26,7 +26,7 @@
                 android:layout_height="?actionBarSize"
                 android:background="@drawable/btn_50_selector"
                 android:padding="12dp"
-                android:src="@drawable/back" />
+                app:srcCompat="@drawable/back" />
 
             <LinearLayout
                 android:id="@+id/searchBtn"
@@ -43,7 +43,7 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
                     android:padding="8dp"
-                    android:src="@drawable/search" />
+                    app:srcCompat="@drawable/search" />
 
                 <EditText
                     android:layout_width="0dp"
@@ -68,7 +68,7 @@
                     android:layout_width="44dp"
                     android:layout_height="match_parent"
                     android:padding="8dp"
-                    android:src="@drawable/close2"
+                    app:srcCompat="@drawable/close2"
                     android:visibility="visible" />
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
@@ -133,7 +133,7 @@
                         android:layout_gravity="end|center_vertical"
                         android:background="@drawable/btn_50_selector"
                         android:padding="2dp"
-                        android:src="@drawable/delete" />
+                        app:srcCompat="@drawable/delete" />
                 </FrameLayout>
 
                 <androidx.recyclerview.widget.RecyclerView

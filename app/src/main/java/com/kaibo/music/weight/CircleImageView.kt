@@ -6,16 +6,13 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
-import android.view.ViewOutlineProvider
 import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import com.kaibo.music.R
 
@@ -28,7 +25,7 @@ import com.kaibo.music.R
  * @description：
  */
 class CircleImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
-        ImageView(context, attrs, defStyle) {
+        AppCompatImageView(context, attrs, defStyle) {
 
     companion object {
         private val SCALE_TYPE = ScaleType.CENTER_CROP
@@ -137,9 +134,6 @@ class CircleImageView @JvmOverloads constructor(context: Context, attrs: Attribu
     private fun init() {
         super.setScaleType(SCALE_TYPE)
         mReady = true
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            outlineProvider = OutlineProvider()
-        }
         if (mSetupPending) {
             setup()
             mSetupPending = false
@@ -239,7 +233,7 @@ class CircleImageView @JvmOverloads constructor(context: Context, attrs: Attribu
         initializeBitmap()
     }
 
-    override fun setImageURI(uri: Uri) {
+    override fun setImageURI(uri: Uri?) {
         super.setImageURI(uri)
         initializeBitmap()
     }
@@ -358,15 +352,5 @@ class CircleImageView @JvmOverloads constructor(context: Context, attrs: Attribu
 
     private fun inTouchableArea(x: Float, y: Float): Boolean {
         return Math.pow((x - mBorderRect.centerX()).toDouble(), 2.0) + Math.pow((y - mBorderRect.centerY()).toDouble(), 2.0) <= Math.pow(mBorderRadius.toDouble(), 2.0)
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private inner class OutlineProvider : ViewOutlineProvider() {
-        override fun getOutline(view: View, outline: Outline) {
-            val bounds = Rect()
-            mBorderRect.roundOut(bounds)
-            outline.setRoundRect(bounds, bounds.width() / 2.0f)
-        }
-
     }
 }

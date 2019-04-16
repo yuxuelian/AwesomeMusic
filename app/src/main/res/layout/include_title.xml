@@ -21,7 +21,7 @@
             <ImageView
                 android:layout_width="34dp"
                 android:layout_height="34dp"
-                android:src="@drawable/logo" />
+                app:srcCompat="@drawable/logo" />
 
             <TextView
                 android:layout_width="wrap_content"

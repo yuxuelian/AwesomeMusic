@@ -129,7 +129,7 @@
             android:id="@+id/changePlayMode"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/single_song"
+            app:srcCompat="@drawable/single_song"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/prePlay"
             app:layout_constraintStart_toStartOf="parent"
@@ -139,7 +139,7 @@
             android:id="@+id/prePlay"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/last_song"
+            app:srcCompat="@drawable/last_song"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/playOrPauseBtnLayout"
             app:layout_constraintStart_toEndOf="@+id/changePlayMode"
@@ -149,7 +149,7 @@
             android:id="@+id/playOrPauseBtnLayout"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/big_pause"
+            app:srcCompat="@drawable/big_pause"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/nextPlay"
             app:layout_constraintStart_toEndOf="@+id/prePlay"
@@ -159,7 +159,7 @@
                 android:id="@+id/playOrPauseBtn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/big_pause" />
+                app:srcCompat="@drawable/big_pause" />
 
             <ProgressBar
                 android:id="@+id/prepareProgress"
@@ -172,7 +172,7 @@
             android:id="@+id/nextPlay"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/next_song"
+            app:srcCompat="@drawable/next_song"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/collectionBtn"
             app:layout_constraintStart_toEndOf="@+id/playOrPauseBtnLayout"
@@ -182,7 +182,7 @@
             android:id="@+id/collectionBtn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/conllection_normal"
+            app:srcCompat="@drawable/conllection_normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/nextPlay"
