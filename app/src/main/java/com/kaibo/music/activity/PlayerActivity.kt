@@ -38,7 +38,6 @@ class PlayerActivity : BaseMusicActivity() {
     // 当前是否正在拖动
     private var isSeeking = false
 
-
     // 旋转动画
     private val rotateAnimator: Animator by lazy {
         AnimatorUtils.getRotateAnimator(playRotaImg)
@@ -134,6 +133,10 @@ class PlayerActivity : BaseMusicActivity() {
                     .setInterpolator(DecelerateInterpolator()).setDuration(400)
                     .start()
         }, 500)
+
+        bottomSheetLayout.onCollapseListener = {
+            finish()
+        }
     }
 
     override fun onResume() {
@@ -269,7 +272,8 @@ class PlayerActivity : BaseMusicActivity() {
                 .setInterpolator(AccelerateInterpolator()).setDuration(400)
                 .start()
         playTopLayout.postDelayed({
-            supportFinishAfterTransition()
+            animFinish()
+//            supportFinishAfterTransition()
         }, 400)
     }
 
@@ -308,5 +312,13 @@ class PlayerActivity : BaseMusicActivity() {
                 }
             }
         }
+    }
+
+    /**
+     * 带动画结束
+     */
+    override fun animFinish() {
+        finish()
+        overridePendingTransition(0, R.anim.translation_top_bottom_to)
     }
 }

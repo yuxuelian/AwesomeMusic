@@ -87,14 +87,6 @@ class BottomSheetLayout @JvmOverloads constructor(
         typedArray.recycle()
     }
 
-    private fun ensureTarget() {
-        if (childCount > 0) {
-            mTargetView = getChildAt(0)
-        } else {
-            throw IllegalArgumentException("at least one child view")
-        }
-    }
-
     override fun onFinishInflate() {
         super.onFinishInflate()
         if (childCount > 0) {
@@ -188,7 +180,6 @@ class BottomSheetLayout @JvmOverloads constructor(
     }
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-        ensureTarget()
         val action = event.actionMasked
         val pointerIndex: Int
         if (!isEnabled || canChildScrollUp() || mNestedScrollInProgress) {
@@ -276,7 +267,9 @@ class BottomSheetLayout @JvmOverloads constructor(
                     val y = event.getY(pointerIndex)
                     val overScrollTop = (y - mInitialMotionY) * DRAG_RATE
                     mIsBeingDragged = false
-                    finishSpinner(overScrollTop)
+                    if (overScrollTop > 0) {
+                        finishSpinner(overScrollTop)
+                    }
                 }
                 mActivePointerId = INVALID_POINTER
                 return false

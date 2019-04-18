@@ -1,7 +1,6 @@
 package com.kaibo.music.activity
 
 import android.graphics.Bitmap
-import android.os.Binder
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +17,6 @@ import com.kaibo.music.player.bean.SongBean
 import com.kaibo.music.player.net.Api
 import com.orhanobut.logger.Logger
 import com.yan.pullrefreshlayout.PullRefreshLayout
-import com.yishi.swipebacklib.activity.BaseSwipeBackActivity
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_song_list.*
@@ -169,7 +167,9 @@ class SongListActivity : BaseMusicActivity() {
                     // 这个方法执行起来比较耗时  这里使用异步执行
                     singleAsync(bindLifecycle(), onSuccess = {
                         // 设置成功  启动PlayerFragment
-                        animStartActivity<PlayerActivity>()
+                        startActivity<PlayerActivity>()
+                        overridePendingTransition(R.anim.translation_bottom_to_top, 0)
+
                     }) {
                         PlayerController.setPlaySong(songBean)
                     }

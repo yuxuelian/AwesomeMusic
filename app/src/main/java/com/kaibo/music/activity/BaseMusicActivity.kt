@@ -1,6 +1,7 @@
 package com.kaibo.music.activity
 
 import android.os.Bundle
+import com.kaibo.core.activity.SuperActivity
 import com.kaibo.music.player.PlayerController
 import com.yishi.swipebacklib.activity.BaseSwipeBackActivity
 
@@ -12,7 +13,7 @@ import com.yishi.swipebacklib.activity.BaseSwipeBackActivity
  * @description：
  */
 
-abstract class BaseMusicActivity : BaseSwipeBackActivity() {
+abstract class BaseMusicActivity : SuperActivity() {
     private var bindToken: PlayerController.BindToken? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

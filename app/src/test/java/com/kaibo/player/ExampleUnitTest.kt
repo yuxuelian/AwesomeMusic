@@ -1,8 +1,8 @@
 package com.kaibo.player
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
+import java.io.*
 import java.nio.charset.Charset
 import java.util.*
 
@@ -133,4 +133,52 @@ class ExampleUnitTest {
         }
     }
 
+    @Test
+    fun text7() {
+        val src = File("""C:\Users\kaibo\Desktop\temp_src.txt""")
+        val target = File("""C:\Users\kaibo\Desktop\target_src.txt""")
+        BufferedReader(InputStreamReader(FileInputStream(src))).useLines {
+            val bufferedWriter = BufferedWriter(OutputStreamWriter(FileOutputStream(target)))
+            var isMulti = false
+            var lastLine = ""
+            it.iterator().forEach { line ->
+                if (line.contains("""/*""") && line.contains("""*/""")) {
+                    // 本行删除
+                } else if (line.contains("""/*""")) {
+                    isMulti = true
+                } else if (line.contains("""*/""")) {
+                    isMulti = false
+                } else {
+                    if (!isMulti) {
+                        if (line.contains("""//""")) {
+                            val split = line.split("""//""")
+                            if (!split[0].allEmpty()) {
+                                bufferedWriter.write(split[0])
+                                bufferedWriter.newLine()
+                            }
+                        } else {
+                            if (lastLine.contains("""import""") && !line.contains("""import""")) {
+                                // 上一行有import  本行没有
+                                bufferedWriter.newLine()
+                                bufferedWriter.write("""/**""")
+                                bufferedWriter.newLine()
+                                bufferedWriter.write(""" * @author 王开波""")
+                                bufferedWriter.newLine()
+                                bufferedWriter.write(""" */""")
+                                bufferedWriter.newLine()
+                                bufferedWriter.newLine()
+                            }
+                            bufferedWriter.write(line)
+                            bufferedWriter.newLine()
+                            lastLine = line
+                        }
+                    }
+                }
+            }
+            bufferedWriter.flush()
+            bufferedWriter.close()
+        }
+    }
 }
+
+fun String.allEmpty() = this.trim().isEmpty()

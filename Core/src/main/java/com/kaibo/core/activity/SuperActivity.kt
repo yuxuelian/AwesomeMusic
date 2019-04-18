@@ -3,6 +3,8 @@ package com.kaibo.core.activity
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.content.res.TypedArray
+import android.os.Build
 import android.os.Bundle
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
@@ -15,6 +17,7 @@ import com.kaibo.core.util.bindLifecycle
 import com.kaibo.core.util.immersive
 import com.tbruyelle.rxpermissions2.Permission
 import com.tbruyelle.rxpermissions2.RxPermissions
+
 
 /**
  * @author:Administrator
@@ -65,15 +68,35 @@ abstract class SuperActivity : AppCompatActivity() {
      */
     protected open fun enableImmersive(): Pair<Boolean, Boolean> = Pair(true, false)
 
+    private fun isTranslucentOrFloating(): Boolean {
+        var isTranslucentOrFloating = false
+        try {
+            val styleableRes = Class.forName("com.android.internal.R\$styleable").getField("Window").get(null) as IntArray
+            val ta = obtainStyledAttributes(styleableRes)
+            val m = ActivityInfo::class.java.getMethod("isTranslucentOrFloating", TypedArray::class.java)
+            m.isAccessible = true
+            isTranslucentOrFloating = m.invoke(null, ta) as Boolean
+            m.isAccessible = false
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return isTranslucentOrFloating
+    }
+
+    override fun setRequestedOrientation(requestedOrientation: Int) {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O && isTranslucentOrFloating()) {
+            return
+        }
+        super.setRequestedOrientation(requestedOrientation)
+    }
+
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //禁止应用内截屏
 //        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-
         //禁止横屏
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
         //默认设置Activity为沉浸式
         val (enableImmersive, isLight) = enableImmersive()
         if (enableImmersive) {
@@ -122,7 +145,7 @@ abstract class SuperActivity : AppCompatActivity() {
     /**
      * 带动画结束
      */
-    protected fun animFinish() {
+    protected open fun animFinish() {
         finish()
         overridePendingTransition(R.anim.translation_left_in, R.anim.translation_left_out)
     }

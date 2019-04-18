@@ -1,64 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.kaibo.music.weight.BottomSheetLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottomSheetLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/blurBackGround"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        app:srcCompat="@drawable/default_cover" />
+        android:layout_height="match_parent">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#80000000" />
-
-    <LinearLayout
-        android:id="@+id/playRootView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <!--顶部布局-->
-        <include
-            android:id="@+id/playTopLayout"
-            layout="@layout/include_play_top" />
-
-        <!--中间布局-->
-        <FrameLayout
-            android:id="@+id/lrcPager"
+        <ImageView
+            android:id="@+id/blurBackGround"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="7"
-            android:overScrollMode="never">
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/default_cover" />
 
-            <com.kaibo.music.weight.CircleImageView
-                android:id="@+id/playRotaImg"
-                android:layout_width="280dp"
-                android:layout_height="280dp"
-                android:layout_gravity="center"
-                app:srcCompat="@drawable/default_cover"
-                app:civ_border_color="@color/color_3999"
-                app:civ_border_width="10dp" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#80000000" />
 
-            <com.kaibo.music.weight.LyricView
-                android:id="@+id/lyricView"
+        <LinearLayout
+            android:id="@+id/playRootView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!--顶部布局-->
+            <include
+                android:id="@+id/playTopLayout"
+                layout="@layout/include_play_top" />
+
+            <!--中间布局-->
+            <FrameLayout
+                android:id="@+id/lrcPager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:high_textColor="@color/colorTheme"
-                app:lyric_margin="10dp" />
-        </FrameLayout>
+                android:layout_height="0dp"
+                android:layout_weight="7"
+                android:overScrollMode="never">
 
-        <!--底部布局-->
-        <include
-            android:id="@+id/playBottomLayout"
-            layout="@layout/include_play_bottom" />
-    </LinearLayout>
-</FrameLayout>
+                <com.kaibo.music.weight.CircleImageView
+                    android:id="@+id/playRotaImg"
+                    android:layout_width="280dp"
+                    android:layout_height="280dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/default_cover"
+                    android:transitionName="@string/transition_share_song_img"
+                    app:civ_border_color="@color/color_3999"
+                    app:civ_border_width="10dp" />
+
+                <com.kaibo.music.weight.LyricView
+                    android:id="@+id/lyricView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:high_textColor="@color/colorTheme"
+                    app:lyric_margin="10dp" />
+            </FrameLayout>
+
+            <!--底部布局-->
+            <include
+                android:id="@+id/playBottomLayout"
+                layout="@layout/include_play_bottom" />
+        </LinearLayout>
+    </FrameLayout>
+</com.kaibo.music.weight.BottomSheetLayout>

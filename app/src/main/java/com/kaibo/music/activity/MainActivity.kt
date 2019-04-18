@@ -2,15 +2,15 @@ package com.kaibo.music.activity
 
 import android.os.Build
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.Window
 import android.view.WindowManager
-import com.kaibo.core.activity.SuperActivity
 import com.kaibo.core.toast.ToastUtils
 import com.kaibo.core.util.isDoubleClick
-import com.kaibo.music.player.PlayerController
 import com.kaibo.music.R
 import com.kaibo.music.fragment.HomeFragment
 import com.kaibo.music.fragment.MiniPlayerFragment
+import com.orhanobut.logger.Logger
 
 
 /**
@@ -46,6 +46,16 @@ class MainActivity : BaseMusicActivity() {
                 .commitAllowingStateLoss()
 
         setNeedsMenuKey()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        Logger.d("onKeyDown keyCode = $keyCode isKEYCODE_MENU = ${keyCode == KeyEvent.KEYCODE_MENU}")
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+        Logger.d("onKeyUp keyCode = $keyCode isKEYCODE_MENU = ${keyCode == KeyEvent.KEYCODE_MENU}")
+        return super.onKeyUp(keyCode, event)
     }
 
     override fun onBackPressed() {

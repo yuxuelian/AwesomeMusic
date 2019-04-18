@@ -23,7 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.PlayerActivity" />
+        <activity
+            android:name=".activity.PlayerActivity"
+            android:theme="@style/TranslucentBackground" />
         <activity android:name=".activity.SearchActivity" />
         <activity android:name=".activity.SongListActivity" />
     </application>
