@@ -40,9 +40,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 
-/**
- * A class for parsing the exif orientation from an image header.
- */
 public class ImageHeaderParser {
     private static final String TAG = "ImageHeaderParser";
     /**
@@ -322,7 +319,6 @@ public class ImageHeaderParser {
     private static class StreamReader implements Reader {
         private final InputStream is;
 
-        // Motorola / big endian byte order.
         public StreamReader(InputStream is) {
             this.is = is;
         }
@@ -413,13 +409,10 @@ public class ImageHeaderParser {
             newExif.setAttribute(ExifInterface.TAG_IMAGE_WIDTH, String.valueOf(width));
             newExif.setAttribute(ExifInterface.TAG_IMAGE_LENGTH, String.valueOf(height));
             newExif.setAttribute(ExifInterface.TAG_ORIENTATION, "0");
-
             newExif.saveAttributes();
-
         } catch (IOException e) {
             Log.d(TAG, e.getMessage());
         }
     }
-
 }
 

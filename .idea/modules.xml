@@ -4,8 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BadgeViewLib/BadgeViewLib.iml" filepath="$PROJECT_DIR$/BadgeViewLib/BadgeViewLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Core/Core.iml" filepath="$PROJECT_DIR$/Core/Core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/DelicateMusic.iml" filepath="$PROJECT_DIR$/.idea/DelicateMusic.iml" />
       <module fileurl="file://$PROJECT_DIR$/DelicateMusic.iml" filepath="$PROJECT_DIR$/DelicateMusic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/DelicateMusic.iml" filepath="$PROJECT_DIR$/.idea/DelicateMusic.iml" />
       <module fileurl="file://$PROJECT_DIR$/MusicPlayer/MusicPlayer.iml" filepath="$PROJECT_DIR$/MusicPlayer/MusicPlayer.iml" />
       <module fileurl="file://$PROJECT_DIR$/NodeMusic/NodeMusic.iml" filepath="$PROJECT_DIR$/NodeMusic/NodeMusic.iml" />
       <module fileurl="file://$PROJECT_DIR$/PullRefresh/PullRefresh.iml" filepath="$PROJECT_DIR$/PullRefresh/PullRefresh.iml" />

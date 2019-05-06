@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <FrameLayout
         android:id="@+id/wrapper_controls"
@@ -48,7 +47,7 @@
             <ImageView
                 android:id="@+id/image_view_state_scale"
                 style="@style/ucrop_ImageViewWidgetIcon"
-                app:srcCompat="@drawable/ucrop_ic_scale" />
+                android:src="@drawable/ucrop_ic_scale" />
 
         </FrameLayout>
 
@@ -59,7 +58,7 @@
             <ImageView
                 android:id="@+id/image_view_state_aspect_ratio"
                 style="@style/ucrop_ImageViewWidgetIcon"
-                app:srcCompat="@drawable/ucrop_ic_crop" />
+                android:src="@drawable/ucrop_ic_crop" />
 
         </FrameLayout>
 
@@ -70,7 +69,7 @@
             <ImageView
                 android:id="@+id/image_view_state_rotate"
                 style="@style/ucrop_ImageViewWidgetIcon"
-                app:srcCompat="@drawable/ucrop_ic_rotate" />
+                android:src="@drawable/ucrop_ic_rotate" />
 
         </FrameLayout>
     </LinearLayout>

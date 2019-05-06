@@ -1,6 +1,8 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -11,6 +13,7 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
         versionCode rootProject.versionCode
         versionName rootProject.versionName
+
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -27,9 +30,9 @@ android {
 
     resourcePrefix 'ucrop_'
 
-    sourceSets.main {
-        jni.srcDirs = []
-    }
+//    sourceSets.main {
+//        jni.srcDirs = []
+//    }
 
     compileOptions {
         sourceCompatibility rootProject.sourceCompatibility
@@ -46,4 +49,74 @@ dependencies {
     implementation kotlin_stdlib
     implementation androidx_appcompat
     implementation okhttp
+}
+
+def siteUrl = 'https://github.com/yuxuelian/DelicateMusic'
+def gitUrl = 'https://github.com/yuxuelian/DelicateMusic.git'
+def libName = "uCrop"
+group = 'com.kaibo.common.lib'
+version = '1.0.0'
+// 上面配置后上传至JCenter后的编译路径是这样的： implementation 'com.kaibo.common.lib:uCrop:1.0.0'
+
+// 生成源文件
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+// 上传到JCenter所需要的源码文件
+artifacts {
+    archives sourcesJar
+}
+
+// 配置maven库，生成POM.xml文件
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                // 项目描述，随意填
+                name '--uCrop--'
+                url siteUrl
+                licenses {
+                    license {
+                        // 开源协议
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        // 开发者的个人信息
+                        id 'yuxuelian'
+                        name 'WangKaibo'
+                        email 'kaibo1hao@gmail.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    user = 'kaibo2'
+    key = '8382ea6342e24c66bccb3e5fceed0f766d15c289'
+    configurations = ['archives']
+    pkg {
+        // 这里的repo值必须要和你创建Maven仓库的时候的名字一样
+        repo = 'CommonRepository'
+        // 发布到JCenter上的项目名字
+        name = libName
+        // 项目描述
+        desc = '--uCrop--'
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+    }
 }

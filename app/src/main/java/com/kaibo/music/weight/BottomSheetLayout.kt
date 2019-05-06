@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.TypedArray
 import android.os.Build
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -14,26 +15,26 @@ import android.widget.AbsListView
 import android.widget.FrameLayout
 import android.widget.ListView
 import androidx.annotation.NonNull
-import androidx.annotation.Nullable
 import androidx.core.view.*
 import androidx.core.widget.ListViewCompat
 import com.kaibo.core.util.dip
 import com.yan.pullrefreshlayout.BezierInterpolator
 
 class BottomSheetLayout @JvmOverloads constructor(
-        @NonNull context: Context,
-        @Nullable attrs: AttributeSet? = null,
+        context: Context,
+        attrs: AttributeSet? = null,
         defStyleAttr: Int = 0) :
         FrameLayout(context, attrs, defStyleAttr),
         NestedScrollingParent,
         NestedScrollingChild {
 
     private val mTouchSlop: Int = ViewConfiguration.get(context).scaledTouchSlop
-    private var mTotalUnconsumed: Float = 0.toFloat()
     private val mNestedScrollingParentHelper: NestedScrollingParentHelper
     private val mNestedScrollingChildHelper: NestedScrollingChildHelper
     private val mParentScrollConsumed = IntArray(2)
     private val mParentOffsetInWindow = IntArray(2)
+
+    private var mTotalUnconsumed: Float = 0.toFloat()
     private var mNestedScrollInProgress: Boolean = false
     private var mInitialMotionY: Float = 0.toFloat()
     private var mInitialDownY: Float = 0.toFloat()
@@ -82,7 +83,7 @@ class BottomSheetLayout @JvmOverloads constructor(
         mNestedScrollingChildHelper = NestedScrollingChildHelper(this)
         isNestedScrollingEnabled = true
         // 查找xml中设置的是否enabled
-        val typedArray = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS)
+        val typedArray: TypedArray = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS)
         isEnabled = typedArray.getBoolean(0, true)
         typedArray.recycle()
     }
@@ -106,8 +107,10 @@ class BottomSheetLayout @JvmOverloads constructor(
      */
     private fun canChildScrollUp(): Boolean {
         return if (mTargetView is ListView) {
-            ListViewCompat.canScrollList((mTargetView as ListView?)!!, -1)
-        } else mTargetView.canScrollVertically(-1)
+            ListViewCompat.canScrollList(mTargetView as ListView, -1)
+        } else {
+            mTargetView.canScrollVertically(-1)
+        }
     }
 
     /**
@@ -136,7 +139,8 @@ class BottomSheetLayout @JvmOverloads constructor(
         val endPosition = if (isExpand) 0f else mTargetView.measuredHeight.toFloat()
         // 计算duration
         val duration = (MAX_DURATION * (Math.abs(endPosition - mLayoutTop) / maxSpringBackDistance)).toLong()
-        val animator = ObjectAnimator.ofFloat(mTargetView, "translationY", mLayoutTop, endPosition)
+        // 使用属性动画  操作 translationY 属性即更新时调用 (  target.setTranslationY )
+        val animator: ObjectAnimator = ObjectAnimator.ofFloat(mTargetView, "translationY", mLayoutTop, endPosition)
         animator.interpolator = BezierInterpolator()
         animator.duration = duration
         animator.addListener(object : AnimatorListenerAdapter() {
@@ -159,13 +163,12 @@ class BottomSheetLayout @JvmOverloads constructor(
         // 计算滑动速率
         val velocity = dip(overScrollTop.toInt()) / (System.currentTimeMillis() - startTouchTime)
         // 创建动画
-        mSpringBackAnimator = if (velocity > 0.5f) {
+        mSpringBackAnimator = if (velocity > 2f) {
             // 速率过大的情况  不需要判断当前的滑动距离是否超过了中线   直接关闭
             createSpringBackAnimator(false)
         } else {
             // 速率过小的情况  去判断滑动距离是否超过了中线
-            createSpringBackAnimator(
-                    overScrollTop < mTargetView.measuredHeight / 2.0)
+            createSpringBackAnimator(overScrollTop < mTargetView.measuredHeight / 2.0)
         }
         // 启动回弹动画
         mSpringBackAnimator!!.start()
@@ -264,9 +267,9 @@ class BottomSheetLayout @JvmOverloads constructor(
                     return false
                 }
                 if (mIsBeingDragged) {
+                    mIsBeingDragged = false
                     val y = event.getY(pointerIndex)
                     val overScrollTop = (y - mInitialMotionY) * DRAG_RATE
-                    mIsBeingDragged = false
                     if (overScrollTop > 0) {
                         finishSpinner(overScrollTop)
                     }
@@ -274,7 +277,9 @@ class BottomSheetLayout @JvmOverloads constructor(
                 mActivePointerId = INVALID_POINTER
                 return false
             }
-            MotionEvent.ACTION_CANCEL -> return false
+            MotionEvent.ACTION_CANCEL -> {
+                return false
+            }
             else -> {
             }
         }
@@ -303,7 +308,11 @@ class BottomSheetLayout @JvmOverloads constructor(
         val pointerIndex = ev.actionIndex
         val pointerId = ev.getPointerId(pointerIndex)
         if (pointerId == mActivePointerId) {
-            val newPointerIndex = if (pointerIndex == 0) 1 else 0
+            val newPointerIndex = if (pointerIndex == 0) {
+                1
+            } else {
+                0
+            }
             mActivePointerId = ev.getPointerId(newPointerIndex)
         }
     }
@@ -314,9 +323,9 @@ class BottomSheetLayout @JvmOverloads constructor(
      * @param b
      */
     override fun requestDisallowInterceptTouchEvent(b: Boolean) {
-        val b1 = Build.VERSION.SDK_INT < 21 && mTargetView is AbsListView
-        val b2 = !ViewCompat.isNestedScrollingEnabled(mTargetView)
-        if (!b1 && !b2) {
+        val b1 = Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && mTargetView is AbsListView
+        val b2 = ViewCompat.isNestedScrollingEnabled(mTargetView)
+        if (b1 || !b2) {
             super.requestDisallowInterceptTouchEvent(b)
         }
     }

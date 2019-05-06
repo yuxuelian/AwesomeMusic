@@ -1,15 +1,14 @@
 package com.kaibo.music.fragment
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
-import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Lifecycle
 import com.kaibo.core.fragment.BaseFragment
 import com.kaibo.core.toast.ToastUtils
 import com.kaibo.core.util.bindLifecycle
 import com.kaibo.core.util.easyClick
+import com.kaibo.core.util.startActivity
 import com.kaibo.core.util.toMainThread
 import com.kaibo.music.R
 import com.kaibo.music.activity.PlayerActivity
@@ -55,9 +54,14 @@ class MiniPlayerFragment : BaseFragment() {
             if (PlayerController.getPlayQueue()?.isEmpty() == true) {
                 ToastUtils.showWarning("播放队列为空")
             } else {
-                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), playRotaImg, getString(R.string.transition_share_song_img))
-                val intent = Intent(requireContext(), PlayerActivity::class.java)
-                startActivity(intent, options.toBundle())
+//                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), playRotaImg, getString(R.string.transition_share_song_img))
+//                val intent = Intent(requireContext(), PlayerActivity::class.java)
+//                startActivity(intent, options.toBundle())
+                // 设置成功  启动PlayerFragment
+                activity?.run {
+                    startActivity<PlayerActivity>()
+                    overridePendingTransition(R.anim.translation_bottom_to_top, 0)
+                }
             }
         }
 
@@ -90,11 +94,21 @@ class MiniPlayerFragment : BaseFragment() {
         } else {
             startPrepare()
         }
+
+        rotateAnimator.start()
     }
 
     override fun onPause() {
         PlayerController.unregisterCallback(playerCallbackStub)
+        rotateAnimator.pause()
         super.onPause()
+    }
+
+    override fun onDestroy() {
+        if (rotateAnimator.isRunning) {
+            rotateAnimator.cancel()
+        }
+        super.onDestroy()
     }
 
     private fun showSongInfo(songBean: SongBean) {

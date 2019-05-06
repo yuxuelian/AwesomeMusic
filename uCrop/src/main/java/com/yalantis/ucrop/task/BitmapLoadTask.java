@@ -35,15 +35,8 @@ import okio.BufferedSource;
 import okio.Okio;
 import okio.Sink;
 
-/**
- * Creates and returns a Bitmap for a given Uri(String url).
- * inSampleSize is calculated based on requiredWidth property. However can be adjusted if OOM occurs.
- * If any EXIF config is found - bitmap is transformed properly.
- */
 public class BitmapLoadTask extends AsyncTask<Void, Void, BitmapLoadTask.BitmapWorkerResult> {
-
     private static final String TAG = "BitmapWorkerTask";
-
     private final Context mContext;
     private Uri mInputUri;
     private Uri mOutputUri;
@@ -53,20 +46,16 @@ public class BitmapLoadTask extends AsyncTask<Void, Void, BitmapLoadTask.BitmapW
     private final BitmapLoadCallback mBitmapLoadCallback;
 
     public static class BitmapWorkerResult {
-
         Bitmap mBitmapResult;
         ExifInfo mExifInfo;
         Exception mBitmapWorkerException;
-
         public BitmapWorkerResult(@NonNull Bitmap bitmapResult, @NonNull ExifInfo exifInfo) {
             mBitmapResult = bitmapResult;
             mExifInfo = exifInfo;
         }
-
         public BitmapWorkerResult(@NonNull Exception bitmapWorkerException) {
             mBitmapWorkerException = bitmapWorkerException;
         }
-
     }
 
     public BitmapLoadTask(@NonNull Context context,

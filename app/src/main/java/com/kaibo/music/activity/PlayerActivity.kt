@@ -161,21 +161,24 @@ class PlayerActivity : BaseMusicActivity() {
         } else {
             startPrepare()
         }
+
+        rotateAnimator.start()
     }
 
     override fun onPause() {
         PlayerController.unregisterCallback(playerCallbackStub)
+        rotateAnimator.pause()
         super.onPause()
     }
 
     override fun onDestroy() {
-        // 退出的时候停止旋转动画
         if (rotateAnimator.isRunning) {
             rotateAnimator.cancel()
         }
-
         super.onDestroy()
     }
+
+    override fun isSupportSwipeBack() = false
 
     private fun showSongInfo(songBean: SongBean) {
         songName.text = songBean.songname

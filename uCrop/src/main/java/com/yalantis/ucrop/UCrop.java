@@ -22,11 +22,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-/**
- * Created by Oleksii Shliama (https://github.com/shliama).
- * <p/>
- * Builder class to ease Intent setup.
- */
 public class UCrop {
 
     public static final int REQUEST_CROP = 69;

@@ -8,6 +8,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.yalantis.ucrop.callback.BitmapCropCallback;
 import com.yalantis.ucrop.model.CropParameters;
 import com.yalantis.ucrop.model.ExifInfo;
@@ -18,23 +21,27 @@ import com.yalantis.ucrop.util.ImageHeaderParser;
 import java.io.File;
 import java.io.IOException;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-/**
- * Crops part of image that fills the crop bounds.
- * <p/>
- * First image is downscaled if max size was set and if resulting image is larger that max size.
- * Then image is rotated accordingly.
- * Finally new Bitmap object is created and saved to file.
- */
 public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
-
-    private static final String TAG = "BitmapCropTask";
-
     static {
         System.loadLibrary("ucrop");
     }
+
+    private static final String TAG = "BitmapCropTask";
+
+    public static native boolean cropCImg(
+            String inputPath,
+            String outputPath,
+            int left,
+            int top,
+            int width,
+            int height,
+            float angle,
+            float resizeScale,
+            int format,
+            int quality,
+            int exifDegrees,
+            int exifTranslation
+    ) throws IOException, OutOfMemoryError;
 
     private Bitmap mViewBitmap;
 
@@ -93,8 +100,8 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
         try {
             crop(resizeScale);
             mViewBitmap = null;
-        } catch (Throwable throwable) {
-            return throwable;
+        } catch (Throwable e) {
+            return e;
         }
 
         return null;
@@ -130,40 +137,28 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
         return resizeScale;
     }
 
-    private boolean crop(float resizeScale) throws IOException {
-        ExifInterface originalExif = new ExifInterface(mImageInputPath);
+    private void crop(float resizeScale) throws IOException {
 
         cropOffsetX = Math.round((mCropRect.left - mCurrentImageRect.left) / mCurrentScale);
         cropOffsetY = Math.round((mCropRect.top - mCurrentImageRect.top) / mCurrentScale);
         mCroppedImageWidth = Math.round(mCropRect.width() / mCurrentScale);
         mCroppedImageHeight = Math.round(mCropRect.height() / mCurrentScale);
-
         boolean shouldCrop = shouldCrop(mCroppedImageWidth, mCroppedImageHeight);
         Log.i(TAG, "Should crop: " + shouldCrop);
-
         if (shouldCrop) {
             boolean cropped = cropCImg(mImageInputPath, mImageOutputPath,
                     cropOffsetX, cropOffsetY, mCroppedImageWidth, mCroppedImageHeight,
                     mCurrentAngle, resizeScale, mCompressFormat.ordinal(), mCompressQuality,
                     mExifInfo.getExifDegrees(), mExifInfo.getExifTranslation());
             if (cropped && mCompressFormat.equals(Bitmap.CompressFormat.JPEG)) {
+                ExifInterface originalExif = new ExifInterface(mImageInputPath);
                 ImageHeaderParser.copyExif(originalExif, mCroppedImageWidth, mCroppedImageHeight, mImageOutputPath);
             }
-            return cropped;
         } else {
             FileUtils.copyFile(mImageInputPath, mImageOutputPath);
-            return false;
         }
     }
 
-    /**
-     * Check whether an image should be cropped at all or just file can be copied to the destination path.
-     * For each 1000 pixels there is one pixel of error due to matrix calculations etc.
-     *
-     * @param width  - crop area width
-     * @param height - crop area height
-     * @return - true if image must be cropped, false - if original image fits requirements
-     */
     private boolean shouldCrop(int width, int height) {
         int pixelError = 1;
         pixelError += Math.round(Math.max(width, height) / 1000f);
@@ -174,14 +169,6 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
                 || Math.abs(mCropRect.right - mCurrentImageRect.right) > pixelError
                 || mCurrentAngle != 0;
     }
-
-    @SuppressWarnings("JniMissingFunction")
-    native public static boolean
-    cropCImg(String inputPath, String outputPath,
-             int left, int top, int width, int height,
-             float angle, float resizeScale,
-             int format, int quality,
-             int exifDegrees, int exifTranslation) throws IOException, OutOfMemoryError;
 
     @Override
     protected void onPostExecute(@Nullable Throwable t) {
@@ -194,5 +181,4 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
             }
         }
     }
-
 }

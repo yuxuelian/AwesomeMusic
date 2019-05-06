@@ -1,6 +1,7 @@
 package com.yalantis.ucrop;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -25,6 +26,16 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+
 import com.yalantis.ucrop.callback.BitmapCropCallback;
 import com.yalantis.ucrop.model.AspectRatio;
 import com.yalantis.ucrop.util.SelectedStateListDrawable;
@@ -42,21 +53,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.ColorInt;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.IdRes;
-import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-
-/**
- * Created by Oleksii Shliama (https://github.com/shliama).
- */
-
-@SuppressWarnings("ConstantConditions")
 public class UCropActivity extends AppCompatActivity {
 
     public static final int DEFAULT_COMPRESS_QUALITY = 90;
@@ -177,7 +173,8 @@ public class UCropActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.menu_crop) {
             cropAndSaveImage();
         } else if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+            setResult(Activity.RESULT_CANCELED);
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -188,6 +185,15 @@ public class UCropActivity extends AppCompatActivity {
         if (mGestureCropImageView != null) {
             mGestureCropImageView.cancelAllAnimations();
         }
+    }
+
+    /**
+     * 带动画结束
+     */
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.ucrop_translation_left_in, R.anim.ucrop_translation_left_out);
     }
 
     /**
@@ -211,11 +217,6 @@ public class UCropActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * This method extracts {@link com.yalantis.ucrop.UCrop.Options #optionsBundle} from incoming intent
-     * and setups Activity, {@link OverlayView} and {@link CropImageView} properly.
-     */
-    @SuppressWarnings("deprecation")
     private void processOptions(@NonNull Intent intent) {
         // Bitmap compression options
         String compressionFormatName = intent.getStringExtra(UCrop.Options.EXTRA_COMPRESSION_FORMAT_NAME);

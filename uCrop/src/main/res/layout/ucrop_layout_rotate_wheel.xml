@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:visibility="gone"
     tools:showIn="@layout/ucrop_activity_photobox"
     tools:visibility="visible">
@@ -30,7 +29,7 @@
 
         <ImageView
             style="@style/ucrop_ImageViewWidgetIcon"
-            app:srcCompat="@drawable/ucrop_ic_reset" />
+            android:src="@drawable/ucrop_ic_reset" />
 
     </FrameLayout>
 
@@ -43,6 +42,6 @@
 
         <ImageView
             style="@style/ucrop_ImageViewWidgetIcon"
-            app:srcCompat="@drawable/ucrop_ic_angle" />
+            android:src="@drawable/ucrop_ic_angle" />
     </FrameLayout>
 </RelativeLayout>

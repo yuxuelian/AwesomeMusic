@@ -13,7 +13,7 @@ import com.yishi.swipebacklib.activity.BaseSwipeBackActivity
  * @description：
  */
 
-abstract class BaseMusicActivity : SuperActivity() {
+abstract class BaseMusicActivity : BaseSwipeBackActivity() {
     private var bindToken: PlayerController.BindToken? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
