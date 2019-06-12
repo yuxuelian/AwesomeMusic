@@ -19,12 +19,12 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
+import androidx.annotation.IntDef;
+
 import com.kaibo.music.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import androidx.annotation.IntDef;
 
 import static com.kaibo.core.util.DimensionsExtKt.dip;
 

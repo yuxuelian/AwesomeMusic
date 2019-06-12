@@ -5,19 +5,15 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.Random;
 
-import static android.content.ContentValues.TAG;
-
 /**
  * @author chqiu
- *         Email:qstumn@163.com
+ * Email:qstumn@163.com
  * Animation borrowed from https://github.com/tyrantgit/ExplosionField
  */
 

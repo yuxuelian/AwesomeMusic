@@ -3,13 +3,10 @@ package com.kaibo.core.dialog
 import android.os.Bundle
 import android.view.WindowManager
 import android.widget.DatePicker
-import com.jakewharton.rxbinding2.view.clicks
 import com.kaibo.core.R
 import com.kaibo.core.util.bindLifecycle
 import com.kaibo.core.util.easyClick
-import com.kaibo.core.util.toTimeMillis
 import kotlinx.android.synthetic.main.dialog_date_picker.*
-import java.util.*
 
 /**
  * @author kaibo

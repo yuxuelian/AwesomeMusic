@@ -4,14 +4,14 @@ import android.os.Bundle
 import android.view.View
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
-import com.jakewharton.rxbinding2.widget.textChanges
 import com.kaibo.core.adapter.withItems
 import com.kaibo.core.util.*
 import com.kaibo.music.R
-import com.kaibo.music.player.bean.HotSearchBean
 import com.kaibo.music.item.search.HotSearchItem
+import com.kaibo.music.player.bean.HotSearchBean
 import com.kaibo.music.player.net.Api
-import com.yishi.swipebacklib.activity.BaseSwipeBackActivity
+import com.kaibo.swipe_back.SwipeBackEnable
+import com.yishi.core.rxbinding.textChanges
 import kotlinx.android.synthetic.main.fragment_search.*
 import java.util.concurrent.TimeUnit
 
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit
  */
 
 
-class SearchActivity : BaseMusicActivity() {
+class SearchActivity : BaseMusicActivity(), SwipeBackEnable {
 
     override fun getLayoutRes() = R.layout.fragment_search
 

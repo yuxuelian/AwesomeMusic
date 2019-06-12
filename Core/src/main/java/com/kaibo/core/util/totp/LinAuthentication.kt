@@ -1,6 +1,5 @@
 package com.kaibo.core.util.totp
 
-import com.kaibo.core.util.totp.Base32String
 import java.security.GeneralSecurityException
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec

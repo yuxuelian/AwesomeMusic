@@ -1,8 +1,8 @@
 package com.kaibo.music
 
 import com.kaibo.core.BaseApplication
+import com.kaibo.swipe_back.SwipeBackManager
 import com.squareup.leakcanary.LeakCanary
-import com.yishi.swipebacklib.SwipeBackHelper
 
 /**
  * @author:Administrator
@@ -19,7 +19,7 @@ class App : BaseApplication() {
         LeakCanary.install(this)
 
         // 初始化侧滑返回
-        SwipeBackHelper.init(this, null)
+        SwipeBackManager.init(this)
     }
 
 }

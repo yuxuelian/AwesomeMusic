@@ -1,7 +1,6 @@
 package com.kaibo.core.dialog
 
 import android.os.Bundle
-import com.jakewharton.rxbinding2.view.clicks
 import com.kaibo.core.R
 import com.kaibo.core.util.bindLifecycle
 import com.kaibo.core.util.dip

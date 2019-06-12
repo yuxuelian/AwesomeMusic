@@ -76,6 +76,7 @@
             android:id="@+id/testRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:overScrollMode="never" />
     </com.yan.pullrefreshlayout.footer.NestedLinearLayout>
 </com.kaibo.music.weight.BottomSheetLayout>

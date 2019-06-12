@@ -4,14 +4,13 @@ import android.view.View
 import androidx.annotation.CheckResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import com.jakewharton.rxbinding2.view.clicks
 import com.kaibo.core.exception.DataException
 import com.kaibo.core.http.BaseBean
-import com.orhanobut.logger.Logger
 import com.uber.autodispose.AutoDispose
 import com.uber.autodispose.AutoDisposeConverter
 import com.uber.autodispose.ObservableSubscribeProxy
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
+import com.yishi.core.rxbinding.clicks
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -100,5 +99,5 @@ fun <T> singleAsync(autoDispose: AutoDisposeConverter<T>, onSuccess: (T) -> Unit
  */
 @CheckResult
 fun View.easyClick(autoDispose: AutoDisposeConverter<Unit>, timeout: Long = 200L): ObservableSubscribeProxy<Unit> {
-    return this.clicks().debounce(timeout, TimeUnit.MILLISECONDS).toMainThread().`as`(autoDispose)
+    return this.clicks().throttleFirst(timeout, TimeUnit.MILLISECONDS).toMainThread().`as`(autoDispose)
 }

@@ -11,7 +11,6 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
         versionCode rootProject.versionCode
         versionName rootProject.versionName
-        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -21,9 +20,6 @@ android {
         }
     }
 
-    lintOptions {
-        abortOnError false
-    }
     compileOptions {
         sourceCompatibility rootProject.sourceCompatibility
         targetCompatibility rootProject.targetCompatibility
@@ -31,9 +27,11 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation junit
     androidTestImplementation androidx_test_runner
     androidTestImplementation androidx_test_espresso_core
-    implementation project(':Core')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    implementation kotlin_stdlib
+    implementation androidx_appcompat
 }

@@ -6,88 +6,92 @@ ext {
     minSdkVersion = 19
     targetSdkVersion = 28
     versionCode = 1
-    versionName = "1.0.0"
+    versionName = "1.0"
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 buildscript {
     ext.kotlin_version = '1.3.31'
-    ext.gradle_plugin_version = '3.4.0'
+    ext.gradle_plugin_version = '3.4.1'
 
     ext {
-        LIBS_DIRS_PATH = "${projectDir.getPath()}/Core/libs"
-
         // --------------------------------------kotlin依赖------------------------------------------
         kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-
         // --------------------------------------debug相关-------------------------------------------
-        leakcanary_android = 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+        leakcanary_android = 'com.squareup.leakcanary:leakcanary-android:1.6.3'
+        leakcanary_android_no_op = 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
+        leakcanary_support_fragment = 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'
         // debug 日志输出
         debug_logger = 'com.orhanobut:logger:2.2.0'
         junit = 'junit:junit:4.12'
-        androidx_test_runner = 'androidx.test:runner:1.1.1'
-        androidx_test_espresso_core = 'androidx.test.espresso:espresso-core:3.1.1'
-
+        androidx_test_runner = 'androidx.test:runner:1.2.0'
+        androidx_test_espresso_core = 'androidx.test.espresso:espresso-core:3.2.0'
         // ---------------------------------------runtime相关----------------------------------------
         androidx_appcompat = 'androidx.appcompat:appcompat:1.1.0-alpha01'
         androidx_multidex = 'androidx.multidex:multidex:2.0.1'
         androidx_v4 = 'androidx.legacy:legacy-support-v4:1.0.0'
-        androidx_material = 'com.google.android.material:material:1.1.0-alpha02'
+        androidx_material = 'com.google.android.material:material:1.1.0-alpha05'
         androidx_cardview = 'androidx.cardview:cardview:1.0.0'
-        androidx_recyclerview = 'androidx.recyclerview:recyclerview:1.1.0-alpha01'
+        androidx_recyclerview = 'androidx.recyclerview:recyclerview:1.1.0-alpha05'
         androidx_constraintlayout = 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
-        androidx_room_runtime = 'androidx.room:room-runtime:2.1.0-alpha03'
-        androidx_room_rxjava2 = 'androidx.room:room-rxjava2:2.1.0-alpha03'
-        androidx_annotation = 'androidx.annotation:annotation:1.0.0@jar'
-
+        androidx_room_runtime = 'androidx.room:room-runtime:2.1.0-alpha07'
+        androidx_room_rxjava2 = 'androidx.room:room-rxjava2:2.1.0-alpha07'
         // rx系列
-        rxjava2 = 'io.reactivex.rxjava2:rxjava:2.2.3'
-        rxandroid = 'io.reactivex.rxjava2:rxandroid:2.1.0'
-        rxpermissions = 'com.github.tbruyelle:rxpermissions:0.10.2'
-        rxbinding = 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.1.1'
-
-        rxrelay2 = 'com.jakewharton.rxrelay2:rxrelay:2.1.0'
-
+        rxjava2 = 'io.reactivex.rxjava2:rxjava:2.2.8'
+        rxandroid = 'io.reactivex.rxjava2:rxandroid:2.1.1'
+        rx_permissions = 'com.github.yuxuelian:RxPermissions:1.0.0'
+        rxbinding = 'com.jakewharton.rxbinding3:rxbinding-core:3.0.0-alpha2'
+        rx_relay2 = 'com.jakewharton.rxrelay2:rxrelay:2.1.0'
         // auto_dispose
-        auto_dispose = 'com.uber.autodispose:autodispose-android:1.1.0'
-        auto_dispose_archcomponents = 'com.uber.autodispose:autodispose-android-archcomponents:1.1.0'
-
+        auto_dispose = 'com.uber.autodispose:autodispose-android:1.3.0'
+        auto_dispose_archcomponents = 'com.uber.autodispose:autodispose-android-archcomponents:1.3.0'
         // okhttp
         okhttp = 'com.squareup.okhttp3:okhttp:3.11.0'
         okhttp_logger = 'com.squareup.okhttp3:logging-interceptor:3.11.0'
         // retrofit
-        retrofit = 'com.squareup.retrofit2:retrofit:2.4.0'
-        retrofit_rxjava2_adapter = 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+        retrofit = 'com.squareup.retrofit2:retrofit:2.5.0'
+        retrofit_rxjava2_adapter = 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
         gson = 'com.google.code.gson:gson:2.8.5'
-        gson_converter = 'com.squareup.retrofit2:converter-gson:2.4.0'
-
+        gson_converter = 'com.squareup.retrofit2:converter-gson:2.5.0'
         // 协程
-        coroutines_android = 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1'
+        coroutines_android = 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
         retrofit_coroutines_adapter = 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
         // kotlin官方json解析库
-        serialization_runtime = 'org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.10.0'
-        retrofit_serialization_converter = 'com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.2.0'
+        serialization_runtime = 'org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.11.0'
+        retrofit_serialization_converter = 'com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.4.0'
 
         flexbox = 'com.google.android:flexbox:1.0.0'
         // 二维码
         zxing = 'com.google.zxing:core:3.2.1'
         // 屏幕适配
-        autosize = 'me.jessyan:autosize:1.1.0'
+        android_autosize = 'me.jessyan:autosize:1.1.2'
         // 加载动画库
         android_spin_kit = 'com.github.ybq:AndroidSpinKit:1.2.0'
         // 桌面角标
         shortcut_badger = 'me.leolin:ShortcutBadger:1.1.22'
         // 裁剪
-        ucrop = 'com.github.yalantis:ucrop:2.2.2'
+        ucrop = 'com.github.yuxuelian:uCrop:1.0.0'
         // gif 播放器
         gif_player = 'pl.droidsonroids.gif:android-gif-drawable:1.2.16'
+        // 引导层
+        easyguideview = 'com.yuyh.easyguideview:library:1.2.2'
+
+        // 轮播
+        xbanner = 'com.github.xiaohaibin:XBanner:androidx_v1.0.0'
+
+        glide = 'com.github.bumptech.glide:glide:4.9.0'
+        glide_okhttp = "com.github.bumptech.glide:okhttp3-integration:4.9.0"
+        glide_compiler = 'com.github.bumptech.glide:compiler:4.9.0'
+
+        sticky_decoration = 'com.gavin.com.library:stickyDecoration:1.4.5'
 
         // 腾讯信鸽
-        xinge = 'com.tencent.xinge:xinge:3.2.7-Release'
+//        xinge = 'com.tencent.xinge:xinge:4.3.2-release'
+        xinge = 'com.tencent.xinge:xinge:4.3.2-xgotherpush-release'
         jg = 'com.tencent.jg:jg:1.1'
-        wup = 'com.tencent.wup:wup:1.0.0.E-release'
-        mid = 'com.tencent.mid:mid:4.0.6-release'
+        wup = 'com.tencent.wup:wup:1.0.0.E-Release'
+        mid = 'com.tencent.mid:mid:4.0.7-Release'
 
         // bugly
         crashreport_upgrade = 'com.tencent.bugly:crashreport_upgrade:1.3.6'
@@ -96,17 +100,8 @@ buildscript {
         // tinker热修复
         tinker = 'com.tencent.tinker:tinker-android-lib:1.9.9'
 
-        // 轮播
-        xbanner = 'com.github.xiaohaibin:XBanner:androidx_v1.0.0'
-
         // -----------------------------------compiler----------------------------------------------
         room_compiler = 'androidx.room:room-compiler:2.1.0-alpha03'
-
-        glide = 'com.github.bumptech.glide:glide:4.9.0'
-        glide_okhttp = "com.github.bumptech.glide:okhttp3-integration:4.9.0"
-        glide_compiler = 'com.github.bumptech.glide:compiler:4.9.0'
-
-        sticky_decoration = 'com.gavin.com.library:stickyDecoration:1.4.5'
     }
 
     repositories {
@@ -118,13 +113,18 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$gradle_plugin_version"
+        // kotlin数据类生成无参构造方法,以便gson可以进行反射
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
+        // tinker生成差分包插件
+        classpath "com.tencent.bugly:tinker-support:1.1.5"
         // 资源文件混淆插件
         classpath 'com.tencent.mm:AndResGuard-gradle-plugin:1.2.15'
 
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+
+        classpath 'com.google.gms:google-services:4.2.0'
     }
 }
 
@@ -144,20 +144,11 @@ allprojects {
         mavenCentral()
         maven {
             url 'https://jitpack.io'
-//            url 'http://localhost:8081/repository/maven-public/'
         }
 
         maven {
             url "https://kotlin.bintray.com/kotlinx"
         }
-
-//        maven {
-//            url "${RELEASE_REPOSITORY_URL}"
-//            credentials {
-//                username "${NEXUS_USERNAME}"
-//                password "${NEXUS_PASSWORD}"
-//            }
-//        }
     }
 }
 

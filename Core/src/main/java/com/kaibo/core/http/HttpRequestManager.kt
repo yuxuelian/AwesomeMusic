@@ -1,7 +1,6 @@
 package com.kaibo.core.http
 
 import com.kaibo.core.AppContext
-import com.kaibo.core.BaseApplication
 import io.reactivex.schedulers.Schedulers
 import okhttp3.Cache
 import okhttp3.Interceptor

@@ -3,11 +3,11 @@ package com.kaibo.core.toast
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
-import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import com.kaibo.core.R
 import kotlinx.android.synthetic.main.toast_layout.view.*
 

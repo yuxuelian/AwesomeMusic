@@ -103,7 +103,8 @@
             android:id="@+id/songListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorBackground" />
+            android:background="@color/colorBackground"
+            android:overScrollMode="never" />
     </com.yan.pullrefreshlayout.PullRefreshLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

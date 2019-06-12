@@ -2,10 +2,6 @@ package com.kaibo.core
 
 import com.kaibo.core.http.HttpRequestManager
 import com.kaibo.core.http.progress.ProgressObservable
-import com.kaibo.core.util.CommandUtil
-import com.kaibo.core.util.LunarCalendar
-import com.kaibo.core.util.ThreadUtils
-import com.kaibo.core.util.leaveTwoDecimal
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.File

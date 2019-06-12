@@ -2,7 +2,6 @@ package com.kaibo.core.http.progress
 
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
-import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.ConcurrentHashMap
 
 /**

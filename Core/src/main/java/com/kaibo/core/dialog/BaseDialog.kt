@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.kaibo.core.R
-import com.uber.autodispose.AutoDisposeConverter
 
 /**
  * @author:Administrator

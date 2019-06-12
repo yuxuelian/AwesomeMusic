@@ -4,13 +4,16 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import com.kaibo.core.fragment.BaseFragment
-import com.kaibo.core.util.*
+import com.kaibo.core.util.animStartActivity
+import com.kaibo.core.util.bindLifecycle
+import com.kaibo.core.util.easyClick
+import com.kaibo.core.util.statusBarHeight
 import com.kaibo.music.R
+import com.kaibo.music.activity.SearchActivity
 import com.kaibo.music.fragment.tab.MineFragment
 import com.kaibo.music.fragment.tab.RankFragment
 import com.kaibo.music.fragment.tab.RecommendFragment
 import com.kaibo.music.fragment.tab.SingerFragment
-import com.kaibo.music.activity.SearchActivity
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.include_home_title.*
 

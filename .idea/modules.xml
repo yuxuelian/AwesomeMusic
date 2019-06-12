@@ -9,10 +9,8 @@
       <module fileurl="file://$PROJECT_DIR$/MusicPlayer/MusicPlayer.iml" filepath="$PROJECT_DIR$/MusicPlayer/MusicPlayer.iml" />
       <module fileurl="file://$PROJECT_DIR$/NodeMusic/NodeMusic.iml" filepath="$PROJECT_DIR$/NodeMusic/NodeMusic.iml" />
       <module fileurl="file://$PROJECT_DIR$/PullRefresh/PullRefresh.iml" filepath="$PROJECT_DIR$/PullRefresh/PullRefresh.iml" />
-      <module fileurl="file://$PROJECT_DIR$/RxPermissions/RxPermissions.iml" filepath="$PROJECT_DIR$/RxPermissions/RxPermissions.iml" />
       <module fileurl="file://$PROJECT_DIR$/SwipeBackLib/SwipeBackLib.iml" filepath="$PROJECT_DIR$/SwipeBackLib/SwipeBackLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/uCrop/uCrop.iml" filepath="$PROJECT_DIR$/uCrop/uCrop.iml" />
     </modules>
   </component>
 </project>

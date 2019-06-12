@@ -15,6 +15,7 @@ import com.kaibo.music.player.bean.RecommendSongListBean
 import com.kaibo.music.player.bean.SingerSongListBean
 import com.kaibo.music.player.bean.SongBean
 import com.kaibo.music.player.net.Api
+import com.kaibo.swipe_back.SwipeBackEnable
 import com.orhanobut.logger.Logger
 import com.yan.pullrefreshlayout.PullRefreshLayout
 import io.reactivex.Observable
@@ -29,7 +30,7 @@ import kotlinx.android.synthetic.main.activity_song_list.*
  * @description：
  */
 
-class SongListActivity : BaseMusicActivity() {
+class SongListActivity : BaseMusicActivity(), SwipeBackEnable {
 
     override fun getLayoutRes() = R.layout.activity_song_list
 

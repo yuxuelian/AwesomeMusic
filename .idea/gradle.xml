@@ -13,10 +13,8 @@
             <option value="$PROJECT_DIR$/MusicPlayer" />
             <option value="$PROJECT_DIR$/NodeMusic" />
             <option value="$PROJECT_DIR$/PullRefresh" />
-            <option value="$PROJECT_DIR$/RxPermissions" />
             <option value="$PROJECT_DIR$/SwipeBackLib" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/uCrop" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

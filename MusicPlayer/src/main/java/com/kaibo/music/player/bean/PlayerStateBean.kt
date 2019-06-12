@@ -13,7 +13,7 @@ import android.os.Parcelable
 
 data class PlayerStateBean(
         val isPlaying: Boolean
-): Parcelable{
+) : Parcelable {
     constructor(parcel: Parcel) : this(parcel.readByte() != 0.toByte()) {
     }
 

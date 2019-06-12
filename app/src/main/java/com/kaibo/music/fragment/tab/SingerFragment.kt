@@ -10,9 +10,9 @@ import com.kaibo.core.fragment.BaseFragment
 import com.kaibo.core.util.*
 import com.kaibo.music.R
 import com.kaibo.music.activity.SongListActivity
+import com.kaibo.music.item.singer.SingerItem
 import com.kaibo.music.player.bean.SingerBean
 import com.kaibo.music.player.bean.SingerListBean
-import com.kaibo.music.item.singer.SingerItem
 import com.kaibo.music.player.net.Api
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_singer.*

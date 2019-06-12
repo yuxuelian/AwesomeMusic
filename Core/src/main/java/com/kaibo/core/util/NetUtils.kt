@@ -11,5 +11,5 @@ import retrofit2.HttpException
  */
 
 fun HttpException.errorBodyMsg(): String? {
-    return this.response().errorBody()?.string()?:""
+    return this.response().errorBody()?.string() ?: ""
 }

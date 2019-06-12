@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDex
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.kaibo.core.toast.ToastUtils
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger

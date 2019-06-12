@@ -100,13 +100,9 @@ dependencies {
     implementation kotlin_stdlib
     // 性能检测
     implementation leakcanary_android
-
 //    kapt room_compiler
-
     implementation project(':Core')
-    implementation project(':BadgeViewLib')
-    implementation project(':PullRefresh')
     implementation project(':MusicPlayer')
-    implementation project(':RxPermissions')
-    implementation project(':SwipeBackLib')
+    implementation project(':PullRefresh')
+    implementation project(':BadgeViewLib')
 }

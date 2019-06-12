@@ -178,8 +178,6 @@ class PlayerActivity : BaseMusicActivity() {
         super.onDestroy()
     }
 
-    override fun isSupportSwipeBack() = false
-
     private fun showSongInfo(songBean: SongBean) {
         songName.text = songBean.songname
         singerName.text = songBean.singername

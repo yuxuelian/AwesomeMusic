@@ -116,7 +116,7 @@ dependencies {
     // rx相关
     api rxjava2
     api rxandroid
-    api rxbinding
+//    api rxbinding
     // 生命周期自动解绑
     api auto_dispose
     api auto_dispose_archcomponents
@@ -139,14 +139,15 @@ dependencies {
     // flex布局
     api flexbox
     // 屏幕适配
-    api autosize
+    api android_autosize
     // 轮播组件
     api xbanner
 
-    api project(':RxPermissions')
-    api project(':uCrop')
+    api ucrop
+    api rx_permissions
+    api project(':SwipeBackLib')
 
-    api rxrelay2
+    api rx_relay2
     api zxing
 
     api glide
