@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DelicateMusic</string>
+    <string name="app_name">AwesomeMusic</string>
     <string name="hot_music_list_recommend">热门歌单推荐</string>
     <string name="search_placeholder">搜索歌曲、歌手</string>
     <string name="hot_search">热门搜索</string>
